@@ -12,10 +12,37 @@ public class StateGrid extends JPanel
 	// node states stored as bits
 	protected byte[] states;
 	// names of node states
-	/* XXX TODO
-	protected static String[] names = {}
-		" get these from nodes.h 
-		*/
+	protected static final String[] names = {
+		"APS mode",
+		"IMU mode",
+		"GPS mode",
+		"ATV mode",
+		"REC mode",
+
+		"APS_SWITCH_2", /* CAN bus */
+		"APS_SWITCH_3", /* ATV power amp (and DC/DC converter) */
+		"APS_SWITCH_4", /* WIFI power amp */
+		"UMB_ROCKETREADY",
+		"UMB_CONNECTOR",
+
+		"GPS_POWER",
+
+		"ATV_POWER_CAMERA",
+		"ATV_POWER_OVERLAY",
+		"ATV_POWER_TX",
+		"ATV_POWER_PA",
+
+		"APS_VOLTS",
+		"APS_AMPS",
+		"APS_CHARGE",
+
+		"IMU_ACCEL",
+		"IMU_GYRO",
+		"IMU_PRESSURE",
+		"IMU_TEMPERATURE",
+
+		"GPS_UART_TRANSMIT",
+	};
 	protected ImageIcon greenled = new ImageIcon(ClassLoader.getSystemResource("widgets/greenled.png"));
 	protected ImageIcon redled = new ImageIcon(ClassLoader.getSystemResource("widgets/redled.png"));
 
@@ -51,13 +78,10 @@ public class StateGrid extends JPanel
 
 
 
-	/** return specified bit of data.
-	 * This assumes by bit 1 you mean greatest sig bit, 
-	 * and by bit 8 you mean LSB. 
-	 * ?? should it return boolean or number? */
-	protected int getBit(byte data, int bit) 
+	/** Return specified bit of data. */
+	protected boolean getBit(byte[] data, int bit) 
 	{
-		return data & (0x80 >> bit);
+		return (data[bit / 8] & (1 << (bit % 8))) != 0;
 	}
 
 
@@ -91,9 +115,8 @@ public class StateGrid extends JPanel
 	protected void draw() 
 	{
 		removeAll(); 
-		String fakedesc = "Thing ";
-		for (short i = 0; i < 32; ++i) {
-			JLabel gridEntry = new JLabel(fakedesc + i);
+		for (int i = 0; i < names.length; ++i) {
+			JLabel gridEntry = new JLabel(names[i]);
 			gridEntry.setIcon(redled); //XXX: change to GREY
 			add(gridEntry);
 			//setElementIcon(gridEntry, 0);
@@ -109,12 +132,10 @@ public class StateGrid extends JPanel
 	{
 		//compare state to oldState 
 		//and only change elements which have changed
-		for (short byteIndex = 0; byteIndex < 4; ++byteIndex) {
-			for (short bit = 0; bit < 8; ++bit) {
-				int newBit = getBit(newStates[byteIndex], bit);
-				if (getBit(oldStates[byteIndex], bit) != newBit)
-					setElementIcon(byteIndex * 8 + bit, newBit == 1);
-			}
+		for (int i = 0; i < names.length; ++i) {
+			boolean newBit = getBit(newStates, i);
+			if (getBit(oldStates, i) != newBit)
+				setElementIcon(i, newBit == true);
 		}
 	}
 }
