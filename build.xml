@@ -31,8 +31,12 @@
     <javac srcdir="${src}" includes="cansocket/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
 
+  <target name="widgets" depends="cansocket" description="compile widgets">
+    <javac srcdir="${src}" includes="widgets/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
+  </target>
+
   <!-- programs -->
-  <target name="rocketview" depends="stripchart,cansocket" description="compile rocketview">
+  <target name="rocketview" depends="stripchart,cansocket,widgets" description="compile rocketview">
     <javac srcdir="${src}" includes="rocketview/*.java" destdir="${build}" classpath="${classpath}:${freechartpath}" debug="${debug}" deprecation="on"/>
   </target>
 
@@ -40,7 +44,7 @@
     <java classname="rocketview.Rocketview" classpath="${classpath}:${freechartpath}" fork="yes"/>
   </target>
 
-  <target name="launchcontrol" depends="cansocket" description="compile launchcontrol">
+  <target name="launchcontrol" depends="cansocket,widgets" description="compile launchcontrol">
     <javac srcdir="${src}" includes="launchcontrol/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
 
