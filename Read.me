@@ -1,0 +1,43 @@
+6/9/2003 dcassard: checked in big changes to cansocket, rocketview and
+	stripchart subtrees
+
+I couldn't get the ant build.xml to work on my system, so I provided
+the brain-damaged build_script, a bash script that builds rocketview.
+The manualuplink and launchcontrol directories are commented out,
+but they could be added back in by someone who knows how those
+subtrees should be built.
+
+To get your very own copy of rocketview, pick a convenient directory
+and do:
+    % cvs checkout java
+    % cd java
+    % build_script
+
+The complied and packaged code is all in the build/ directory, so
+you can run rocketview with:
+    % java -jar build/psas.jar
+
+Also in the build/ subdirectory is rocketview.tar.gz, which
+you can take to any java platform and unzip with some equivalent of:
+    % gunzip <rocketview.tar.gz | tar xf -
+This will populate your default direcdtory with all the jars
+you need to do:
+    % java -jar psas.jar
+
+Rocketview is a listen-only program.  It listens for all UDP addresses
+on port 5347 by default.  You can override the port on the command
+line with:
+    % java -jar psas.jar <port>
+
+There is a src/rocketview/Read.me file that indexes
+Can IDs, their Observer classes, and how messages bytes are
+interpreted.
+
+------------------------------------------------------------------
+still to do:
+	* many observers are only implemented as skeletons
+	* the CanBusIDs file needs to be updated with the latest
+		from the Flight Computer and hardware changes
+	* Jamey's LogCanSocket funcionality is broken, i.e.
+		rocket view doesn't log messages to a disk file.
+
