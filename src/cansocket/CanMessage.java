@@ -4,7 +4,7 @@ import java.io.*;
 
 public class CanMessage extends NetMessage
 {
-	public static final short fifo_tag = NET_MSG_TYPE_CAN;
+	public static final short fifo_tag = FMT_CAN;
     /* match the C structure */
     protected int timestamp;	// 25us timestamp counter
     protected short id;		// id,rtr bit,length-of-body packed int 16bits
