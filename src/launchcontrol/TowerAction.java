@@ -22,6 +22,7 @@ public class TowerAction implements SchedulableAction
 	{ "ready", null, "strobe", "siren", null, "igniter", null, null, null, null };
 
 	private LinkedList cmdqueue = new LinkedList();
+	private Object cts = new Object(); // clear-to-send
 	private TowerListener listener = null;
 	private boolean rocketready = false;
 
@@ -88,6 +89,11 @@ public class TowerAction implements SchedulableAction
 						if(listener != null)
 							listener.towerStatus(line.substring(7));
 					}
+					if(line.startsWith("STATUS ") || line.startsWith("OK "))
+						synchronized(cts)
+						{
+							cts.notify();
+						}
 				}
 			} catch(IOException e) {
 				e.printStackTrace();
@@ -107,26 +113,35 @@ public class TowerAction implements SchedulableAction
 		public void run()
 		{
 			boolean sentsta = false;
-			while(true)
-			{
-				try {
+			try {
+				while(true)
+				{
 					String cmd = "atsta";
 					synchronized(cmdqueue)
 					{
 						if(cmdqueue.size() == 0 && sentsta)
-							cmdqueue.wait();
+							try {
+								cmdqueue.wait();
+							} catch(InterruptedException intr) {
+								continue; // try again
+							}
 						if(cmdqueue.size() != 0)
 							cmd = (String)cmdqueue.removeFirst();
 					}
 					// execute the command
 					out.write(cmd.getBytes());
-					Thread.sleep(50 /*ms*/);
 					sentsta = cmd.equals("atsta");
-				} catch(InterruptedException intr) {
-					// ignore
-				} catch(IOException io) {
-					io.printStackTrace();
+					synchronized(cts)
+					{
+						try {
+							cts.wait();
+						} catch(InterruptedException intr) {
+							// ignore
+						}
+					}
 				}
+			} catch(IOException io) {
+				io.printStackTrace();
 			}
 		}
 	}
