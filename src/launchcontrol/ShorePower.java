@@ -40,6 +40,15 @@ public class ShorePower extends JCheckBox implements ItemListener
 		if (title != null)
 			setText(title);
 		new ReaderThread().start();
+		/* Request the power at startup. */
+		try {
+			CanMessage requestMessage = new CanMessage(CanBusIDs.LTR_GET_SPOWER,
+					0, new byte[8]);
+			sock.write(requestMessage);
+			sock.flush();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -74,7 +83,7 @@ public class ShorePower extends JCheckBox implements ItemListener
 		// if msg is a LTR_REPORT_SPOWER (XXX: ensure its not actually LTR_SPOWER)
 		// then set power to first byte.
 		if (msg.getId() == CanBusIDs.LTR_REPORT_SPOWER) {
-			if (msg.getData8(0) == 0) 
+			if (msg.getData8(0) == 1) 
 				powerState = true;
 			else 
 				powerState = false;
