@@ -165,7 +165,7 @@ public class CanMessage extends NetMessage
 	buf.append(" ").append( Integer.toString (getRtr()) );
 	buf.append(" ").append( Integer.toString (len) );
 	for (int i = 0; i < len; i++)
-	    buf.append( " " ).append(Integer.toHexString(body[i]>>4)).append(Integer.toHexString(body[i]&15));
+	    buf.append( " " ).append(Integer.toHexString((body[i]>>4)&15)).append(Integer.toHexString(body[i]&15));
 
 	return buf.toString();
     }
