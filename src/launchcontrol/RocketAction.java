@@ -77,24 +77,38 @@ public class RocketAction implements SchedulableAction
 	* Timestamp    short
 	* body         byte array
 	* data length
+	*
+	* Also remember that the timestamp is currently hardcoded
+	* PRE : The ID is a valid Java Short
+	*	The Body is a valid java Byte array (-128d to +127d)
+	*
+	* POST : ??
  	*/
 	public void dispatch(String cmd) throws Exception
 	{
 		short id;
 		short timestamp = 12;
-		byte[] body_buffer = new byte[8];
 		byte[] can_Body = new byte[8];
 		byte b;
 		int i = 0;
 		StringTokenizer tkn = new StringTokenizer(cmd);
+
+		// Set ID
 		id = Short.parseShort( tkn.nextToken(), 16 );
+
+		// Set Body
 		while (tkn.hasMoreTokens() )
 		{
-			b = Byte.parseByte( tkn.nextToken(), 16 );
+			b = (byte) Short.parseShort( tkn.nextToken(), 16 );
 			can_Body[i] = b;
 			i++;
 		}
-		CanMessage myMessage = new CanMessage(id, timestamp ,can_Body);
+		byte[] body_Buffer = new byte[i];
+		while ( --i >= 0 )
+		{
+			body_Buffer[i] = can_Body[i];
+		}
+		CanMessage myMessage = new CanMessage(id, timestamp , body_Buffer);
 		sock.write(myMessage);
 	}
 }// end RocketAction
