@@ -6,8 +6,9 @@ import java.text.*;
 import java.util.*;
 import javax.swing.*;
 
-public class RocketState extends JLabel implements Observer
+public class RocketState extends JPanel implements Observer
 {
+
 	protected static final String[] stateStrings = {
 		"EvaluatePowerup",
 		"Initialize",
@@ -45,20 +46,35 @@ public class RocketState extends JLabel implements Observer
 	protected final java.util.Timer timer = new java.util.Timer(true /*daemon*/);
 	protected LinkStateChecker task;
 
+	protected JLabel stateLabel;
+	//protected StateGrid detailDisplay;
+
 	protected class LinkStateChecker extends TimerTask
 	{
 		public void run()
 		{
 			// If the task is activated, then it has been too long since
 			// we recieved a message
-			setIcon(redled);
+			stateLabel.setIcon(redled);
 		}
 	}
+
+	/*
+	protected class StateGrid extends JPanel
+	{
+	*/
+
 
 
 	public RocketState()
 	{
-		updateText();
+		stateLabel = new JLabel();
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		updateText(); // get label ready for display 
+		add(stateLabel);
+
+		//detailDisplay = new StateGrid();
+		//add(detailDisplay);
 	}
 
 	public void update(NetMessage msg)
@@ -104,6 +120,7 @@ public class RocketState extends JLabel implements Observer
 	{
 		this.detail = detail;
 		updateText();
+		//detailDisplay.update();
 	}
 
 	protected void setQuality(short signal, short noise)
@@ -121,8 +138,8 @@ public class RocketState extends JLabel implements Observer
 		if(state < 0)
 		{
 			b.append("unknown FC state");
-			setText(b.toString());
-			setIcon(redled);
+			stateLabel.setText(b.toString());
+			stateLabel.setIcon(redled);
 			return;
 		}
 		b.append(dateStr);
@@ -132,12 +149,12 @@ public class RocketState extends JLabel implements Observer
 			b.append(stateStrings[state]);
 		if(detail >= 0)
 			b.append(" [").append(Integer.toBinaryString(detail)).append("]");
-		setText(b.toString());
+		stateLabel.setText(b.toString());
 
 		// set a task to run after delay milliseconds, which will happen
 		// unless we've recieved a message (and thus entered this function)
 		// before that time
-		setIcon(greenled);
+		stateLabel.setIcon(greenled);
 		if (task != null)
 			task.cancel();
 		task = new LinkStateChecker(); // will set "led" to red
