@@ -98,9 +98,9 @@ public class CanMessage
 
 	try
 	{
-	    fifo_tag = dis.readInt();
+	    fifo_tag = dis.readInt();		//!!! assert fifo_tag == 0
 	    timestamp = dis.readInt();
-	    id = (short) ((dis.readByte() & 0xff) | (dis.readByte() << 8));
+	    id = dis.readShort();
 	    body = new byte[MSG_BODY];
 	    dis.read( body );
 	} catch(IOException e) {
@@ -108,9 +108,10 @@ public class CanMessage
 	}
 
 	// cuisinart the bits
-	id11 = id & 0x7ff; // 11-bit id
-	rtr = (id >>> 11) & 0x1;   // RTR bit
-	len = (id >>> 12) & 0xf;           // number of valid bytes in body
+	len = id & 0xf;          // number of valid bytes in body
+	if (len > 8) len = 8;
+	rtr = (id >>> 4) & 1;
+	id11 = id >>> 5;
     }
 
     public byte[] toByteArray()
@@ -152,6 +153,8 @@ public class CanMessage
     public byte getData8(int i) {
 	return body[i];
     }
+
+	//!!! remove Intel byte order assumption?
 
     public short getData16(int i)
     {
