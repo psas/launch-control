@@ -62,7 +62,6 @@ public class Scheduler
 		if(listener != null)
 			listener.started();
 
-		setTimer(/*aborting*/ false);
 		startTime = endTime = 0;
 
 		// read events file for general settings
@@ -90,6 +89,7 @@ public class Scheduler
 		} catch(NumberFormatException e) {
 			// ignore
 		}
+		setTimer(/*aborting*/ false);
 	}
 
 	/**
