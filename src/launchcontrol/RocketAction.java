@@ -29,6 +29,8 @@
 //***********************************
 //		Imports
 //***********************************
+import cansocket.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -64,7 +66,7 @@ public class RocketAction implements SchedulableAction
 	*/
 	public RocketAction(String hostname) throws IOException
 	{
-		sock = new TCPCanSocket(new Socket(hostname, TCPCanSocket.DEFAULT_SOCKET_PORT));
+		sock = new TCPCanSocket(hostname);
 	}
 	
 
