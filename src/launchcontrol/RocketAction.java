@@ -22,6 +22,8 @@
  * - added commentary (larry's usual stuff that'll likely
  *   get stripped out when deliverable is shipped
  *
+ * 20 July :
+ * - Wrote the code in Dispatch method
  */
 
 //***********************************
@@ -29,6 +31,7 @@
 //***********************************
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class RocketAction implements SchedulableAction
 {
@@ -57,29 +60,41 @@ public class RocketAction implements SchedulableAction
 	*
 	* PARAMETERS : The 
 	*
-	* PRE : 
+	* PRE : The hostname is a valid string
 	*
-	* POST :
+	* POST : we have parsed the string into
+	* a new CAN message
 	*/
-	// constructor code goes here
-
-	//sock = new TCPCanSocket(new Socket(hostname, TCPCanSocket.DEFAULT_SOCKET_PORT));
-
+	sock = new TCPCanSocket(new Socket(hostname, TCPCanSocket.DEFAULT_SOCKET_PORT));
 	}
-
 	public void dispatch(String cmd) throws Exception
 	{
 	/** dispatch method
 	* This method will parse a string into a CAN message
 	* and send that CAN message out VIA a TCPSocket sock
 	*
+	* Remember, a well formed CAN message will have a
+	* ID           short
+	* Timestamp    short
+	* body         byte array
+	* data length
  	*/
-       // code goes here pls :)
-      
-	// based on TowerAction (as a templatey thingey...jamey doesn't like the idea tho'
-	// parse a string into (format TBD...ID, Body)
-	//Write that data into a new can message
-	//the can message will be sent out on the bus via sock 
-	    System.out.println(cmd);
+
+	    short id;
+	    short timestamp = 12;
+	    byte[] can_Body = new byte[8];
+	    byte b;
+	    int i = 0;
+	    StringTokenizer tkn = new StringTokenizer(cmd);
+	    id = Short.parseShort( tkn.nextToken(), 16 );
+	    while (tkn.hasMoreTokens()) {
+	    System.out.println( id );
+	    b = Byte.parseByte( tkn.nextToken(), 16 );
+	    can_Body[i] = b;
+	    System.out.println( b );
+	    i++;
+	    }
+	    CanMessage myMessage = new CanMessage(id, timestamp ,can_Body);
+	    sock.write(myMessage);
 	}
 }// end RocketAction
