@@ -26,7 +26,19 @@ class TextObserver extends JTextArea implements Observer
     public void update(Observable o, Object arg)
     {
 	CanMessage msg = (CanMessage) arg;
+	int id = msg.getId11();
 
+	// filter out all id's that are handled elsewhere
+	if( id == CanBusIDs.GPSHeight ||
+	    id == CanBusIDs.GPSID ||
+	    id == CanBusIDs.GPSLatLon ||
+	    id == CanBusIDs.IMUAccel ||
+	    id == CanBusIDs.IMUGyro ||
+	    id == CanBusIDs.PressValue ||
+	    id == CanBusIDs.GPSTime ) {
+
+	    return;
+	}
 
 	StringBuffer buf = new StringBuffer( msg.toString() );
 	String str = new String( buf.toString() + "\n" );

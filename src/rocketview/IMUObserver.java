@@ -121,13 +121,13 @@ class IMUObserver extends JPanel implements Observer
 			(((double) raw - Gzero[type][i]) / Ggain[type][i]);
 		    Short v = new Short( vShort );
 
-		    System.out.println( "type:  " + type
-			+ "  index: " + i
-			+ "    raw: " + raw
-			+ "   zero: " + Gzero[type][i]
-			+ "   gain: " + Ggain[type][i]
-			+ "   h: " + h
-			+ "   v: " + v );
+		    // System.out.println( "type:  " + type
+			// + "  index: " + i
+			// + "    raw: " + raw
+			// + "   zero: " + Gzero[type][i]
+			// + "   gain: " + Ggain[type][i]
+			// + "   h: " + h
+			// + "   v: " + v );
 		    data[type][i].addXYValue( h, v );
 		}
 	}
