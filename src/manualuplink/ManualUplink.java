@@ -1,5 +1,3 @@
-package manualuplink;
-
 /** ManualUplink.java
  * the program to manyally fire the recovery pyros
  * for LV2.
@@ -38,7 +36,7 @@ class ManualUplink{
     protected static final String Lin = "#*2";
     protected static final String Off = "#*3";
 
-
+    static Menu M;
 
     public static void main( String[] args )throws Exception{
 
@@ -46,7 +44,7 @@ class ManualUplink{
 	System.out.println("The PSAS uplink tool, C 2002");
 	CommControl C = new CommControl();
 	C.openPort();
-	Menu M = new Menu();
+	M = new Menu();
 	while ( (choice = M.readMenu()) != '9' ) {
 	    switch ( choice ){
 	    case '1':
@@ -64,12 +62,16 @@ class ManualUplink{
 	    }// the switch
 	}// The while not nine
 	System.out.println("ending the program");
+        //close port
+	C.closePort( );
     }//The Main
 }// The class
 
 class CommControl{
     protected static final String Appname = "ManualUplink";
     CommPort port;
+
+
     public void openPort() throws IOException, NoSuchPortException, PortInUseException {
 	/**
 	 * Oh, Yeah...Make this a Constructor of a CommControl...
@@ -84,10 +86,28 @@ class CommControl{
 	System.out.println (" Enter the parallel port's ID");
 	name = new BufferedReader(new InputStreamReader(System.in)).readLine();
 	port = CommPortIdentifier.getPortIdentifier( name ).open( Appname, 500 ) ;
-	
+	//OutputStreamWriter osw = new OutputStreamWriter( System.out );
+	OutputStreamWriter osw = new OutputStreamWriter( port.getOutputStream() );
+	System.out.println("writing");
+	String cmd[] = { "parport","on" };
+	Runtime.getRuntime().exec(cmd);
+	//try{
+	    //   osw.write( 255 );
+	    //  osw.flush();
+	//}
+	//catch (IOException e){
+	//    System.err.println(e);
+	//}
+    System.out.println("done");
     }//openPort
 
-    public void closePort(){}
+    public void closePort() throws IOException, NoSuchPortException, PortInUseException {
+	String cmd[] = { "parport","off" };
+	Runtime.getRuntime().exec(cmd);
+	//String name = port.getName ();
+	//port.close();
+	//System.out.println( "Closing da Port!" );	
+	}
 
 }//CommCotrol
 
