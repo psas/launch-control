@@ -21,7 +21,7 @@ public class Rocketview extends JFrame
 		Rocketview f = new Rocketview(host);
 		f.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		f.setVisible(true);
-		// dispatch.run(new TCPCanSocket(host));
+		// f.dispatch.run(new LogCanSocket(new TCPCanSocket(host), host));
 		// System.exit(0);
 	}
 
@@ -32,29 +32,32 @@ public class Rocketview extends JFrame
 		dispatch = new Dispatch();
 		getContentPane().setLayout(new BorderLayout());
 
-		Box b;
-
-		b = Box.createHorizontalBox();
+		Box b = Box.createHorizontalBox();
 		getContentPane().add(b, BorderLayout.CENTER);
 
 		addObserver(b, new MessageObserver());
 		addObserver(b, new IMUObserver());
 
-		Box bottom = Box.createVerticalBox();
+		JPanel bottom = new JPanel();
+		bottom.setLayout(new BorderLayout());
 		getContentPane().add(bottom, BorderLayout.SOUTH);
 
-		b = Box.createHorizontalBox();
-		bottom.add(b);
+		JPanel labels;
+		
+		labels = new JPanel();
+		labels.setLayout(new GridLayout(1, 0));
+		bottom.add(labels, BorderLayout.NORTH);
 
-		addObserver(b, "time", new TimeObserver());
-		addObserver(b, "status", new StatusObserver());
-		addObserver(b, "position", new PositionObserver());
+		addObserver(labels, "time", new TimeObserver());
+		addObserver(labels, "status", new StatusObserver());
+		addObserver(labels, "position", new PositionObserver());
 
-		b = Box.createHorizontalBox();
-		bottom.add(b);
+		labels = new JPanel();
+		labels.setLayout(new GridLayout(1, 0));
+		bottom.add(labels, BorderLayout.SOUTH);
 
-		addObserver(b, "height", new HeightObserver());
-		addObserver(b, "gps", new GPSObserver());
+		addObserver(labels, "height", new HeightObserver());
+		addObserver(labels, "gps", new GPSObserver());
 
 		pack();
 	}
