@@ -38,7 +38,7 @@ public class UDPCanSocketTest
 	boolean sendStopMessage = false;
 	StringBuffer hostname = new StringBuffer().append( "localhost" );
 	InetAddress hostip;
-	int port = CanSocket.PORT_RECV;
+	int port = UDPCanSocket.PORT_RECV;
 
 	// require at least 2 arguments
 	if (args.length < 2) {
@@ -93,14 +93,14 @@ public class UDPCanSocketTest
 		fillByt( body );
 
 		// send the Can message
-		sock.send( new CanMessage( timestamp, id, 1, 8, body ));
+		sock.write( new CanMessage( timestamp, id, 1, 8, body ));
 
 		System.out.println (i + ". id: " + id + "  CanMessage sent");
 	    }
 
 	    /* send the terminator */
 	    if (sendStopMessage) {
-		sock.send( new CanMessage( (short)CanMessage.STOP_ID, 0, body ));
+		sock.write( new CanMessage( (short)CanMessage.STOP_ID, 0, body ));
 		System.out.println ("STOP CanMessage sent");
 	    }
 
@@ -131,7 +131,7 @@ public class UDPCanSocketTest
 	System.out.print( "  -host hostname or ip address to send to; " );
 	System.out.println( "defaults to: localhost" );
 	System.out.print( "  -port port to send to; " );
-	System.out.println( "defaults to: " + CanSocket.PORT_RECV);
+	System.out.println( "defaults to: " + UDPCanSocket.PORT_RECV);
 	System.out.println( "  -stop send the terminator message at end" );
 	System.out.println( "  -n number of messages to send" );
     }

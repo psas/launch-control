@@ -1,10 +1,11 @@
 package cansocket;
 
-import java.nio.ByteBuffer;
+import java.io.*;
 
 public class CanMessage
 {
     /* match the C structure */
+    protected int fifo_tag;
     protected int timestamp;	// 25us timestamp counter
     protected short id;		// id,rtr bit,length-of-body packed int 16bits
     protected byte body[];	// 8 bytes of body
@@ -93,14 +94,18 @@ public class CanMessage
      */
     public CanMessage( byte buf[] )
     {
-	body = new byte[MSG_BODY];
-	int fifo_tag;
+	DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
 
-	ByteBuffer bytBuf = ByteBuffer.wrap( buf );
-	fifo_tag = bytBuf.getInt();
-	timestamp = bytBuf.getInt();
-	id = bytBuf.getShort();
-	bytBuf.get( body );
+	try
+	{
+	    fifo_tag = dis.readInt();
+	    timestamp = dis.readInt();
+	    id = dis.readShort();
+	    body = new byte[MSG_BODY];
+	    dis.read( body );
+	} catch(IOException e) {
+	    // never happens.
+	}
 
 	// cuisinart the bits
 	id11 = ((id >> 5) & 0x7ff); // 11-bit id
@@ -109,6 +114,24 @@ public class CanMessage
 
 	// System.out.println("id: " + id );
 	// System.out.println("time: " + timestamp );
+    }
+
+    public byte[] toByteArray()
+    {
+	ByteArrayOutputStream bos = new ByteArrayOutputStream(MSG_SIZE);
+	DataOutputStream dos = new DataOutputStream(bos);
+
+	try
+	{
+	    dos.writeInt(fifo_tag);
+	    dos.writeInt(timestamp);
+	    dos.writeShort((id11 << 5) | (rtr << 4) | len);
+	    dos.write(body);
+	} catch(IOException e) {
+	    // never happens.
+	}
+
+	return bos.toByteArray();
     }
 
     // this returns the 16-bit id that has id,rtr,len packed into it
@@ -146,18 +169,6 @@ public class CanMessage
 	       (body[i + 1] & 0xff) << 16 |
 	       (body[i + 2] & 0xff) << 8 |
 	       (body[i + 3] & 0xff);
-    }
-
-    /* put can message into a byte buffer
-     * return number of bytes put into buffer
-     */
-    public int toByteBuf( ByteBuffer bytBuf )
-    {
-	bytBuf.putShort( id );
-	bytBuf.putInt( timestamp );
-	bytBuf.put( body, 0, body.length );
-
-	return( MSG_ID + MSG_TS + body.length );
     }
 
     /* print can message to standard output

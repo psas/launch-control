@@ -23,9 +23,6 @@ public class Rocketview extends JFrame
 
 	public static void main(String[] args) throws Exception
 	{
-		int port = args.length > 0 ?
-		    Integer.parseInt( args[0] ) : CanSocket.PORT_RECV;
-
 		System.out.println( "Rocketview UDP" );
 		System.out.flush();
 		Rocketview f = new Rocketview( "localhost" );
@@ -34,7 +31,12 @@ public class Rocketview extends JFrame
 
 		// f.dispatch.run(new LogCanSocket(new TCPCanSocket(host),host));
 		// f.dispatch.run(new LogCanSocket(new TCPCanSocket(), host));
-		f.dispatch.run( new UDPCanSocket( port ));
+		CanSocket sock;
+		if(args.length > 0)
+			sock = new UDPCanSocket(Integer.parseInt(args[0]));
+		else
+			sock = new UDPCanSocket();
+		f.dispatch.run(sock);
 
 		System.out.println( "Rocketview exits main()" );
 		System.exit(0);

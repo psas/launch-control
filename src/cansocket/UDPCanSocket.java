@@ -2,36 +2,30 @@ package cansocket;
 
 import java.io.*;
 import java.net.*;
-import java.nio.ByteBuffer;
 
 public class UDPCanSocket implements CanSocket
 {
+    protected static final int PORT_SEND = 5348;
+    protected static final int PORT_RECV = 5347;
+
     private DatagramSocket sock;	// udp socket
-    private InetAddress sendAddress;	// stored send address
-    private int sendPort;		// stored send port
+    private final InetAddress sendAddress;	// stored send address
+    private final int sendPort;		// stored send port
 
     /* constructor with no arguments creates a datagram socket
      * on the default receive port
      */
     public UDPCanSocket() throws IOException
     {
-	System.out.println( "Usock0: open listen socket, port " + PORT_RECV );
-	sock = new DatagramSocket( PORT_RECV );
-	System.out.println( "Usock0: local address:port "
-		+ InetAddress.getLocalHost() + " : "
-		+ sock.getLocalPort() );
+	this( PORT_RECV );
     }
 
     /* constructor with port argument creates a datagram socket
      * on the given port
      */
-    public UDPCanSocket( int port ) throws IOException
+    public UDPCanSocket( int localport ) throws IOException
     {
-	System.out.println( "Usockp: open udp socket, port " + port );
-	sock = new DatagramSocket( port );
-	System.out.println( "Usockp: local address:port "
-		+ InetAddress.getLocalHost() + " : "
-		+ sock.getLocalPort() );
+	this( localport, null, 0);
     }
 
     /* constructor with address argument opens a sending socket
@@ -40,12 +34,7 @@ public class UDPCanSocket implements CanSocket
      */
     public UDPCanSocket( String host ) throws IOException
     {
-	System.out.println( "Usockh: open socket to " + host);
-	sendAddress = InetAddress.getByName( host );
-	sock = new DatagramSocket( PORT_SEND );
-	System.out.println( "Usockh: local address:port "
-		+ InetAddress.getLocalHost() + " : "
-		+ sock.getLocalPort() );
+	this( InetAddress.getByName( host ), PORT_SEND );
     }
 
     /* constructor with address & port opens a sending socket
@@ -54,47 +43,17 @@ public class UDPCanSocket implements CanSocket
      */
     public UDPCanSocket( InetAddress addr, int port ) throws IOException
     {
-	System.out.print( "Usocka: open socket to " );
-	System.out.println( addr + " : " + port);
-	sendAddress = addr;
-	sendPort = port;
-	sock = new DatagramSocket( PORT_SEND );
-	System.out.println( "Usocka: local address:port "
-		+ InetAddress.getLocalHost() + " : "
-		+ sock.getLocalPort() );
+	this( PORT_RECV, addr, port );
     }
 
-    /*** really only used by TCP interface ***/
+    public UDPCanSocket( int localport, InetAddress remaddr, int remport ) throws IOException
+    {
+	sock = new DatagramSocket( localport );
+	sendAddress = remaddr;
+	sendPort = remport;
+    }
+
     public CanMessage read() throws IOException
-    {
-	System.out.println( "Usock: read ");
-	return new CanMessage( (short) 101 );
-    }
-
-    public void write(CanMessage msg) throws IOException
-    {
-	System.out.println( "Usock: write " + msg.getId());
-    }
-    /*** really only used by TCP interface ***/
-
-    /* send the given Can message on this socket.
-     * send-to address must already be established by the constructor.
-     * send-to port is the default receiver.
-     */
-    public void send( CanMessage msg ) throws IOException
-    {
-	// System.out.println( "Usock: send " + msg.getId());
-
-	/* put can message into a byte buffer */
-	byte[] buf = new byte[CanMessage.MSG_SIZE];
-	ByteBuffer bytBuf = ByteBuffer.wrap( buf );
-	int length = msg.toByteBuf( bytBuf );
-
-	/* send packet addressed to the receiver address/port */
-	sock.send( new DatagramPacket( buf, length, sendAddress, sendPort ));
-    }
-
-    public CanMessage recv() throws IOException
     {
 	// System.out.println( "Usock: recv ");
 
@@ -107,6 +66,20 @@ public class UDPCanSocket implements CanSocket
 
 	/* return a new Can message constructed from receive buffer */
 	return( new CanMessage( buf ));
+    }
+
+    public void write(CanMessage msg) throws IOException
+    {
+	if (sendAddress == null)
+	    throw new PortUnreachableException( "not configured for writing messages" );
+
+	// System.out.println( "Usock: send " + msg.getId());
+
+	/* put can message into a byte buffer */
+	byte[] buf = msg.toByteArray();
+
+	/* send packet addressed to the receiver address/port */
+	sock.send( new DatagramPacket( buf, buf.length, sendAddress, sendPort ));
     }
 
     public void close() throws IOException
