@@ -30,7 +30,7 @@
  
 autoimport Cairo; 
 
-void led (cairo_t cr, real red, real green, real blue)
+void led (cairo_t cr, real red, real green, real blue, bool on)
 {
     translate (cr, .5, .5);
     
@@ -38,14 +38,14 @@ void led (cairo_t cr, real red, real green, real blue)
     
     if (true)
     {
-	set_rgb_color (cr, red *.6, green *.6, blue *.6);
+	set_rgb_color (cr, red *.4, green *.4, blue *.4);
 	move_to (cr, 1, 1/2);
 	arc (cr, .5, .5, .5, 0, pi*2);
 	fill (cr);
     }
     
     /* Bright spot of LED illumination */
-    if (true)
+    if (on)
     {
 	pattern_t	led = Pattern::create_radial (1/2, 1/2, 0, 
 						      1/2, 1/2, .4);
@@ -77,7 +77,7 @@ void led (cairo_t cr, real red, real green, real blue)
     if (true)
     {
 	pattern_t	room = Pattern::create_radial (1/3, 1/3, 0, 1/3, 1/3, 1/2);
-	Pattern::add_color_stop (room, 0, 1, 1, 1, .6);
+	Pattern::add_color_stop (room, 0, 1, 1, 1, .4);
 	Pattern::add_color_stop (room, 1, 1, 1, 1, 0);
 	set_pattern (cr, room);
 	move_to (cr, 1, 1/2);
@@ -92,20 +92,23 @@ void led (cairo_t cr, real red, real green, real blue)
  */
 int diameter = 12;
 
-void do_one (string name, real red, real green, real blue)
+void do_one (string name, real red, real green, real blue, bool on)
 {
     cairo_t cr = new_png (name, diameter, diameter);
     
     translate (cr, -width(cr)/2, -height(cr)/2);
     scale (cr, width(cr), height(cr));
-    led (cr, red, green, blue);
+    led (cr, red, green, blue, on);
 }
 
 void doit ()
 {
-    do_one ("redled.png", 1, 0, 0);
-    do_one ("greenled.png", 0, 1, .4824);
-    do_one ("grayled.png", .4, .4, .4);
+    do_one ("redled.png", 1, 0, 0, true);
+    do_one ("redoff.png", 1, 0, 0, false);
+    do_one ("greenled.png", 0, 1, .4824, true);
+    do_one ("greenoff.png", 0, 1, .4824, false);
+    do_one ("grayled.png", .9, .9, .9, false);
+    do_one ("grayon.png", .9, .9, .9, true);
 }
 
 if (dim(argv) > 0)
