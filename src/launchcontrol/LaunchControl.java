@@ -1,6 +1,7 @@
 package launchcontrol;
 
 import cansocket.*;
+import widgets.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -11,7 +12,7 @@ import java.util.*;
 import javax.swing.*;
 
 public class LaunchControl extends JFrame
-	implements ScheduleListener, ActionListener
+	implements ScheduleListener, LinkStateListener, ActionListener
 {
 	// Class constants
 	protected final static String startMsg = "Start Countdown";
@@ -268,6 +269,16 @@ public class LaunchControl extends JFrame
 	}
 
 
+	public void linkStateChanged(boolean state)
+	{
+		if(!state)
+			try {
+				sched.abortCountdown();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+	}
+
 
 	public void started()
 	{
@@ -288,12 +299,7 @@ public class LaunchControl extends JFrame
 
 	public void disableAbort()
 	{
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run()
-			{
-				countdownButton.setEnabled(false);
-			}
-		});
+		// no longer useful
 	}
 
 	public void aborted()
@@ -314,7 +320,6 @@ public class LaunchControl extends JFrame
 			{
 				countdownButton.setText(startMsg);
 				countdownButton.setActionCommand("start");
-				countdownButton.setEnabled(true);
 				clock.setText("");
 			}
 		});

@@ -46,6 +46,7 @@ public class RocketState extends JPanel implements Observer
 	protected static final long delay = 1200; /* link timeout delay (millisecs) */
 	protected final java.util.Timer timer = new java.util.Timer(true /*daemon*/);
 	protected LinkStateChecker task;
+	protected LinkStateListener listener;
 
 	protected JLabel zLabel;	// Z IMU
 	protected JLabel stateLabel;
@@ -58,6 +59,8 @@ public class RocketState extends JPanel implements Observer
 			// If the task is activated, then it has been too long since
 			// we recieved a message
 			stateLabel.setIcon(redled);
+			if(listener != null)
+				listener.linkStateChanged(false);
 		}
 	}
 
@@ -81,6 +84,11 @@ public class RocketState extends JPanel implements Observer
 
 		detailDisplay = new StateGrid();
 		add(detailDisplay);
+	}
+
+	public void addLinkStateListener(LinkStateListener listener)
+	{
+		this.listener = listener;
 	}
 
 	public void update(Observable o, Object arg)
@@ -133,10 +141,12 @@ public class RocketState extends JPanel implements Observer
 		// unless we've recieved a message (and thus entered this function)
 		// before that time
 		stateLabel.setIcon(greenled);
+		if(listener != null)
+			listener.linkStateChanged(true);
 		if (task != null)
 			task.cancel();
 		task = new LinkStateChecker(); // will set "led" to red
-		timer.schedule(task, delay);
+		timer.schedule(task, delay, 1000);
 	}
 
 	protected void setQuality(short signal, short noise)
@@ -156,6 +166,8 @@ public class RocketState extends JPanel implements Observer
 			b.append("unknown FC state");
 			stateLabel.setText(b.toString());
 			stateLabel.setIcon(redled);
+			if(listener != null)
+				listener.linkStateChanged(false);
 			return;
 		}
 		b.append(dateStr);
