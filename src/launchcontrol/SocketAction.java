@@ -66,7 +66,16 @@ public class SocketAction implements SchedulableAction
 		this.sock = sock;
 		this.type = type;
 	}
-	
+
+	protected static short shortValue(String s)
+		throws NoSuchFieldException, IllegalAccessException
+	{
+		try {
+			return Short.parseShort(s, 16);
+		} catch(NumberFormatException e) {
+			return ((Number) CanBusIDs.class.getField(s).get(null)).shortValue();
+		}
+	}
 
 	/** dispatch method
 	* This method will parse a string into a CAN message
@@ -89,27 +98,17 @@ public class SocketAction implements SchedulableAction
  	*/
 	public void dispatch(String cmd) throws Exception
 	{
-		short id;
 		short timestamp = 0;
 		byte[] can_Body = new byte[8];
-		byte b;
 		int len = 0;
-		String command;
 		StringTokenizer tkn = new StringTokenizer(cmd);
 
-		// Set command
-		command = tkn.nextToken();
-		
 		// convert to CAN id
-		id = Config.getInt(type + "." + command).shortValue();
+		short id = shortValue(tkn.nextToken());
 
 		// Set Body
 		while (tkn.hasMoreTokens() )
-		{
-			b = (byte) Short.parseShort( tkn.nextToken(), 16 );
-			can_Body[len] = b;
-			len++;
-		}
+			can_Body[len++] = (byte) shortValue(tkn.nextToken());
 		// why bother with this? why not just use can_Body?
 		byte[] body_Buffer = new byte[len];
 		int i = len;
@@ -117,8 +116,7 @@ public class SocketAction implements SchedulableAction
 		{
 			body_Buffer[i] = can_Body[i];
 		}
-		// this supports smaller IDs with no RTR
-		CanMessage myMessage = new CanMessage(timestamp, id, 0, len, body_Buffer);
+		CanMessage myMessage = new CanMessage(id, timestamp, body_Buffer);
 		sock.write(myMessage);
 		sock.flush();
 	}
