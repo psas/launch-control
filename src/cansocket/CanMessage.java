@@ -100,7 +100,7 @@ public class CanMessage
 	{
 	    fifo_tag = dis.readInt();
 	    timestamp = dis.readInt();
-	    id = dis.readShort();
+	    id = (short) ((dis.readByte() & 0xff) | (dis.readByte() << 8));
 	    body = new byte[MSG_BODY];
 	    dis.read( body );
 	} catch(IOException e) {
@@ -108,12 +108,9 @@ public class CanMessage
 	}
 
 	// cuisinart the bits
-	id11 = ((id >> 5) & 0x7ff); // 11-bit id
-	rtr = ((id & 0x10) >> 4);   // RTR bit
-	len = (id & 0xf);           // number of valid bytes in body
-
-	// System.out.println("id: " + id );
-	// System.out.println("time: " + timestamp );
+	id11 = id & 0x7ff; // 11-bit id
+	rtr = (id >>> 11) & 0x1;   // RTR bit
+	len = (id >>> 12) & 0xf;           // number of valid bytes in body
     }
 
     public byte[] toByteArray()
@@ -175,21 +172,7 @@ public class CanMessage
      */
     public void print()
     {
-	System.out.println ("__|"
-	+ Integer.toHexString (timestamp) + "|__|"
-	// + Integer.toHexString (id11) + "|__|"
-	+ id11 + "|__|"
-	+ Integer.toHexString (rtr) + "|__|"
-	+ Integer.toHexString (len) + "|__|"
-	+ hexByte( body[0] ) + " "
-	+ hexByte( body[1] ) + " "
-	+ hexByte( body[2] ) + " "
-	+ hexByte( body[3] ) + " "
-	+ hexByte( body[4] ) + " "
-	+ hexByte( body[5] ) + " "
-	+ hexByte( body[6] ) + " "
-	+ hexByte( body[7] ) + " "
-	+ "|__");
+	System.out.println (this);
     }
 
     /* format can message to a string
@@ -197,7 +180,6 @@ public class CanMessage
      */
     public String toString()
     {
-	// StringBuffer buf = new StringBuffer();
 	StringBuffer buf = new StringBuffer( "0x" );
 
 	buf.append( Integer.toHexString (timestamp) + " " );

@@ -19,7 +19,6 @@ public class Rocketview extends JFrame
 	// preferredSize = new Dimension(750, 550);
 	// preferredSize = new Dimension(1024, 768);
 	protected final Dispatch dispatch;
-	private boolean detect_stop = false;
 
 	public static void main(String[] args) throws Exception
 	{
@@ -48,7 +47,7 @@ public class Rocketview extends JFrame
 	{
 		super("Rocketview: " + host);
 
-		dispatch = new Dispatch( detect_stop );
+		dispatch = new Dispatch();
 
 		// format a start-time string
 		DateFormat df

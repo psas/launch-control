@@ -5,24 +5,13 @@ import java.util.*;
 
 class Dispatch extends Observable
 {
-	public Dispatch( boolean ds )
-	{
-	}
-
-	public void run(CanSocket sock)
+	public void run(CanSocket sock) throws Exception
 	{
 		CanMessage m;
-		try
+		while ((m = sock.read()) != null)
 		{
-			while ((m = sock.read()) != null)
-			{
-			    setChanged();
-			    notifyObservers(m);
-			}
-		}
-		catch(Exception e)
-		{
-			System.err.println(e);
+		    setChanged();
+		    notifyObservers(m);
 		}
 	}
 }
