@@ -123,6 +123,12 @@ public class Rocketview extends JFrame
 		addObserver( gps, new GPSObserver() );
 		subSys.add( gps );
 
+		// APS panel
+		JPanel aps = new JPanel();
+		addUntitledObserver( aps, new APSObserver() );
+		// addObserver( aps, "APS", new APSObserver() );
+		subSys.add( aps );
+
 		pack();
 	}
 
