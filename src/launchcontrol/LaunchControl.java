@@ -233,12 +233,12 @@ public class LaunchControl extends JFrame
 
 		try {
 			towerSocket = new TCPCanSocket(Config.getString("tower.host"), Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT));
-			Scheduler.addSchedulableAction("tower", new SocketAction(towerSocket, "tower"));
+			Scheduler.addSchedulableAction("tower", new SocketAction(towerSocket));
 		} catch(ConnectException e) {
 			e.printStackTrace();
 		}
 
-		Scheduler.addSchedulableAction("rocket", new SocketAction(rocketSocket, "rocket"));
+		Scheduler.addSchedulableAction("rocket", new SocketAction(rocketSocket));
 
 		ended(); // reset the button and label
 		sched.addScheduleListener(this, 100);
@@ -309,9 +309,9 @@ public class LaunchControl extends JFrame
 					"Proceed?",
 					JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) 
 					return; // user wasn't sure.
-				//byte[] data = { CanBusIDs.PowerDownState };
-				byte[] data = new byte[8];
-				data[0] = CanBusIDs.PowerDownState;
+				byte[] data = { CanBusIDs.PowerDownState };
+				//byte[] data = new byte[8];
+				//data[0] = CanBusIDs.PowerDownState;
 				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
 			} 
 			else if(event.getActionCommand().equals("fc_on"))

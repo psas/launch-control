@@ -48,7 +48,6 @@ import java.util.*;
 public class SocketAction implements SchedulableAction
 {
 	protected CanSocket sock;
-	protected String type;
 	
 	/**
 	*     SocketAction Method 
@@ -61,10 +60,9 @@ public class SocketAction implements SchedulableAction
 	*
 	* POST :
 	*/
-	public SocketAction(CanSocket sock, String type) throws IOException
+	public SocketAction(CanSocket sock) throws IOException
 	{
 		this.sock = sock;
-		this.type = type;
 	}
 
 	protected static short shortValue(String s)
@@ -73,6 +71,7 @@ public class SocketAction implements SchedulableAction
 		try {
 			return Short.parseShort(s, 16);
 		} catch(NumberFormatException e) {
+			// not an integer? try a CanBusID symbol
 			return ((Number) CanBusIDs.class.getField(s).get(null)).shortValue();
 		}
 	}
@@ -86,7 +85,7 @@ public class SocketAction implements SchedulableAction
 	*
 	* Remember, a well formed CAN message will have a
 	* ID           short
-	* Timestamp    short
+	* Timestamp    int
 	* body         byte array
 	* data length
 	*
@@ -98,7 +97,7 @@ public class SocketAction implements SchedulableAction
  	*/
 	public void dispatch(String cmd) throws Exception
 	{
-		short timestamp = 0;
+		int timestamp = 0;
 		byte[] can_Body = new byte[8];
 		int len = 0;
 		StringTokenizer tkn = new StringTokenizer(cmd);
@@ -109,6 +108,7 @@ public class SocketAction implements SchedulableAction
 		// Set Body
 		while (tkn.hasMoreTokens() )
 			can_Body[len++] = (byte) shortValue(tkn.nextToken());
+		/*
 		// why bother with this? why not just use can_Body?
 		byte[] body_Buffer = new byte[len];
 		int i = len;
@@ -116,7 +116,8 @@ public class SocketAction implements SchedulableAction
 		{
 			body_Buffer[i] = can_Body[i];
 		}
-		CanMessage myMessage = new CanMessage(id, timestamp, body_Buffer);
+		*/
+		CanMessage myMessage = new CanMessage(id, timestamp, can_Body);
 		sock.write(myMessage);
 		sock.flush();
 	}
