@@ -32,12 +32,6 @@ public interface CanBusIDs
 	public static final int GPSTransmit = (GPSID | 1);
 	public static final int GPSReceive = (GPSID | 2);
 
-	/** totally bogus; for compilation only **/
-	public static final int GPSHeight = (GPSID | 4);
-	public static final int GPSLatLon = (GPSID | 8);
-	public static final int GPSTime = (GPSID | 16);
-	/** end totally bogus **/
-
 	public static final int PressID = (0x07 << 5);
 	public static final int PressSleep = (PressID | (0 << 3));
 	public static final int PressRate = (PressID | (1 << 3));
