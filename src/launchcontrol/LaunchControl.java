@@ -20,7 +20,7 @@ public class LaunchControl extends JFrame
 
 	// Member variables, presumably used by multiple methods
 	protected final DecimalFormat fmt = new DecimalFormat("T+0.0;T-0.0");
-	protected final Dimension windowSize = new Dimension((int)(300 * 1.61803399), 300);
+	protected final Dimension windowSize = new Dimension((int)(450 * 1.61803399), 450);
 	protected JButton countdownButton = new JButton();
 	protected java.util.Timer powerSequence = null; // power on or off fc
 	
@@ -208,7 +208,6 @@ public class LaunchControl extends JFrame
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		pack();
 
-		//System.out.println("setting window size to: " + windowSize);
 		setSize(windowSize);
 
 		show();
@@ -292,9 +291,15 @@ public class LaunchControl extends JFrame
 		if (powerSequence != null) {
 			powerSequence.cancel();
 		}
+		powerSequence = new java.util.Timer(true /* daemon */);
+
+		//first set shore power to correct initial state for a short period
+		//if fcPower = on, init state is off.  if fcPower = off, init state is on.
+		int init_period = 4000; // four seconds until anything else may run.
+		powerSequence.schedule(
+				new ShorePowerTask(!fcPower), 0 /* run now */);
 
 		// sched 5 things for new sequence
-		powerSequence = new java.util.Timer(true /* daemon */);
 		for (int i = 1; i <= 5; ++i)
 		{
 			boolean power;
@@ -303,7 +308,7 @@ public class LaunchControl extends JFrame
 			else  // i is even
 				power= !fcPower; //on even secs, shore is set to !fcPower
 			powerSequence.schedule(
-					new ShorePowerTask(power), i * delay);
+					new ShorePowerTask(power), init_period + i * delay);
 		}
 	}
 
