@@ -3,7 +3,7 @@ package cansocket;
 import java.io.*;
 import java.util.*;
 
-public class CanListener extends Observable
+public class CanListener extends Observable implements Runnable
 {
     protected final CanSocket sock;
 
@@ -12,13 +12,21 @@ public class CanListener extends Observable
 	this.sock = sock;
     }
 
-    public void run() throws IOException
+    public void run() 
     {
         CanMessage m;
-        while ((m = sock.read()) != null)
-	{
-	    setChanged();
-	    notifyObservers(m);
-	}
+		try 
+		{
+			while ((m = sock.read()) != null)
+			{
+			setChanged();
+			notifyObservers(m);
+			}
+		} 
+		catch (IOException e) 
+		{
+			System.err.println("CanListener encountered error " + 
+					"reading socket: " + e);
+		}
     }
 }
