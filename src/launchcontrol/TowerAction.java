@@ -32,9 +32,9 @@ public class TowerAction implements SchedulableAction
 
 	public TowerAction(String host, int port) throws IOException
 	{
-		Socket s = new Socket(host, port);
-		new ReaderThread(s.getInputStream()).start();
-		new WriterThread(s.getOutputStream()).start();
+	    //Socket s = new Socket(host, port);
+	    //new ReaderThread(s.getInputStream()).start();
+	    //new WriterThread(s.getOutputStream()).start();
 	}
 
 	public void addTowerListener(TowerListener l)

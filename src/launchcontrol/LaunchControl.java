@@ -57,7 +57,7 @@ public class LaunchControl extends JFrame
                 RocketAction rocket = new RocketAction(
                        conf.getProperty("rocketHost"),
 		       Integer.
-                    parseInt(conf.getProperty("localrocketPort"))
+                    parseInt(conf.getProperty("rocketPort"))
                 );
                 Scheduler.addSchedulableAction("rocket", rocket);
 

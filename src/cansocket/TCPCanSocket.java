@@ -14,6 +14,7 @@ public class TCPCanSocket implements CanSocket
 	/* constructor with a socket opens the data streams */
 	public TCPCanSocket(Socket s) throws IOException
 	{ 
+	    System.out.println(s.getInetAddress() + " " + s.getPort());
 		this.s = s;
 		System.out.println( "constructor: open socket data streams" );
 		din = new BufferedInputStream(s.getInputStream());
@@ -42,7 +43,7 @@ public class TCPCanSocket implements CanSocket
 	
     public TCPCanSocket(String host, int port) throws IOException {
 	this(new Socket(host,port));
-	System.out.println("Open client socket: " + host + Integer.toString(port));
+	System.out.println("Opening client socket: " + host + " "+ Integer.toString(port));
     }
 
 	public CanMessage read() throws IOException
