@@ -2,8 +2,8 @@
 
 // started by Karl Hallowell June 26, 2003.
 
-// UDPCanListener listens to a socket for UDP-based Can messages. Use
-// underlying CanListener class to actually run the listening thread.
+/** UDPCanListener listens to a socket for UDP-based Can messages. Use
+ * underlying CanListener class to actually run the listening thread. */
 
 package cansocket;
 

@@ -47,6 +47,7 @@ public class GpsOriginMessage extends NetMessage
 		}
 	}
 
+	/** Returns a string representation of this GPS message object */
 	public String toString()
 	{
 		return "GPS orig lat:" + Double.toString(latitude) + " GPS orig long:" + Double.toString(longitude) + "GPS orig height" + Double.toString(height);

@@ -44,6 +44,9 @@ public class PressureBaseMessage extends NetMessage
 		}
 	}
 
+	/** Return a string representation of this object.
+	 * The string should include all information contained by this
+	 * object. */
 	public String toString()
 	{
 		return "pressure base:" + Double.toString(pressure) + " temperature base:" + Double.toString(temperature) + "altitude base" + Double.toString(altitude);

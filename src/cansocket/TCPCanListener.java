@@ -2,8 +2,9 @@
 
 // started by Karl Hallowell June 26, 2003.
 
-// TCPCanListener listens to a socket for UDP-based Can messages. Use
-// underlying CanListener class to actually run the listening thread.
+/** TCPCanListener listens to a socket for UDP-based Can messages. Use
+ * underlying CanListener class to actually run the listening thread.
+ */
 
 package cansocket;
 
@@ -69,7 +70,7 @@ public class TCPCanListener extends CanListener {
 	init();
     }
 
-    /*
+    /**
      * init() starts the listener thread which is contained in the
      * CanListener.run() method.
      */

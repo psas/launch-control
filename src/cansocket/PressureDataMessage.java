@@ -28,6 +28,8 @@ public class PressureDataMessage extends NetMessage
 		}
 	}
 
+	/** Return a string representation of this object.
+	 * The string returned includes pressure and altitude. */
 	public String toString()
 	{
 		return "Press:" + Double.toString(pressure) + " Alt:" + Double.toString(altitude);

@@ -27,10 +27,13 @@ public class ImuGyroMessage extends NetMessage
 		}
 	}
 
+	/** Return a string representation of this Imu Gyro Message.
+	 * The returned string should include all data this object holds. */
 	public String toString()
 	{
-		return "Pitch:" + Double.toString(Pdot) + " Yaw:" + Double.toString(Ydot) +
-		" Roll:" + Double.toString(Rdot);
+		return "Pitch:" + Double.toString(Pdot) + 
+			" Yaw:" + Double.toString(Ydot) +
+			" Roll:" + Double.toString(Rdot);
 	}
 }
 

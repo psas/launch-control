@@ -22,16 +22,16 @@ public class UDPCanSocket implements CanSocket
 	private DatagramPacket packet;
 	private DataInputStream dis;
 	
-    /* constructor with no arguments creates a datagram socket
-     * on the default receive port
+    /** constructor with no arguments creates a datagram socket
+     * on the default receive port.
      */
     public UDPCanSocket() throws IOException
     {
 	this( PORT_RECV );
     }
 
-    /* constructor with port argument creates a datagram socket
-     * on the given port
+    /** constructor with port argument creates a datagram socket
+     * on the given port.
      */
 
     public UDPCanSocket( int localport ) throws IOException
@@ -39,7 +39,7 @@ public class UDPCanSocket implements CanSocket
 	this( localport, (InetAddress) null, 0);
     }
 
-    /* constructor with address argument opens a sending socket
+    /** constructor with address argument opens a sending socket
      * on the default send port and remembers the address for
      * send()
      */
@@ -49,7 +49,7 @@ public class UDPCanSocket implements CanSocket
 	this( InetAddress.getByName( host ), PORT_SEND );
     }
 
-    /*
+    /**
      * Construct with address and port. Address and port will be remembered.
      */
 
@@ -58,7 +58,7 @@ public class UDPCanSocket implements CanSocket
 	this( InetAddress.getByName( host ), port );
     }
 
-    /* constructor with address & port opens a sending socket
+    /** constructor with address & port opens a sending socket
      * on the default send port and remembers the address/port
      * for later send()
      */

@@ -11,7 +11,7 @@ public class TCPCanSocket implements CanSocket
 	protected InputStream din;
 	protected OutputStream dout;
 
-	/* constructor with a socket opens the data streams */
+	/** constructor with a socket opens the data streams */
 	public TCPCanSocket(Socket s) throws IOException
 	{ 
 	    System.out.println(s.getInetAddress() + " " + s.getPort());
@@ -22,8 +22,8 @@ public class TCPCanSocket implements CanSocket
 		// dout.flush();
 	}
 
-	/* constructor with no arguments creates a server socket
-	 * on the default port
+	/** constructor with no arguments creates a server socket
+	 * on the default port.
 	 */
 	public TCPCanSocket() throws IOException
 	{
@@ -37,7 +37,7 @@ public class TCPCanSocket implements CanSocket
 	System.out.println( "constructor: open server socket" );
     }
 
-	/* constructor with host argument opens a client socket
+	/** constructor with host argument opens a client socket
 	 * on the default port
 	 */
 	public TCPCanSocket(String host) throws IOException
@@ -46,7 +46,7 @@ public class TCPCanSocket implements CanSocket
 		System.out.println( "open client socket" );
 	}
 
-    /*
+    /**
      * Constructor with host and port arguments opens a client socket on
      * the default port.
      */

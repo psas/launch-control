@@ -29,7 +29,7 @@ public class CanMessage extends NetMessage
     protected static long lastTime = 0;
     protected static byte subMilli = 0;
 	
-    /* Construct a can message from a data input stream,
+    /** Construct a can message from a data input stream,
 	 * which is wrapping the payload of a network packet.
 	 * The header (version, size, type) has already been read.
      */
@@ -42,7 +42,7 @@ public class CanMessage extends NetMessage
 			dis.read(body);
 	}
 
-    /* Construct a can message from given id, timestamp, body.
+    /** Construct a can message from given id, timestamp, body.
      * This is the packed 16-bit id containing (id11,rtr,len)
      */
     public CanMessage(int id16, int timestamp, byte body[])
@@ -52,7 +52,7 @@ public class CanMessage extends NetMessage
 	this.body = body;
     }
 
-    /* Construct a can message from given (timestamp,id,rtr,len,body)
+    /** Construct a can message from given (timestamp,id,rtr,len,body).
      * This id is the 11-bit id, which will be packed into the 16-bit
      * id along with rtr and len.
      */
@@ -70,7 +70,7 @@ public class CanMessage extends NetMessage
      * and a ??? timestamp
      */
 
-    /******
+    /* *****
     public CanMessage(short id, byte body[])
     {
 	long time = System.currentTimeMillis() - firstTime;
@@ -110,7 +110,7 @@ public class CanMessage extends NetMessage
 
     }
 
-    // this returns the 16-bit id that has id,rtr,len packed into it
+    /** Returns the 16-bit id that has id,rtr,len packed into it. */
     public short getId() {
 	return id;
     }
@@ -142,14 +142,14 @@ public class CanMessage extends NetMessage
 	       (body[i + 3] & 0xff);
     }
 
-    /* print can message to standard output
+    /** print can message to standard output
      */
     public void print()
     {
 	System.out.println (this);
     }
 
-    /* format can message to a string
+    /** format can message to a string.
      * All numeric values are shown in hex
      */
     public String toString()

@@ -29,6 +29,8 @@ public class ImuAccelMessage extends NetMessage
 		}
 	}
 
+	/** Return a string representation of this Imu Accel Message.
+	 * The returned string should include all data this object holds. */
 	public String toString()
 	{
 		return "AX:" + Double.toString(Ax) + " AY:" + Double.toString(Ay) +
