@@ -17,9 +17,10 @@ public class TowerAction implements SchedulableAction
 		cmds.put("strobe", "st");
 		cmds.put("siren", "si");
 		cmds.put("igniter", "ig");
+		cmds.put("power", "a1");
 	}
 	private static final String statusbits[] =
-	{ "ready", null, "strobe", "siren", null, "igniter", null, null, null, null };
+	{ "ready", null, "strobe", "siren", null, "igniter", "power", null, null, null };
 
 	private LinkedList cmdqueue = new LinkedList();
 	private Object cts = new Object(); // clear-to-send
