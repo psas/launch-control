@@ -186,7 +186,7 @@ public class CanMessage
 	buf.append( Integer.toHexString (id11) + " " );
 	buf.append( Integer.toHexString (rtr) + " " );
 	buf.append( Integer.toHexString (len) + " " );
-	for (int i = 0; i < len; i++) {
+	for (int i = 0; i < body.length; i++) {
 	    buf.append( hexByte (body[i]) + " " );
 	}
 

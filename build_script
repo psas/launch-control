@@ -65,7 +65,7 @@ fi
 
 # prepare build tree
 mkdir -p build
-if cp -vf src/stripchart/*.jar build; then
+if cp -vf ext/*.jar build; then
     echo ""	# copy ok
 else
     echo "*** failed copying jar files to build tree"

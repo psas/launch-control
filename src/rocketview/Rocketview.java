@@ -120,13 +120,10 @@ public class Rocketview extends JFrame
 
 		// 3 GPS observers go in 1 panel
 		JPanel gps = new JPanel();
-		gps.setBorder(BorderFactory.createLineBorder( Color.gray ));
-		subSys.add( gps );
-		// addObserver( gps, "GPS", new GPSPositionObserver() );
-		addObserver( gps, new GPSPositionObserver() );
+		addUntitledObserver( gps, new GPSPositionObserver() );
 		addObserver( gps, new GPSHeightObserver() );
 		addObserver( gps, new GPSObserver() );
-
+		subSys.add( gps );
 
 		// APS panel
 		JPanel aps = new JPanel();
