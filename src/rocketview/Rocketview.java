@@ -1,6 +1,7 @@
 package rocketview;
 
 import cansocket.*;
+import widgets.*;
 
 import java.awt.*;
 import java.util.*;
@@ -81,7 +82,7 @@ public class Rocketview extends JFrame
 
 		// flight computer state
 		JPanel fcState = new JPanel();
-		addObserver( fcState, "FC State", new FcStateObserver() );
+		addObserver( fcState, "FC State", new RocketState() );
 		top.add( fcState );
 
 
