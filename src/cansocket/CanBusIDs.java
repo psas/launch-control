@@ -1,65 +1,72 @@
-/* This file was automatically generated from canbusid.m4. Do not edit. */
+/* CanBusIDs - CAN bus message interface
+ * This file was automatically generated
+ * from canMessageInput.txt on Sun Aug 10 21:26:03 PDT 2003
+ * Do not hand-edit.
+ *
+ * All constants defined public static final.
+ */
 package cansocket;
 
 public interface CanBusIDs
 {
-	public static final int UplinkID = (0x01 << 5);
-	public static final int UplinkSleep = (UplinkID | 0);
-	public static final int UplinkReceived = (UplinkID | 4);
-	public static final int UplinkExecuted = (UplinkID | 8);
+    public static final String genTime = {"Sun Aug 10 21:26:03 PDT 2003"};
 
-	public static final int StatusID = (0x02 << 5);
-	public static final int StatusEvent = (StatusID | 0);
-	public static final int StatusChange = (StatusID | 1);
-	public static final int StatusCurrent = (StatusID | 2);
+// --- from C header file aps_exports.h ---
 
-	public static final int PowerID = (0x03 << 5);
-	public static final int PowerSleep = (PowerID | 0);
-	public static final int PowerShore = (PowerID | 4);
-	public static final int PowerBusCurrent = (PowerID | 8);
-	public static final int PowerBusVoltage = (PowerID | 9);
-	public static final int PowerPowerDown = (PowerID | 16);
+// from c enum: aps_can_id_t	java: ApsCanId
 
-	public static final int IMUID = (0x04 << 5);
-	public static final int IMUSleep = (IMUID | 0);
-	public static final int IMURate = (IMUID | 4);
-	public static final int IMURateDiv = (IMUID | 8);
-	public static final int IMUAccel = (IMUID | (4 << 2));
-	public static final int IMUGyro = (IMUID | (5 << 2));
+    public static final int can_id_aps_set_reset = 304;	// 0x130
+    public static final int can_id_aps_report_error = 257;	// 0x101
+    public static final int can_id_aps_set_state = 306;	// 0x132
+    public static final int can_id_aps_report_state = 258;	// 0x102
+    public static final int can_id_aps_get_state = 298;	// 0x12a
+    public static final int can_id_umb_set_rocketready = 368;	// 0x170
+    public static final int can_id_umb_report_rocketready = 320;	// 0x140
+    public static final int can_id_umb_get_rocketready = 360;	// 0x168
+    public static final int can_id_umb_report_connection = 321;	// 0x141
+    public static final int can_id_umb_get_connection = 361;	// 0x169
+    public static final int can_id_umb_report_voltage = 322;	// 0x142
+    public static final int can_id_umb_get_voltage = 362;	// 0x16a
+    public static final int can_id_umb_set_isoc_messages = 371;	// 0x173
+    public static final int can_id_pwr_set_isoc_messages = 435;	// 0x1b3
+    public static final int can_id_pwr_report_voltage = 384;	// 0x180
+    public static final int can_id_pwr_get_voltage = 424;	// 0x1a8
+    public static final int can_id_pwr_report_current = 385;	// 0x181
+    public static final int can_id_pwr_get_current = 425;	// 0x1a9
+    public static final int can_id_pwr_report_charge = 386;	// 0x182
+    public static final int can_id_pwr_get_charge = 426;	// 0x1aa
+    public static final int can_id_pwr_set_charge = 434;	// 0x1b2
 
-	public static final int GPSID = (0x06 << 5);
-	public static final int GPSSleep = (GPSID | 0);
-	public static final int GPSTransmit = (GPSID | 1);
-	public static final int GPSReceive = (GPSID | 2);
+// from c enum: aps_state_t	java: ApsState
 
-	/** totally bogus; for compilation only **/
-	public static final int GPSHeight = (GPSID | 4);
-	public static final int GPSLatLon = (GPSID | 8);
-	public static final int GPSTime = (GPSID | 16);
-	/** end totally bogus **/
+    public static final int aps_state_sleep = 0;
+    public static final int aps_state_waking_up = 1;
+    public static final int aps_state_shutting_down = 2;
+    public static final int aps_state_on = 3;
 
-	public static final int PressID = (0x07 << 5);
-	public static final int PressSleep = (PressID | (0 << 3));
-	public static final int PressRate = (PressID | (1 << 3));
-	public static final int PressRateDiv = (PressID | (2 << 3));
-	public static final int PressValue = (PressID | (3 << 3));
+// from c enum: aps_error_t	java: ApsError
 
-	public static final int UmbilicalID = (0x08 << 5);
-	public static final int UmbilicalSleep = (UmbilicalID | 0);
-	public static final int UmbilicalStatus = (UmbilicalID | 4);
-	public static final int UmbilicalReady = (UmbilicalID | 8);
+    public static final int NOT_AN_ERROR_MESSAGE = 0;
+    public static final int UNKNOWN_APS_COMMAND = 1;
+    public static final int INVALID_APS_RESET_COMMAND = 2;
+    public static final int APS_UNKNOWN_COMMAND_TYPE = 3;
+    public static final int APS_MISSED_10HZ_TICK = 4;
+    public static final int NOT_VALID_UMB_COMMAND = 5;
+    public static final int RR_ABORTED_DUE_TO_VALID_VUMB = 6;
+    public static final int INVALID_ROCKET_READY_COMMAND = 7;
+    public static final int INVALID_UMB_COMMAND = 8;
+    public static final int UNKNOWN_PWR_COMMAND = 9;
+    public static final int INVALID_APS_SET_STATE_COMMAND = 10;	// 0xa
+    public static final int APS_SHUTDOWN_MSG_EQ_ZERO = 11;	// 0xb
+    public static final int APS_SHUTDOWN_BAD_LENGTH = 12;	// 0xc
+    public static final int FE_BAD_APS_STATE = 13;	// 0xd
 
-	public static final int ATVID = (0x10 << 5);
-	public static final int ATVSleep = (ATVID | 0);
-	public static final int ATVStatus = (ATVID | 1);
-	public static final int ATVAmpPower = (ATVID | 2);
-	public static final int ATVOverlay = (ATVID | 3);
-	public static final int ATVTransmit = (ATVID | 4);
-	public static final int ATVReceive = (ATVID | 5);
+// --- from C header file Bps_exports.h ---
 
-	public static final int TempID = (0x14 << 5);
-	public static final int TempSleep = (TempID | (0 << 3));
-	public static final int TempRate = (TempID | (1 << 3));
-	public static final int TempRateDiv = (TempID | (2 << 3));
-	public static final int TempValue = (TempID | (3 << 3));
-}
+// from c enum: aps_enum_t	java: ApsEnum
+
+    public static final int ENUM0_MESSAGE = 0;
+    public static final int ENUM1_MESSAGE = 291;	// 0x123
+    public static final int ENUM2_MESSAGE = 123;	// 0x7b
+
+}	// end interface CanBusIDs
