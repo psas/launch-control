@@ -49,7 +49,6 @@ public class Rocketview extends JFrame
 		bottom.add(labels, BorderLayout.NORTH);
 
 		addObserver(labels, "time", new TimeObserver());
-		addObserver(labels, "status", new StatusObserver());
 		addObserver(labels, "position", new PositionObserver());
 
 		labels = new JPanel();
