@@ -55,4 +55,23 @@ public class Config
 			return def;
 		return Integer.parseInt(val);
 	}
+
+	public static Double getInt(String name, Double def)
+		throws NumberFormatException
+	{
+		String val = conf.getProperty(name);
+		if(val == null)
+			return def;
+		return new Double(val);
+	}
+
+	public static double getDouble(String name, double def)
+		throws NumberFormatException
+	{
+		String val = conf.getProperty(name);
+		if (val == null)
+			return def;
+		return Double.parseDouble(val);
+	}
+
 }
