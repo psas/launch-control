@@ -11,6 +11,8 @@ public class StateGrid extends JPanel
 {
 	// node states stored as bits
 	protected byte[] states;
+	protected byte[] mask;
+
 	// names of node states
 	protected static final String[] names = {
 		"APS mode",
@@ -65,7 +67,7 @@ public class StateGrid extends JPanel
 
 	protected ImageIcon greenled = new ImageIcon(ClassLoader.getSystemResource("widgets/greenled.png"));
 	protected ImageIcon redled = new ImageIcon(ClassLoader.getSystemResource("widgets/redled.png"));
-
+	protected ImageIcon grayled = new ImageIcon(ClassLoader.getSystemResource("widgets/grayled.png"));
 
 	public StateGrid() {
 		setLayout(new GridLayout(0,4)); // four rows
@@ -92,11 +94,19 @@ public class StateGrid extends JPanel
 	 * messages. */
 	public void setStates(byte[] newStates)
 	{
-		redraw(states, newStates);
+		redraw(states, newStates, mask, mask);
 		states = newStates;
 	}
 
-
+	/**
+	 * Set importance mask byte array and update LEDs.
+	 * @param newMask 8 byte importance mask from FC_REPORT_IMPORTANCE_MASK
+	 */
+	public void setMask(byte[] newMask)
+	{
+		redraw(states, states, mask, newMask);
+		mask = newMask;
+	}
 
 	/** Return specified bit of data. */
 	protected boolean getBit(byte[] data, int bit) 
@@ -107,20 +117,32 @@ public class StateGrid extends JPanel
 
 
 	/** Set the icon for the given element.
+	 *
+	 * Uninteresting        -> gray LED
+	 * Interesting and bad  -> red LED
+	 * Interesting and good -> green LED
+	 * 
 	 * @param element: the element number n for the component,
 	 * note the the component must have been the n'th component
 	 * added to this StateGrid. 
-	 * @param isGood: if the element is in a good state, 
-	 * if true the LED will be set green, else red */
-	protected void setElementIcon(int element, boolean isGood) 
+	 * @param isGood: if the element is in a good state
+	 * @param isInteresting: if the element is interesting (being checked
+	 * by the flight computer).
+	 *
+	 */
+	protected void setElementIcon(int element, boolean isGood,
+                                      boolean isInteresting)
 	{
 		JLabel gridElement = (JLabel) getComponents()[element];
-		setElementIcon(gridElement, isGood);
+		setElementIcon(gridElement, isGood, isInteresting);
 	}
 
-	protected void setElementIcon(JLabel element, boolean isGood)
+	protected void setElementIcon(JLabel element, boolean isGood,
+                                      boolean isInteresting)
 	{
-		if (isGood) 
+		if (!isInteresting)
+			element.setIcon(grayled);
+		else if (isGood) 
 			element.setIcon(greenled);
 		else 
 			element.setIcon(redled);
@@ -137,7 +159,7 @@ public class StateGrid extends JPanel
 		removeAll(); 
 		for (int i = 0; i < names.length; ++i) {
 			JLabel gridEntry = new JLabel(names[i]);
-			gridEntry.setIcon(redled); //XXX: change to GREY
+			gridEntry.setIcon(grayled);
 			add(gridEntry);
 			//setElementIcon(gridEntry, 0);
 		}
@@ -148,14 +170,18 @@ public class StateGrid extends JPanel
 	// 2) assuming we can access element X of the
 	// grid, we only change an element X of the grid 
 	// if bit X of the state has changed.
-	protected void redraw(byte[] oldStates, byte[] newStates)
+	protected void redraw(byte[] oldStates, byte[] newStates,
+	                      byte[] oldMask, byte[] newMask)
 	{
-		//compare state to oldState 
+		//compare newStates to oldStates and newMask to oldMask
 		//and only change elements which have changed
 		for (int i = 0; i < names.length; ++i) {
 			boolean newBit = getBit(newStates, i);
-			if (getBit(oldStates, i) != newBit)
-				setElementIcon(i, newBit == true);
+			boolean newInteresting = getBit(newMask, i);
+			if (getBit(oldStates, i) != newBit
+			    || getBit(oldMask, i) != newInteresting)
+				setElementIcon(i, newBit == true,
+                                               newInteresting == true);
 		}
 	}
 }
