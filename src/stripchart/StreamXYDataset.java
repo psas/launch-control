@@ -1,3 +1,5 @@
+package stripchart;
+
 /* --------------------
 * StreamXYDataset.java
 * --------------------
