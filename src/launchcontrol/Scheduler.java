@@ -1,17 +1,30 @@
+import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.text.*;
 import java.util.*;
+import javax.swing.*;
 
 public class Scheduler
 {
+	public interface ScheduleListener
+	{
+		public void started();
+		public void aborted();
+		public void ended();
+		public void time(long millis);
+	}
+
 	private static Hashtable types = new Hashtable();
 	static {
+		/* built-in event types */
 		types.put("sound", new SoundAction());
 		types.put("msg", new MessageAction());
 	}
 
 	private URL events;
-	private Timer timer;
+	private java.util.Timer timer;
 
 	private ScheduleListener listener = null;
 	private int millidelta;
@@ -29,6 +42,11 @@ public class Scheduler
 	public Scheduler(URL events)
 	{
 		this.events = events;
+	}
+
+	public static void addSchedulableAction(String name, SchedulableAction action)
+	{
+		types.put(name, action);
 	}
 
 	/**
@@ -117,7 +135,7 @@ public class Scheduler
 		if(aborting)
 			startTime = 0;
 
-		timer = new Timer();
+		timer = new java.util.Timer();
 		// read events file for timing
 		BufferedReader cs = new BufferedReader(
 			new InputStreamReader(events.openStream())
@@ -161,8 +179,12 @@ public class Scheduler
 			}
 
 			// schedule this event
-			timer.schedule(new ScheduledTask(action, cmd),
-				new Date(started.getTime() + time - startTime));
+			try {
+				timer.schedule(new ScheduledTask(action, cmd),
+					new Date(started.getTime() + time - startTime));
+			} catch(IllegalArgumentException exc) {
+				exc.printStackTrace();
+			}
 		}
 
 		// schedule the repeated clock updates as requested for the listener
@@ -207,6 +229,104 @@ public class Scheduler
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public Component getControls(String startSound, String abortSound)
+	{
+		return new CountdownPanel(startSound, abortSound);
+	}
+
+	private class CountdownPanel extends JPanel
+		implements ScheduleListener, ActionListener
+	{
+		private final static String startMsg = "Start Countdown";
+		private final static String stopMsg = "Abort Countdown";
+		private final static String stoppedMsg = "Countdown Stopped";
+		private final DecimalFormat fmt = new DecimalFormat("T+0.0;T-0.0");
+
+		private JButton button = new JButton();
+		private JLabel clock = new JLabel();
+		private String startSound;
+		private String abortSound;
+
+		public CountdownPanel(String start, String abort)
+		{
+			startSound = start;
+			abortSound = abort;
+
+			setLayout(new BorderLayout());
+			add(button, BorderLayout.WEST);
+			add(clock, BorderLayout.CENTER);
+			ended(); // reset the button and label
+			addScheduleListener(this, 100);
+			button.addActionListener(this);
+		}
+
+		public void actionPerformed(ActionEvent event)
+		{
+			try {
+				if(event.getActionCommand().equals("start"))
+					startCountdown();
+				else if(event.getActionCommand().equals("abort"))
+					abortCountdown();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	
+		public void started()
+		{
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run()
+				{
+					button.setText(stopMsg);
+					button.setActionCommand("abort");
+				}
+			});
+			try {
+				SoundAction.playSound(startSound);
+			} catch(Exception e) {
+				// ignore
+			}
+		}
+	
+		public void aborted()
+		{
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run()
+				{
+					button.setEnabled(false);
+				}
+			});
+			try {
+				SoundAction.playSound(abortSound);
+			} catch(Exception e) {
+				// ignore
+			}
+		}
+	
+		public void ended()
+		{
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run()
+				{
+					button.setText(startMsg);
+					button.setActionCommand("start");
+					button.setEnabled(true);
+					clock.setText(stoppedMsg);
+				}
+			});
+		}
+	
+		public void time(final long millis)
+		{
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run()
+				{
+					clock.setText(fmt.format((float)millis / 1000.0));
+				}
+			});
 		}
 	}
 }
