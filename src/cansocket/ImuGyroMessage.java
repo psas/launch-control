@@ -26,5 +26,11 @@ public class ImuGyroMessage extends NetMessage
 			// never happens
 		}
 	}
+
+	public String toString()
+	{
+		return "Pitch:" + Double.toString(Pdot) + " Yaw:" + Double.toString(Ydot) +
+		" Roll:" + Double.toString(Rdot);
+	}
 }
 

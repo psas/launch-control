@@ -27,5 +27,10 @@ public class PressureDataMessage extends NetMessage
 			// never happens
 		}
 	}
+
+	public String toString()
+	{
+		return "Press:" + Double.toString(pressure) + " Alt:" + Double.toString(altitude);
+	}
 }
 

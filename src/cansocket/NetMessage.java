@@ -27,6 +27,7 @@ public abstract class NetMessage
 	/* abstract messages */
 	public byte[] toByteArray() { return new byte[MAX_MSG_SIZE]; }
 	public abstract void putMessage(DataOutputStream dos);
+	public abstract String toString();
 
 	/* factory */
 	static NetMessage newNetMessage(byte packet[]) throws IOException

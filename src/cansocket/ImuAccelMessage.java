@@ -28,5 +28,11 @@ public class ImuAccelMessage extends NetMessage
 			// never happens
 		}
 	}
+
+	public String toString()
+	{
+		return "AX:" + Double.toString(Ax) + " AY:" + Double.toString(Ay) +
+		" AZ:" + Double.toString(Az) + " AQ:" + Double.toString(Aq);
+	}
 }
 

@@ -162,26 +162,10 @@ public class CanMessage extends NetMessage
 	StringBuffer buf = new StringBuffer( "0x" );
 
 	buf.append( Integer.toHexString (getId11()) );
-	buf.append( " 0x" );
-	buf.append( Integer.toHexString (getRtr()) );
-	buf.append( " 0x" );
-	buf.append( Integer.toHexString (len) );
+	buf.append(" ").append( Integer.toString (getRtr()) );
+	buf.append(" ").append( Integer.toString (len) );
 	for (int i = 0; i < len; i++)
-	    buf.append( " " ).append( hexByte(body[i]) );
-
-	return buf.toString();
-    }
-
-    /* format a byte into 2 hex digits
-     */
-    private static String hexByte( byte byt )
-    {
-	StringBuffer buf = new StringBuffer();
-	int index;
-
-	index = byt & 0xff;
-	if( index < 0x10 ) buf.append( "0" );
-	buf.append( Integer.toHexString (index) );
+	    buf.append( " " ).append( Integer.toString(body[i]>>8)).append(Integer.toString(body[i]&15));
 
 	return buf.toString();
     }

@@ -26,7 +26,7 @@ public class LogCanSocket implements CanSocket
 	protected NetMessage log(NetMessage msg) throws IOException
 	{
 		StringBuffer buf = new StringBuffer();
-
+/*
 		if (msg instanceof CanMessage)
 		{
 			CanMessage cm = (CanMessage) msg;
@@ -39,7 +39,9 @@ public class LogCanSocket implements CanSocket
 				buf.append(' ').append(body[i]);
 		}
 		buf.append('\n');
-		log.write(buf.toString());
+*/
+		log.write(msg.toString());
+		log.write("\n");
 		log.flush();
 
 		return msg;
