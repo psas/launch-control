@@ -4,7 +4,12 @@ import java.io.*;
 
 public abstract class NetMessage
 {
-	/* factory */
+	/* NEW PROTOCOL */
+	/* byte 0-1:   protocol version = 2
+	   byte 2-3:   size of packet
+	   byte 4-5:   message type
+	   remainder: type specific payload
+	*/
 	public static final int HEADER_SIZE               = 2 + 2 + 2;
 	public static final int MAX_MSG_SIZE              = HEADER_SIZE + CanMessage.MSG_SIZE;  // later: use max(...)
 
@@ -19,6 +24,7 @@ public abstract class NetMessage
 	public abstract byte[] toByteArray();
 	public abstract void putMessage(DataOutputStream dos);
 
+	/* factory */
 	static NetMessage newNetMessage(byte packet[]) throws IOException
 	{
 		DataInputStream s = new DataInputStream(new ByteArrayInputStream(packet));

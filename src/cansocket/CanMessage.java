@@ -4,12 +4,6 @@ import java.io.*;
 
 public class CanMessage extends NetMessage
 {
-	/* NEW PROTOCOL */
-	/* byte 0-1:   protocol version = 1
-	   byte 2-3:   size of packet
-	   byte 4-5:   message type
-	   remainder: type specific payload
-	*/
 	public static final short fifo_tag = NET_MSG_TYPE_CAN;
     /* match the C structure */
     protected int timestamp;	// 25us timestamp counter
@@ -17,8 +11,8 @@ public class CanMessage extends NetMessage
     protected byte body[];	// 8 bytes of body
 
     /* the really interesting id */
-	public int getId11() { return id >> 5; }		// 11-bit id
-	public int getRtr() { return (id >> 4) & 1; }	// RTR bit
+	public int getId11() { return id >>> 5; }		// 11-bit id
+	public int getRtr() { return (id >>> 4) & 1; }	// RTR bit
 	public int getLen() { return id & 0xf; }   // number of valid bytes in body
 
     // unused id for a stop sentinel
@@ -93,7 +87,7 @@ public class CanMessage extends NetMessage
 	
     public byte[] toByteArray()
     {
-	ByteArrayOutputStream bos = new ByteArrayOutputStream(2+2+2+MSG_SIZE);
+	ByteArrayOutputStream bos = new ByteArrayOutputStream(HEADER_SIZE+MSG_SIZE);
 	DataOutputStream dos = new DataOutputStream(bos);
 	putMessage(dos);
 	return bos.toByteArray();
@@ -106,7 +100,7 @@ public class CanMessage extends NetMessage
 	{
 		// header: (move to NetMessage?)
 		dos.writeShort(FC_PROT_VER);
-		dos.writeShort(2 + 2 + 2 + MSG_SIZE);
+		dos.writeShort(HEADER_SIZE + MSG_SIZE);
 	    dos.writeShort(fifo_tag);
 
 	    dos.writeInt(timestamp);
@@ -134,8 +128,6 @@ public class CanMessage extends NetMessage
     public byte getData8(int i) {
 	return body[i];
     }
-
-	//!!! remove Intel byte order assumption?
 
     public short getData16(int i)
     {

@@ -23,32 +23,25 @@ public class LogCanSocket implements CanSocket
 		base.write(log(msg));
 	}
 
-	/*** phony: keep interface definition happy ***/
-	public NetMessage recv() 
-	{
-	    return( new CanMessage( (short)98, 100, new byte[CanMessage.MSG_BODY] ));
-	}
-
-	public void send( NetMessage msg )
-	{}
-	/*** end phony ***/
-
 	protected NetMessage log(NetMessage msg) throws IOException
 	{
+		StringBuffer buf = new StringBuffer();
+
 		if (msg instanceof CanMessage)
 		{
 			CanMessage cm = (CanMessage) msg;
-			StringBuffer buf = new StringBuffer();
+			//!!! why not use cm.toString?
 			byte body[] = cm.getBody();
 			buf.append(cm.getId())
 				.append(' ').append(cm.getTimestamp())
 				.append(' ').append(body.length);
 			for(int i = 0; i < body.length; ++i)
 				buf.append(' ').append(body[i]);
-			buf.append('\n');
-			log.write(buf.toString());
-			log.flush();
 		}
+		buf.append('\n');
+		log.write(buf.toString());
+		log.flush();
+
 		return msg;
 	}
 
