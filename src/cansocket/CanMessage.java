@@ -82,7 +82,7 @@ public class CanMessage
     }
     *******************/
 	
-    public byte[] toByteArray()
+    public byte[] toByteArray() throws IOException
     {
 	ByteArrayOutputStream bos = new ByteArrayOutputStream(MSG_SIZE);
 	DataOutputStream dos = new DataOutputStream(bos);
@@ -90,20 +90,13 @@ public class CanMessage
 	return bos.toByteArray();
 	}
 
-	public void putMessage(DataOutputStream dos)
-	{
-
-	try
+	public void putMessage(DataOutputStream dos) throws IOException
 	{
 	    dos.writeInt(id);
 	    dos.writeInt(timestamp);
 	    dos.write(body);
 	    for(int i = body.length; i < MSG_BODY; ++i)
 		dos.writeByte(0);
-	} catch(IOException e) {
-	    // never happens.
-	}
-
     }
 
     /** Returns the 16-bit id that has id,rtr,len packed into it. */
