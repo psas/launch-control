@@ -74,6 +74,7 @@ public class StateGrid extends JPanel
 
 		// initialize state array to 0 
 		states = new byte[8]; 
+		mask = new byte[8]; 
 		/*
 		for (int i = 0; i < 8; ++i) {
 			states[i] = 0;
