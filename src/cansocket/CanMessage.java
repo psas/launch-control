@@ -120,6 +120,7 @@ public class CanMessage
 	return body;
     }
 
+	/** Get one byte of this CanMessage's body starting at byte i */
     public byte getData8(int i) {
 	return body[i];
     }
