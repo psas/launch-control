@@ -32,6 +32,14 @@
     <javac srcdir="${src}" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
 
+  <target name="launchcontrol" depends="compile" description="run launchcontrol">
+    <java classname="launchcontrol.LaunchControl" classpath="${classpath}" fork="yes"/>
+  </target>
+
+  <target name="rocketview" depends="compile" description="run rocketview">
+    <java classname="rocketview.Rocketview" classpath="${classpath}" fork="yes"/>
+  </target>
+
   <target name="jar" depends="compile" description="build a jar archive">
     <mkdir dir="${dist}/${name}"/>
 
