@@ -5,7 +5,7 @@ import java.net.*;
 
 public class TCPCanSocket implements CanSocket
 {
-    public static final int DEFAULT_PORT = 4439; // was 5349
+    public static final int DEFAULT_PORT = 4437; // was 5349
 
 	protected Socket s;
 	protected InputStream din;
