@@ -1,97 +1,148 @@
 package launchcontrol;
 
-import cansocket.*;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.text.*;
 import java.util.*;
 import javax.swing.*;
 
 public class LaunchControl extends JFrame
+	implements ScheduleListener, ActionListener
 {
-        private static JLabel statusLabel = new JLabel("nothing to see here");
+	protected final static String startMsg = "Start Countdown";
+	protected final static String stopMsg = "Abort Countdown";
+	protected final static String stoppedMsg = "Countdown stopped";
+	protected final DecimalFormat fmt = new DecimalFormat("T+0.0;T-0.0");
 
-        private LaunchControl() throws IOException
-        {
-                super("LaunchControl");
-                Container content = getContentPane();
-                content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+	protected JButton button = new JButton();
+	protected JLabel clock = new JLabel();
+	protected JLabel statusLabel = new JLabel();
+	protected String startSound = Config.getString("startSound");
+	protected String abortSound = Config.getString("abortSound");
 
-                Properties conf = new Properties();
-                conf.load(new FileInputStream("main.conf"));
-                Scheduler s = new Scheduler(new File(conf.getProperty("schedule")).toURL());
-                content.add(s.getControls(
-                        conf.getProperty("startSound"),
-                        conf.getProperty("abortSound")
-                ));
+	protected final Scheduler sched = new Scheduler();
 
-                String towerHost = (String) conf.getProperty("towerHost");
-                int towerPort = Integer.
-                    parseInt(conf.getProperty("towerPort"));
-                int localPort = Integer.
-                    parseInt(conf.getProperty("localTowerPort"));
-                                                 
+	private LaunchControl() throws IOException
+	{
+		super("LaunchControl");
+		Container content = getContentPane();
+		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-                CanAction tower = new CanAction(
-		    Integer.parseInt(conf.getProperty("localTowerPort")),
-                    conf.getProperty("towerHost"),
-                    Integer.parseInt(conf.getProperty("towerPort")),
-		    "tcp",
-		    // ignore parameter "localTowerPort" for tcp connections
-		    null
-                );
+		JPanel time = new JPanel();
+		time.setLayout(new BorderLayout());
+		time.add(button, BorderLayout.WEST);
+		time.add(clock, BorderLayout.CENTER);
+		content.add(time);
 
-                Scheduler.addSchedulableAction("tower", tower);
+		Container statusBar = new JPanel();
+		statusBar.setLayout(new BorderLayout());
+		statusLabel.setBorder(BorderFactory.createLoweredBevelBorder());
+		statusBar.add(statusLabel, BorderLayout.CENTER);
+		content.add(statusBar);
 
+		ended(); // reset the button and label
+		sched.addScheduleListener(this, 100);
+		button.addActionListener(this);
 
-                CanListener towerListener = new UDPCanListener(localPort);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-                
-                String rocketHost = (String) conf.getProperty("rocketHost");
-                int rocketPort = Integer.
-                    parseInt(conf.getProperty("rocketPort"));
-                int localPort2 = Integer.
-                    parseInt(conf.getProperty("localRocketPort"));
+		pack();
+		show();
+	}
 
-                CanAction rocket = new CanAction(
-		    //Integer.parseInt(conf.getProperty("localRocketPort")),
-                    6666,
-                    conf.getProperty("rocketHost"),
-                    Integer.parseInt(conf.getProperty("rocketPort")),
-		    "udp",
-		    null
-                );
+	public void actionPerformed(ActionEvent event)
+	{
+		try {
+			if(event.getActionCommand().equals("start"))
+			{
+				if(JOptionPane.showConfirmDialog(this,
+					"Are you sure you want to start the countdown?", "Proceed?",
+					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+					sched.startCountdown();
+			}
+			else if(event.getActionCommand().equals("abort"))
+				sched.abortCountdown();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-                Scheduler.addSchedulableAction("rocket", rocket);
+	public void started()
+	{
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				button.setText(stopMsg);
+				button.setActionCommand("abort");
+			}
+		});
+		setStatus("Countdown started");
+		try {
+			SoundAction.playSound(startSound);
+		} catch(Exception e) {
+			// ignore
+		}
+	}
 
-                CanListener rocketListener = new UDPCanListener(localPort2);
+	public void disableAbort()
+	{
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				button.setEnabled(false);
+			}
+		});
+	}
 
-                content.add(new StatusPanel(towerListener, rocketListener));
-                Container statusBar = new JPanel();
-                statusBar.setLayout(new BorderLayout());
-                statusLabel.setBorder(BorderFactory.createLoweredBevelBorder());
-                statusBar.add(statusLabel, BorderLayout.CENTER);
-                content.add(statusBar);
+	public void aborted()
+	{
+		disableAbort();
+		setStatus("Countdown aborted: cleaning up");
+		try {
+			SoundAction.playSound(abortSound);
+		} catch(Exception e) {
+			// ignore
+		}
+	}
 
-                setDefaultCloseOperation(EXIT_ON_CLOSE);
+	public void ended()
+	{
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				button.setText(startMsg);
+				button.setActionCommand("start");
+				button.setEnabled(true);
+				clock.setText("");
+			}
+		});
+		setStatus(stoppedMsg);
+	}
 
-                pack();
-        }
+	public void time(final long millis)
+	{
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				clock.setText(fmt.format((float)millis / 1000.0));
+			}
+		});
+	}
 
-        public static void setStatus(final String msg)
-        {
-                SwingUtilities.invokeLater(new Runnable() {
-                        public void run()
-                        {
-                                statusLabel.setText(msg);
-                        }
-                });
-        }
+	protected void setStatus(final String msg)
+	{
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				statusLabel.setText(msg);
+			}
+		});
+	}
 
-        public static void main(String args[]) throws IOException
-        {
-                new LaunchControl().setVisible(true);
-        }
+	public static void main(String args[]) throws IOException
+	{
+		new LaunchControl();
+	}
 }

@@ -1,14 +1,19 @@
 package launchcontrol;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import javax.swing.*;
 
-
+/**
+ * Runs events from a list in timed sequence, on request. The event list
+ * is not read immediately, but will be re-read every time
+ * startCountdown() is called.
+ */
 public class Scheduler
 {
-
 	private static Hashtable types = new Hashtable();
 	static {
 		/* built-in event types */
@@ -16,7 +21,7 @@ public class Scheduler
 		types.put("msg", new MessageAction());
 	}
 
-	private URL events;
+	private static String events = Config.getString("schedule", "sched.conf");
 	private java.util.Timer timer;
 
 	private ScheduleListener listener = null;
@@ -24,18 +29,6 @@ public class Scheduler
 
 	private int startTime, endTime; // in milliseconds
 	private Date started;
-
-	/**
-	 * Create a new Scheduler from an event list. The event list is not
-	 * read immediately, but will be re-read every time startCountdown()
-	 * is called.
-	 *
-	 * @param events URL to a configuration file listing events
-	 */
-	public Scheduler(URL events)
-	{
-		this.events = events;
-	}
 
 	public static void addSchedulableAction(String name, SchedulableAction action)
 	{
@@ -69,10 +62,19 @@ public class Scheduler
 		if(listener != null)
 			listener.started();
 
+		setTimer(/*aborting*/ false);
+		startTime = endTime = 0;
+
 		// read events file for general settings
 		Properties conf = new Properties();
-		conf.load(events.openStream());
-		startTime = endTime = 0;
+		try
+		{
+			conf.load(new FileInputStream(events));
+		}
+		catch(Exception e)
+		{
+			return;
+		}
 
 		try {
 			String start = conf.getProperty("startTime");
@@ -88,8 +90,6 @@ public class Scheduler
 		} catch(NumberFormatException e) {
 			// ignore
 		}
-
-		setTimer(/*aborting*/ false);
 	}
 
 	/**
@@ -114,25 +114,20 @@ public class Scheduler
 	}
 
 	/**
-	 * Initializes the Timer instance from the events file. Used by both
-	 * startCountdown() and abortCountdown() with the aborting parameter
-	 * set to false and true, respectively. When aborting, events set to
-	 * execute before time 0 are ignored, and startTime is forced to 0.
+	 * Parses events out of the events file.
 	 */
-	private void setTimer(boolean aborting) throws IOException
+	private void parseEvents(boolean aborting) throws IOException
 	{
-		// don't start until everything has probably been set up
-		// tweak the number in the following line for an appropriate delay
-		started = new Date(new Date().getTime() + 250);
+		BufferedReader cs;
+		try
+		{
+			cs = new BufferedReader(new FileReader(events));
+		}
+		catch(Exception e)
+		{
+			return;
+		}
 
-		if(aborting)
-			startTime = 0;
-
-		timer = new java.util.Timer();
-		// read events file for timing
-		BufferedReader cs = new BufferedReader(
-			new InputStreamReader(events.openStream())
-		);
 		String line;
 		while((line = cs.readLine()) != null)
 		{
@@ -179,6 +174,25 @@ public class Scheduler
 				exc.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * Initializes the Timer instance from the events file. Used by both
+	 * startCountdown() and abortCountdown() with the aborting parameter
+	 * set to false and true, respectively. When aborting, events set to
+	 * execute before time 0 are ignored, and startTime is forced to 0.
+	 */
+	private void setTimer(boolean aborting) throws IOException
+	{
+		// don't start until everything has probably been set up
+		// tweak the number in the following line for an appropriate delay
+		started = new Date(new Date().getTime() + 250);
+
+		if(aborting)
+			startTime = 0;
+
+		timer = new java.util.Timer();
+		parseEvents(aborting);
 
 		// schedule the repeated clock updates as requested for the listener
 		if(listener != null && millidelta > 0)
@@ -234,8 +248,4 @@ public class Scheduler
 		}
 	}
 
-	public Component getControls(String startSound, String abortSound)
-	{
-	    return new CountdownPanel(startSound, abortSound, this);
-	}
 }
