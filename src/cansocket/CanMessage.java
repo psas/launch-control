@@ -98,11 +98,7 @@ public class CanMessage extends NetMessage
 
 	try
 	{
-		// header: (move to NetMessage?)
-		dos.writeShort(FC_PROT_VER);
-		dos.writeShort(MSG_SIZE);
-	    dos.writeShort(fifo_tag);
-
+	    NetMessage.putHeader(dos, MSG_SIZE, fifo_tag);
 	    dos.writeInt(timestamp);
 	    dos.writeShort(id);
 	    dos.write(body);

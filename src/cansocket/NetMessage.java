@@ -29,6 +29,24 @@ public abstract class NetMessage
 	public abstract void putMessage(DataOutputStream dos);
 	public abstract String toString();
 
+	
+	/** put the NetMessage header into the DataOutputStream.
+	 * @param dos: the DataOutputStream to write to
+	 * @param msgSize: Number of bytes used by data of message. 
+	 * Example: CanMessage.MSG_SIZE.
+	 * @param type: type of message. ex: FMT_CAN.
+	 */
+	static void putHeader(DataOutputStream dos, int msgSize, int type)
+	{
+		try {
+			dos.writeShort(FC_PROT_VER);
+			dos.writeShort(msgSize);
+			dos.writeShort(type);
+		} catch(IOException e) {
+			//never happens according to CanMessage's putMessage comment.
+		}
+	}
+
 	/* factory */
 	static NetMessage newNetMessage(byte packet[]) throws IOException
 	{
@@ -44,6 +62,8 @@ public abstract class NetMessage
 			throw e;
 		}
 	}
+
+
 	static NetMessage newNetMessage(DataInputStream s) throws IOException
 	{
 		short version = s.readShort();  // assert version == FC_PROT_VER
