@@ -31,11 +31,30 @@ public class RocketState extends JLabel implements Observer
 
 	protected static final DateFormat df = new SimpleDateFormat("HH:mm:ss.SSS: ");
 
+	protected ImageIcon greenled = new ImageIcon("src/widgets/greenled.png");
+	protected ImageIcon redled = new ImageIcon("src/widgets/redled.png");
+
 	protected int state = -1;
 	protected int detail = -1;
 
+	protected static final long delay = 1200; /* link timeout delay (millisecs) */
+	protected final java.util.Timer timer = new java.util.Timer(true /*daemon*/);
+	protected LinkStateChecker task;
+
+	protected class LinkStateChecker extends TimerTask
+	{
+		public void run()
+		{
+			// If the task is activated, then it has been too long since
+			// we recieved a message
+			setIcon(redled);
+		}
+	}
+
+
 	public RocketState()
 	{
+		System.out.println("green width: " + greenled.getIconWidth());
 		updateText();
 	}
 
@@ -43,6 +62,7 @@ public class RocketState extends JLabel implements Observer
 	{
 		update(null, msg);
 	}
+
 
 	public void update(Observable o, Object arg)
 	{
@@ -84,6 +104,7 @@ public class RocketState extends JLabel implements Observer
 		if(state < 0)
 		{
 			setText("unknown");
+			setIcon(redled);
 			return;
 		}
 
@@ -95,5 +116,15 @@ public class RocketState extends JLabel implements Observer
 		if(detail >= 0)
 			b.append(" [").append(Integer.toBinaryString(detail)).append("]");
 		setText(b.toString());
+
+		// set a task to run after delay milliseconds, which will happen
+		// unless we've recieved a message (and thus entered this function)
+		// before that time
+		setIcon(greenled);
+		if (task != null)
+			task.cancel();
+		task = new LinkStateChecker(); // will set "led" to red
+		timer.schedule(task, delay);
+
 	}
 }
