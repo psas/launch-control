@@ -94,9 +94,9 @@ public interface CanBusIDs {
 	public static final int APS_ENABLE_VOLTS = 0x3b10; /* from aps/aps_exports */
 	public static final int APS_DATA_VOLTS = 0x3b02; /* from aps/aps_exports */
 	public static final int APS_ENABLE_AMPS = 0x3b30; /* from aps/aps_exports */
-	public static final int APS_DATA_AMPS = 0x3b22; /* from aps/aps_exports */
+	public static final int APS_DATA_AMPS = 0x3b24; /* from aps/aps_exports */
 	public static final int APS_ENABLE_CHARGE = 0x3b50; /* from aps/aps_exports */
-	public static final int APS_DATA_CHARGE = 0x3b44; /* from aps/aps_exports */
+	public static final int APS_DATA_CHARGE = 0x3b42; /* from aps/aps_exports */
 	public static final int ATV_MODE_SAFE = 0x0034; /* from atv/atv_exports */
 	public static final int ATV_MODE_ARMED = 0x0088; /* from atv/atv_exports */
 	public static final int ATV_MODE = 0x0000; /* from atv/atv_exports */
