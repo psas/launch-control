@@ -4,7 +4,7 @@ import java.io.*;
 
 public class PressureDataMessage extends NetMessage
 {
-	public static final short fifo_tag = FMT_IMU_ACCEL;
+	public static final short fifo_tag = FMT_PRESSURE_DATA;
 	public final short raw_data;
 	public final double pressure, altitude; 
 
