@@ -100,12 +100,14 @@ public class CanMessage extends NetMessage
 	{
 		// header: (move to NetMessage?)
 		dos.writeShort(FC_PROT_VER);
-		dos.writeShort(HEADER_SIZE + MSG_SIZE);
+		dos.writeShort(MSG_SIZE);
 	    dos.writeShort(fifo_tag);
 
 	    dos.writeInt(timestamp);
 	    dos.writeShort(id);
 	    dos.write(body);
+	    for(int i = body.length; i < 8; ++i)
+		dos.writeByte(0);
 	} catch(IOException e) {
 	    // never happens.
 	}
