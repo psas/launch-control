@@ -32,72 +32,13 @@ public class LaunchControl extends JFrame
 	protected CanSocket rocketSocket; // rocket communication socket
 	protected TCPCanSocket towerSocket;
 
-
-
-	/** A task, which when run, will set the shore power to
-	 * a desired state. 
-	 * This can be used by any code that needs to schedule
-	 * the shore power to be set to a certain state at a given time */
-	protected class ShorePowerTask extends TimerTask 
-	{
-		private boolean power;
-		private CanMessage powerOn;
-		private CanMessage powerOff;
-		private CanMessage requestMessage;
-
-		public ShorePowerTask (boolean power_state) 
-		{
-			power = power_state;
-			short id = CanBusIDs.LTR_SET_SPOWER;
-			byte onBody[] = { 1 };
-			byte offBody[] = { 0 };
-			byte[] blank = new byte[8];
-			powerOn = new CanMessage(id, 0, onBody );
-			powerOff = new CanMessage(id, 0, offBody);
-			requestMessage = new CanMessage(CanBusIDs.LTR_GET_SPOWER, 0, blank);
-		}
-
-		public void run() 
-		{
-			CanMessage powerMessage;
-			if (power)  // set shore power on
-				powerMessage = powerOn;
-			else  // set shore power off
-				powerMessage = powerOff;
-				
-			if (towerSocket == null) 
-			{
-				System.out.println(
-					"can't send power command (towerSocket null); connected?");
-			} 
-			else 
-			{
-				try {
-					if (power) 
-					{
-						System.out.println("LC: ShorePowerTask->powerOn");
-					} 
-					else 
-					{
-						System.out.println("LC: ShorePowerTask->powerOff");
-					}
-
-					towerSocket.write(powerMessage);
-					towerSocket.write(requestMessage);
-					towerSocket.flush();
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-
 	protected final Scheduler sched = new Scheduler();
 
+
+
+	/** Create LaunchControl GUI, open connections, and start scheduler */
 	private LaunchControl() throws IOException
 	{
-
 		super("LaunchControl");
 		//possible TODO: use gridlayout (or gridbaglayout) instead
 		//of using boxes of boxes. The advantage of a gridlayout is
@@ -310,7 +251,7 @@ public class LaunchControl extends JFrame
 		//if fcPower = on, init state is off.  if fcPower = off, init state is on.
 		int init_period = 4000; // four seconds until anything else may run.
 		powerSequence.schedule(
-				new ShorePowerTask(!fcPower), 0 /* run now */);
+				new ShorePowerTask(!fcPower, towerSocket), 0 /* run now */);
 
 		// sched 5 things for new sequence
 		for (int i = 1; i <= 5; ++i)
@@ -321,7 +262,8 @@ public class LaunchControl extends JFrame
 			else  // i is even
 				power= !fcPower; //on even secs, shore is set to !fcPower
 			powerSequence.schedule(
-					new ShorePowerTask(power), init_period + i * delay);
+					new ShorePowerTask(power, towerSocket), 
+					init_period + i * delay);
 		}
 	}
 
