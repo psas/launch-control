@@ -60,24 +60,10 @@ public abstract class NetMessage
 				return new ImuGyroMessage(s);
 			case FMT_PRESSURE_DATA:
 				return new PressureDataMessage(s);
-
-			// The following two will only be sent to the rocket, 
-			// so they can be implemented when we need to do that.
 			case FMT_GPS_ORIGIN:
-			{
-				double lat  = s.readDouble();
-				double lng  = s.readDouble();
-				double ht   = s.readDouble();
-				// FIXME: return new GPSMessage(s);
-			}
-			break;
+				return new GpsOriginMessage(s);
 			case FMT_PRESSURE_BASE:
-			{
-				double press = s.readDouble();
-				double temp  = s.readDouble();
-				// FIXME: return new PressureBaseMessage(s);
-			}
-			break;
+				return new PressureBaseMessage(s);
 		}
 		return null;		// FIXME: return new NullMessage;
 	}
