@@ -111,6 +111,6 @@ public class StreamXYDataset extends AbstractSeriesDataset implements XYDataset
 		next = (next + 1) % x.length;       // increment next
 
 		// tell listeners
-		notifyListeners( new DatasetChangeEvent( this ) );
+		notifyListeners( new DatasetChangeEvent( this, this ) );
 	}
 }   // end of class StreamXYDataset

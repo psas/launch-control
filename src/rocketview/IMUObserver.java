@@ -72,13 +72,13 @@ class IMUObserver extends JPanel implements Observer
 		}
 	}
 
-	protected JFreeChartPanel createChart(String title, StreamXYDataset data)
+	protected ChartPanel createChart(String title, StreamXYDataset data)
 	{
 		NumberAxis xAxis;
 		NumberAxis yAxis;
 		XYPlot plot;
 		JFreeChart chart;
-		JFreeChartPanel panel;
+		ChartPanel panel;
 
 		xAxis = new HorizontalNumberAxis(null);
 		xAxis.setAutoRangeIncludesZero(false);
@@ -88,11 +88,11 @@ class IMUObserver extends JPanel implements Observer
 		yAxis.setAutoRangeIncludesZero(false);
 		yAxis.setTickLabelsVisible(true);
 
-		plot = new XYPlot(xAxis, yAxis);
+		plot = new XYPlot(data, xAxis, yAxis);
 		plot.setXYItemRenderer(new StandardXYItemRenderer(StandardXYItemRenderer.LINES));
 
-		chart = new JFreeChart(data, plot, null, TITLE_FONT, false);
-		panel = new JFreeChartPanel(chart);
+		chart = new JFreeChart(title, TITLE_FONT, plot, false);
+		panel = new ChartPanel(chart);
 		panel.setPreferredSize(preferredSize);
 		return panel;
 	}
