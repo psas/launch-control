@@ -43,5 +43,14 @@ class TextObserver extends JTextArea implements Observer
 
 	append( msg.toString() );
 	append( "\n" );
+	//Try to keep the scrollpane looking at the tail of the log
+	JScrollPane scrollpane = (JScrollPane) getParent().getParent();
+	final JScrollBar vertBar = scrollpane.getVerticalScrollBar();
+	SwingUtilities.invokeLater(new Runnable() {
+	  public void run() {
+	    if (! vertBar.getValueIsAdjusting()) 
+	      vertBar.setValue(vertBar.getMaximum());
+	  }
+	});
     }
 }
