@@ -4,22 +4,21 @@ import java.io.*;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+/* dump all CAN message network traffic to a log file */
+/* the raw log file can translated to ASCII Cantalope format with the fcfifo 'dumplog' tool */
+
 public class LogCanSocket implements CanSocket
 {
 	CanSocket base;
-	Writer log;
-	SimpleDateFormat myformat;
+	DataOutputStream log;
 
 	public LogCanSocket(CanSocket base, String logfile) throws IOException
 	{
 		this.base = base;
-		log = new FileWriter(logfile, /* append */ true);
-		/* timestamp log messages as e.g. "Fri, 15 Oct 2004 13:59:59:025 PDT": */
-		myformat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss:SSS z ");
-		// write a header with the complete date
-		log.write( myformat.format(new Date()) + " *** NEW SESSION ***\n");
-		// use a more compact date for telemetry
-		myformat = new SimpleDateFormat("HH:mm:ss:SSS ");
+		log = new DataOutputStream( new FileOutputStream(logfile, /* append */ true) );
+		/* TODO: initial message to capture local date and time
+			to calibrate the timestamps and signal the start of a session */
+		/* OR: allocate a unique file name per session */
 	}
 
 	public CanMessage read() throws IOException
@@ -29,17 +28,13 @@ public class LogCanSocket implements CanSocket
 
 	public void write(CanMessage msg) throws IOException
 	{
-		log.write( "-> ");		// distinguish commands from telemetry
 		base.write(log(msg));
 	}
 
 	protected CanMessage log(CanMessage msg) throws IOException
 	{
-		log.write( myformat.format(new Date()) );
-		log.write( msg.toString() );
-		log.write( "\n" );
-		log.flush();
-
+		msg.putMessage( log );
+		// log.flush();
 		return msg;
 	}
 
