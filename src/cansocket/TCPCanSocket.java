@@ -98,6 +98,16 @@ public class TCPCanSocket implements CanSocket
 
 	public void flush() throws IOException
 	{
-		dout.flush();
+		try {
+			dout.flush();
+		} catch(ConnectException e) {
+			close();
+			makeConnection();
+			dout.flush();
+		} catch(SocketException e) {
+			close();
+			makeConnection();
+			dout.flush();
+		}
 	}
 }
