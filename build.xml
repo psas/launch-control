@@ -68,8 +68,12 @@
     <javac srcdir="${src}" includes="manualuplink/*.java" destdir="${build}" classpath="${classpath}:${rxtxpath}" debug="${debug}" deprecation="on"/>
   </target>
 
+  <target name="ping" depends="init" description="compile ping">
+    <javac srcdir="${src}" includes="ping/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
+  </target>
+
   <!-- build everything -->
-  <target name="all" depends="rocketview,launchcontrol" description="compile all sources">
+  <target name="all" depends="rocketview,launchcontrol,ping" description="compile all sources">
     <javac srcdir="${src}" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
 
