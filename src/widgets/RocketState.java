@@ -105,6 +105,15 @@ public class RocketState extends JPanel implements Observer
 		this.dateStr = df.format(new Date());
 		this.state = state;
 		updateText();
+
+		// set a task to run after delay milliseconds, which will happen
+		// unless we've recieved a message (and thus entered this function)
+		// before that time
+		stateLabel.setIcon(greenled);
+		if (task != null)
+			task.cancel();
+		task = new LinkStateChecker(); // will set "led" to red
+		timer.schedule(task, delay);
 	}
 
 	protected void setQuality(short signal, short noise)
@@ -134,15 +143,6 @@ public class RocketState extends JPanel implements Observer
 		if(detail >= 0)
 			b.append(" [").append(Integer.toBinaryString(detail)).append("]");
 		stateLabel.setText(b.toString());
-
-		// set a task to run after delay milliseconds, which will happen
-		// unless we've recieved a message (and thus entered this function)
-		// before that time
-		stateLabel.setIcon(greenled);
-		if (task != null)
-			task.cancel();
-		task = new LinkStateChecker(); // will set "led" to red
-		timer.schedule(task, delay);
 
 	}
 }
