@@ -12,6 +12,9 @@ package launchcontrol;
  * TCPCanSocket class.  This message will be a valid CAN
  * message with an ID ( always 11 bits), a body ( 0 to 8 bytes )
  *
+ * 8 June 03 - Karl Hallowell
+ * 
+ * Looks like CAN messages will continue to be sent via TCP.
  *
  */  
 
@@ -53,7 +56,9 @@ import java.util.*;
 	*/
 public class RocketAction implements SchedulableAction
 {
-	protected TCPCanSocket sock;
+        protected TCPCanSocket sock;
+        //protected UDPCanSocket sock;
+
 	/**
 	*     RocketAction Method 
 	* This method is the constructor for the
@@ -68,13 +73,14 @@ public class RocketAction implements SchedulableAction
 	*/
 	public RocketAction(String hostname) throws IOException
 	{
-		sock = new TCPCanSocket(hostname);
+	        sock = new TCPCanSocket(hostname);
+       	        //sock = new UDPCanSocket(hostname);
 	}
 	
 
 	/** dispatch method
 	* This method will parse a string into a CAN message
-	* and send that CAN message out VIA a TCPSocket sock
+	* and send that CAN message out VIA a TCPCanSocket sock
 	*
 	* Remember, a well formed CAN message will have a
 	* ID           short
