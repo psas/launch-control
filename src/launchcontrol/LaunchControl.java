@@ -11,7 +11,7 @@ import java.util.*;
 import javax.swing.*;
 
 public class LaunchControl extends JFrame
-	implements ScheduleListener, ActionListener
+	implements ScheduleListener, ActionListener, ItemListener
 {
 	protected final static String startMsg = "Start Countdown";
 	protected final static String stopMsg = "Abort Countdown";
@@ -63,13 +63,36 @@ public class LaunchControl extends JFrame
 		ended(); // reset the button and label
 		sched.addScheduleListener(this, 100);
 		countdownButton.addActionListener(this);
-		shorePowerState.setActionCommand("shore");
-		shorePowerState.addActionListener(this);
+		//shorePowerState.setActionCommand("shore");
+		//shorePowerState.addActionListener(this);
+		shorePowerState.addItemListener(this);
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		pack();
 		show();
+	}
+
+	public void itemStateChanged(ItemEvent event)
+	{
+		Object source = event.getItemSelectable();
+		if (source == shorePowerState)
+		{
+			short id = CanBusIDs.LTR_SET_SPOWER;
+			int timestamp = 0;
+			byte body[] = new byte[8];
+			if (event.getStateChange() == ItemEvent.DESELECTED)
+				body[0] = 0;
+			else
+				body[0] = 1;
+			try {
+				CanMessage myMessage = new CanMessage(id, timestamp, body);
+				towerSocket.write(myMessage);
+				towerSocket.flush();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void actionPerformed(ActionEvent event)
@@ -85,16 +108,6 @@ public class LaunchControl extends JFrame
 			else if(event.getActionCommand().equals("abort"))
 			{
 				sched.abortCountdown();
-			}
-			else if(event.getActionCommand().equals("shore"))
-			{
-				short id = CanBusIDs.LTR_SET_SPOWER;
-				int timestamp = 0;
-				byte body[] = new byte[8];
-				body[0] = 1;					//TODO: check state
-				CanMessage myMessage = new CanMessage(id, timestamp, body);
-				towerSocket.write(myMessage);
-				towerSocket.flush();
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
