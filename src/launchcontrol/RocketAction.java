@@ -110,5 +110,6 @@ public class RocketAction implements SchedulableAction
 		}
 		CanMessage myMessage = new CanMessage(id, timestamp , body_Buffer);
 		sock.write(myMessage);
+		sock.flush();
 	}
 }// end RocketAction

@@ -32,9 +32,14 @@ public class TCPCanSocket implements CanSocket
 		dout.writeShort(msg.getTimestamp());
 		dout.write(msg.getBody());
 	}
-	
+
 	public void close() throws IOException
 	{
 		s.close();
+	}
+
+	public void flush() throws IOException
+	{
+		dout.flush();
 	}
 }
