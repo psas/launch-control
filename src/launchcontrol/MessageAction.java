@@ -1,3 +1,5 @@
+package launchcontrol;
+
 /**
  * This action is intended for debugging only, as its output goes to a
  * terminal rather than the GUI.

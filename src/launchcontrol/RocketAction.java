@@ -1,3 +1,5 @@
+package launchcontrol;
+
 /** Class RocketAction
  *
  * By Larry Leach

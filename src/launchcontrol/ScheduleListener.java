@@ -1,3 +1,5 @@
+package launchcontrol;
+
 public interface ScheduleListener
 {
 	public void started();
