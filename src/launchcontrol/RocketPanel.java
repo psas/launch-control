@@ -53,7 +53,7 @@ public class RocketPanel extends JPanel implements ActionListener
 			}
 			else if (event.getActionCommand().equals("arm"))
 			{
-				byte[] data = { CanBusIDs.ArmedState };
+				byte[] data = { CanBusIDs.ArmingState };
 				sock.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
 			}
 			else if (event.getActionCommand().equals("powerdown"))
