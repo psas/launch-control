@@ -17,7 +17,7 @@ class HeightObserver extends JLabel implements Observer
 		switch(msg.getId())
 		{
 		case CanBusIDs.GPSHeight:
-			gpsHeight = msg.getData16(0);
+			gpsHeight = msg.getData16(0) / 100;
 			break;
 		case CanBusIDs.PressValue:
 			pressHeight = toHeight(msg.getData16(0));
@@ -27,9 +27,9 @@ class HeightObserver extends JLabel implements Observer
 		}
 		StringBuffer buf = new StringBuffer();
 		if(gpsHeight != Integer.MAX_VALUE)
-			buf.append(" gps:").append(gpsHeight);
+			buf.append(" gps:").append(gpsHeight).append('m');
 		if(pressHeight != Integer.MAX_VALUE)
-			buf.append(" press:").append(pressHeight);
+			buf.append(" press:").append(pressHeight).append('m');
 		setText(buf.toString());
 	}
 
