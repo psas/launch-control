@@ -45,20 +45,19 @@ class IMUObserver extends JPanel implements Observer
 	};
 
 	// low limit, graph vertical axis
-	protected final int vLow[][] = {
-		{ -5, -5, -15 },
-		{ 0, 0, 0 }
+	protected final double vLow[][] = {
+		{ -2, -2, -16 },
+		{ -90, -90, -90 }
 	};
 
 	// high limit, graph vertical axis
-	protected final int vHigh[][] = {
-		{ 5, 5, 15 },
-		{ 4096, 4096, 4096 }
+	protected final double vHigh[][] = {
+		{ 2, 2, 16 },
+		{ 90, 90, 90 }
 	};
 
-	protected final int freq[] = { 250, 100, };
-	// protected final int HIST_LEN = 10;
-	protected final int HIST_LEN = 1;
+	protected final int freq[] = { 2500, 833, };
+	protected final int HIST_LEN = 2;
 	protected int msgCount[] = { 0, 0, };
 
 
@@ -93,9 +92,9 @@ class IMUObserver extends JPanel implements Observer
 	protected void addAccelValues(int type, ImuAccelMessage msg)
 	{
 		Integer h = new Integer(msgCount[type]++);
-		data[type][0].addXYValue( h, new Double(msg.Ax) );
-		data[type][1].addXYValue( h, new Double(msg.Ay) );
-		data[type][2].addXYValue( h, new Double(msg.Az) );
+		data[type][0].addXYValue( h, new Double(msg.Ax / 9.81) );
+		data[type][1].addXYValue( h, new Double(msg.Ay / 9.81) );
+		data[type][2].addXYValue( h, new Double(msg.Az / 9.81) );
 	}
 
 	// until we get conversion constants, Yaw/Pitch/Roll
