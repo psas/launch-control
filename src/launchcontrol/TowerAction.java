@@ -18,11 +18,12 @@ public class TowerAction implements SchedulableAction
 	static {
 		cmds.put("strobe", "st");
 		cmds.put("siren", "si");
-		cmds.put("igniter", "ig");
-		cmds.put("power", "a1");
+		cmds.put("arm", "a2");
+		cmds.put("igniter", "a1");
+		cmds.put("power", "a4");
 	}
 	private static final String statusbits[] =
-	{ "ready", null, "strobe", "siren", null, "igniter", "power", null, null, null };
+	{ "ready", null, "strobe", "siren", null, null, "igniter", "arm", null, "power" };
 
 	private LinkedList cmdqueue = new LinkedList();
 	private Object cts = new Object(); // clear-to-send
@@ -49,10 +50,10 @@ public class TowerAction implements SchedulableAction
 		if(cmd.equals("status"))
 			remote = "sta";
 		else if(cmd.equals("launch"))
-			if(rocketready)
-				remote = "1ig";
-			else
-				return; // don't launch unless rocket is ready
+			/* if(rocketready) */
+				remote = "1" + (String)cmds.get("igniter");
+			/* else
+				return; // don't launch unless rocket is ready */
 		else
 		{
 			int lastidx = cmd.length() - 1;

@@ -87,7 +87,7 @@ public class TowerSimulator
 							case '1': case '2': case '3': case '4': // "a1" through "a4"
 								if(cmd[1] != 'a')
 									break error;
-								setStatus(6 + cmd[2] - '1', "AUX No. " + cmd[2], cmd[0]);
+								setStatus(6 + cmd[2] - '1', "AUX No. " + (int) (cmd[2] - '0'), cmd[0]);
 								break;
 							default:
 								break error;
