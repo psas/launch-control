@@ -134,6 +134,7 @@ public interface CanBusIDs {
 	public static final int FC_NODE_STATUS = 0x0060; /* from fc_exports */
 	public static final int FC_LINK_QUALITY = 0x0080; /* from fc_exports */
 	public static final int FC_IMPORTANCE_MASK = 0x00a0; /* from fc_exports */
+	public static final int FC_PING = 0x00c0; /* from fc_exports */
 	public static final int FC_REPORT_STATE = 0x0121; /* from fc_exports */
 	public static final int FC_FORCE_STATE = 0x0221; /* from fc_exports */
 	public static final int FC_REQUEST_STATE = 0x0021; /* from fc_exports */
@@ -141,6 +142,7 @@ public interface CanBusIDs {
 	public static final int FC_REPORT_NODE_STATUS = 0x0168; /* from fc_exports */
 	public static final int FC_REPORT_LINK_QUALITY = 0x0184; /* from fc_exports */
 	public static final int FC_REPORT_IMPORTANCE_MASK = 0x01a8; /* from fc_exports */
+	public static final int FC_PING_MESSAGE = 0x01c8; /* from fc_exports */
 	public static final int FC_IMU_HEIGHT = 0xf004; /* from fc_exports */
 	public static final int FC_GPS_NAVSOL = 0xf804; /* from fc_exports */
 	public static final int FC_GPS_TIME = 0xf827; /* from fc_exports */
