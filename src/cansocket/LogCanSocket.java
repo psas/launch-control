@@ -46,8 +46,7 @@ public class LogCanSocket implements CanSocket
 		}
 		buf.append('\n');
 */
-		Date cur_time = new Date();
-		log.write( myformat.format(cur_time) + msg.toString() );
+		log.write( myformat.format(new Date()) + msg.toString() );
 		log.write("\n");
 		log.flush();
 
