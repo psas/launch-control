@@ -191,10 +191,6 @@ public class Rocketview extends JFrame
 			// seems to give the desired layout effect: border is drawn around entire
 			// widget area, not just the space used (as was the case with jlabel)
 			jc.setBorder(new TitledBorder(title));
-			// try setting preferred size to as small as possible. 
-			//int containerWidth = (int)jc.getPreferredSize().getWidth();
-			//int compHeight = (int)o.getPreferredSize().getHeight();
-			//jc.setPreferredSize( new Dimension(containerWidth, compHeight) );
 		} else {
 			o.setBorder(new TitledBorder(title));
 		}
