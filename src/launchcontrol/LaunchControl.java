@@ -38,13 +38,15 @@ public class LaunchControl extends JFrame
 	 * a desired state. 
 	 * This can be used by any code that needs to schedule
 	 * the shore power to be set to a certain state at a given time */
-	protected class ShorePowerTask extends TimerTask {
+	protected class ShorePowerTask extends TimerTask 
+	{
 		private boolean power;
 		private CanMessage powerOn;
 		private CanMessage powerOff;
 		private CanMessage requestMessage;
 
-		public ShorePowerTask (boolean power_state) {
+		public ShorePowerTask (boolean power_state) 
+		{
 			power = power_state;
 			short id = CanBusIDs.LTR_SET_SPOWER;
 			byte onBody[] = { 1 };
@@ -55,21 +57,28 @@ public class LaunchControl extends JFrame
 			requestMessage = new CanMessage(CanBusIDs.LTR_GET_SPOWER, 0, blank);
 		}
 
-		public void run() {
+		public void run() 
+		{
 			CanMessage powerMessage;
 			if (power)  // set shore power on
 				powerMessage = powerOn;
 			else  // set shore power off
 				powerMessage = powerOff;
 				
-			if (towerSocket == null) {
+			if (towerSocket == null) 
+			{
 				System.out.println(
 					"can't send power command (towerSocket null); connected?");
-			} else {
+			} 
+			else 
+			{
 				try {
-					if (power) {
+					if (power) 
+					{
 						System.out.println("LC: ShorePowerTask->powerOn");
-					} else {
+					} 
+					else 
+					{
 						System.out.println("LC: ShorePowerTask->powerOff");
 					}
 
@@ -241,7 +250,8 @@ public class LaunchControl extends JFrame
 			else if(event.getActionCommand().equals("fc_on"))
 			{
 				fcPower(true);
-			} else if (event.getActionCommand().equals("fc_off"))
+			} 
+			else if (event.getActionCommand().equals("fc_off"))
 			{
 				if(JOptionPane.showConfirmDialog(this,
 					"Are you sure you want to cut power to flight computer?", 
@@ -251,7 +261,8 @@ public class LaunchControl extends JFrame
 					return; // user wasn't sure.
 
 				fcPower(false);
-			} else if(event.getActionCommand().equals("start"))
+			} 
+			else if(event.getActionCommand().equals("start"))
 			{
 				if(JOptionPane.showConfirmDialog(this,
 					"Are you sure you want to start the countdown?", "Proceed?",
@@ -282,13 +293,15 @@ public class LaunchControl extends JFrame
 	 * @param fcPower the new desired power state of the 
 	 * FC (true=on, false=off) 
 	 */
-	protected void fcPower(boolean fcPower) {
+	protected void fcPower(boolean fcPower) 
+	{
 		/* A two second delay (2000 millisecs) between shore on/off msgs 
 		 * which are sent in sequence while trying to turn on or off the FC. */
 		int delay = 2000;
 
 		// cancel any prev. sequence
-		if (powerSequence != null) {
+		if (powerSequence != null) 
+		{
 			powerSequence.cancel();
 		}
 		powerSequence = new java.util.Timer(true /* daemon */);
