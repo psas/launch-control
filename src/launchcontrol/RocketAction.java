@@ -33,9 +33,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class RocketAction implements SchedulableAction
-{
-	/** RocketaAction class
+
+/** RocketaAction class
  	* This class implements the "t -5 signal"
 	* i.e. this class will send a CAN Message
 	* VIA the CAN bus.
@@ -48,13 +47,11 @@ public class RocketAction implements SchedulableAction
 	* POST :
 	*
 	*/
- 
+public class RocketAction implements SchedulableAction
+{
 	protected TCPCanSocket sock;
-
-	public RocketAction(String hostname) throws IOException
-	{
 	/**
-	*    ** RocketAction Method **
+	*     RocketAction Method 
 	* This method is the constructor for the
 	* RocketAction class
 	*
@@ -65,10 +62,12 @@ public class RocketAction implements SchedulableAction
 	* POST : we have parsed the string into
 	* a new CAN message
 	*/
-	sock = new TCPCanSocket(new Socket(hostname, TCPCanSocket.DEFAULT_SOCKET_PORT));
-	}
-	public void dispatch(String cmd) throws Exception
+	public RocketAction(String hostname) throws IOException
 	{
+		sock = new TCPCanSocket(new Socket(hostname, TCPCanSocket.DEFAULT_SOCKET_PORT));
+	}
+	
+
 	/** dispatch method
 	* This method will parse a string into a CAN message
 	* and send that CAN message out VIA a TCPSocket sock
@@ -79,22 +78,23 @@ public class RocketAction implements SchedulableAction
 	* body         byte array
 	* data length
  	*/
-
-	    short id;
-	    short timestamp = 12;
-	    byte[] can_Body = new byte[8];
-	    byte b;
-	    int i = 0;
-	    StringTokenizer tkn = new StringTokenizer(cmd);
-	    id = Short.parseShort( tkn.nextToken(), 16 );
-	    while (tkn.hasMoreTokens()) {
-	    System.out.println( id );
-	    b = Byte.parseByte( tkn.nextToken(), 16 );
-	    can_Body[i] = b;
-	    System.out.println( b );
-	    i++;
-	    }
-	    CanMessage myMessage = new CanMessage(id, timestamp ,can_Body);
-	    sock.write(myMessage);
+	public void dispatch(String cmd) throws Exception
+	{
+		short id;
+		short timestamp = 12;
+		byte[] body_buffer = new byte[8];
+		byte[] can_Body = new byte[8];
+		byte b;
+		int i = 0;
+		StringTokenizer tkn = new StringTokenizer(cmd);
+		id = Short.parseShort( tkn.nextToken(), 16 );
+		while (tkn.hasMoreTokens() )
+		{
+			b = Byte.parseByte( tkn.nextToken(), 16 );
+			can_Body[i] = b;
+			i++;
+		}
+		CanMessage myMessage = new CanMessage(id, timestamp ,can_Body);
+		sock.write(myMessage);
 	}
 }// end RocketAction
