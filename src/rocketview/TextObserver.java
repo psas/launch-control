@@ -15,7 +15,7 @@ class TextObserver extends JTextArea implements Observer
     public TextObserver() {
 
 	// construct a JTextArea
-	super( 30, 40 ); // row, column
+	super( 15, 40 ); // row, column
 	this.setLineWrap( true );
 	this.setFont( new Font( "Monospaced", Font.PLAIN, 10 ));
     }
