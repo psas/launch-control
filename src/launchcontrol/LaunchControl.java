@@ -42,13 +42,6 @@ public class LaunchControl extends JFrame
 		    // ignore parameter "localTowerPort" for tcp connections
 		    null
                 );
-		/*
-                TowerAction tower = new TowerAction(
-                        conf.getProperty("towerHost"),
-                        Integer.parseInt(conf.getProperty("towerPort"))
-                );
-		*/
-                //content.add(tower.getControls());
 
                 Scheduler.addSchedulableAction("tower", tower);
 
@@ -70,12 +63,6 @@ public class LaunchControl extends JFrame
 		    "udp",
 		    null
                 );
-
-		/*                RocketAction rocket = new RocketAction(
-                       conf.getProperty("rocketHost"),
-                       Integer.
-                    parseInt(conf.getProperty("rocketPort"))
-		    );*/
 
                 Scheduler.addSchedulableAction("rocket", rocket);
 
