@@ -3,34 +3,30 @@ import java.net.*;
 
 public class TCPCanSocketTest
 {
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
-		try
+		String host = args.length > 0 ? args[0] : "localhost";
+		Socket s = new Socket(host, TCPCanSocket.DEFAULT_SOCKET_PORT);
+		TCPCanSocket cs = new TCPCanSocket(s);
+		CanMessage cm;
+
+		while(true)
 		{
-		
-			TCPCanSocket cs = new TCPCanSocket(new Socket("localhost",TCPCanSocket.DEFAULT_SOCKET_PORT));
-		
-			while(true)
+			System.out.println("Attempting to read CanMessage");
+			cm = cs.read();
+
+			System.out.print("id: ");
+			System.out.println(cm.getId());
+			System.out.print("time: ");
+			System.out.println(cm.getTimestamp());
+			System.out.print("body:");
+			byte body[] = cm.getBody();
+			for(int i = 0; i < body.length; ++i)
 			{
-				System.out.println("Attempting to read CanMessage");
-		
-				CanMessage cm = cs.read();
-		
-				System.out.println("msg id: " + cm.getId());
-				System.out.println("msg time: " + cm.getTimestamp());
-				System.out.println("msg body: " + cm.getBody());
-				System.out.println("Message received");
+				System.out.print(" ");
+				System.out.print(body[i]);
 			}
+			System.out.println();
 		}
-		catch(UnknownHostException e)
-		{
-			System.out.println("Caught UnknownHostException " + e);
-		}
-		catch(IOException e)
-		{
-			System.out.println("Caught IOException " + e);
-		}
-		
 	}
-	
 }
