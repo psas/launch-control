@@ -24,6 +24,7 @@ class PositionObserver extends JLabel implements Observer
 	{
 		char sgn = mag < 0 ? neg : pos;
 		mag = -mag;
-		b.append((float)mag / 100000000.0).append(sgn);
+		float rad = mag / (float)100000000.0;
+		b.append(rad * (180.0 / Math.PI)).append(sgn);
 	}
 }

@@ -7,6 +7,7 @@ import com.jrefinery.chart.*;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 class IMUObserver extends JPanel implements Observer
 {
@@ -72,28 +73,36 @@ class IMUObserver extends JPanel implements Observer
 		}
 	}
 
-	protected ChartPanel createChart(String title, StreamXYDataset data)
+	protected JComponent createChart(String title, StreamXYDataset data)
 	{
 		NumberAxis xAxis;
 		NumberAxis yAxis;
 		XYPlot plot;
 		JFreeChart chart;
-		ChartPanel panel;
+		ChartPanel chartpanel;
+		JPanel panel;
 
 		xAxis = new HorizontalNumberAxis(null);
 		xAxis.setAutoRangeIncludesZero(false);
-		xAxis.setTickLabelsVisible(true);
+		xAxis.setTickLabelsVisible(false);
 
-		yAxis = new VerticalNumberAxis(title);
-		yAxis.setAutoRangeIncludesZero(false);
-		yAxis.setTickLabelsVisible(true);
+		yAxis = new VerticalNumberAxis(null);
+		yAxis.setRange(0, 4096);
+		yAxis.setTickLabelsVisible(false);
 
 		plot = new XYPlot(data, xAxis, yAxis);
 		plot.setRenderer(new StandardXYItemRenderer(StandardXYItemRenderer.LINES));
 
-		chart = new JFreeChart(title, TITLE_FONT, plot, false);
-		panel = new ChartPanel(chart);
-		panel.setPreferredSize(preferredSize);
+		chart = new JFreeChart(null, TITLE_FONT, plot, false);
+		chartpanel = new ChartPanel(chart);
+		chartpanel.setPreferredSize(preferredSize);
+
+		// workaround: ChartPanel renders wrong with borders.
+		panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add(chartpanel);
+
+		panel.setBorder(new TitledBorder(title));
 		return panel;
 	}
 }
