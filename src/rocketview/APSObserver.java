@@ -11,7 +11,8 @@ import javax.swing.*;
  * Handles message id PowerID
  * Updates the APS box with status
  *
- *   display: APS bus: xx.xxV x.xxA  batt: xx.xxxAHr
+ *   display: APS bus: xx.xxV  batt: x.xxA xx.xxxAHr
+ *          : Umb: [on/off] Power: [on/off] Charge: [on/off] 
  */
 class APSObserver extends JLabel implements Observer
 {
@@ -48,7 +49,7 @@ class APSObserver extends JLabel implements Observer
 	    case CanBusIDs.APS_DATA_VOLTS:
 		counts = msg.getData16(0);
 		counts &= 0xffff;   // unsigned
-		voltage = counts * 5 / 1024 * 0.14815;
+		voltage = counts * 0.03296;  // * 5 / 1024 / 0.14815;
 		break;
 	    case CanBusIDs.APS_DATA_AMPS:
 		current = 768.05 / msg.getData32(0);
