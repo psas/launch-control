@@ -95,17 +95,38 @@ public class CanMessage
     public CanMessage( byte buf[] )
     {
 	DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
+	int notInt;
+	byte notByt;
 
 	try
 	{
-	    fifo_tag = dis.readInt();		//!!! assert fifo_tag == 0
+	    // fifo_tag  = dis.readInt();		//!!! assert fifo_tag == 0
+	    // timestamp = dis.readInt();
+	    // id        = dis.readShort();
+	    // body = new byte[MSG_BODY];
+	    // dis.read( body );
+
+	    notByt  = dis.readByte();
+	    notByt  = dis.readByte();
+	    notByt  = dis.readByte();
+
+	    len = dis.readByte() - 11;
+
 	    timestamp = dis.readInt();
-	    id = dis.readShort();
-	    body = new byte[MSG_BODY];
+	    notInt  = dis.readInt();
+
+	    id        = dis.readShort();
+
+	    // body = new byte[MSG_BODY];
+	    body = new byte[len];
 	    dis.read( body );
+
 	} catch(IOException e) {
 	    // never happens.
 	}
+	System.out.println (" fifo_tag: " + fifo_tag);
+	System.out.println ("timestamp: " + timestamp);
+	System.out.println ("       id: " + id);
 
 	// cuisinart the bits
 	len = id & 0xf;          // number of valid bytes in body
@@ -185,9 +206,9 @@ public class CanMessage
     {
 	StringBuffer buf = new StringBuffer( "0x" );
 
-	buf.append( Integer.toHexString (timestamp) + " " );
-	buf.append( Integer.toHexString (id11) + " " );
-	buf.append( Integer.toHexString (rtr) + " " );
+	buf.append( Integer.toHexString (timestamp) + " 0x" );
+	buf.append( Integer.toHexString (id11) + " 0x" );
+	buf.append( Integer.toHexString (rtr) + " 0x" );
 	buf.append( Integer.toHexString (len) + " " );
 	for (int i = 0; i < len; i++) {
 	    buf.append( hexByte (body[i]) + " " );
