@@ -1,3 +1,5 @@
+package cansocket;
+
 import java.io.*;
 import java.net.*;
 
@@ -6,8 +8,7 @@ public class TCPCanSocketTest
 	public static void main(String[] args) throws Exception
 	{
 		String host = args.length > 0 ? args[0] : "localhost";
-		Socket s = new Socket(host, TCPCanSocket.DEFAULT_SOCKET_PORT);
-		TCPCanSocket cs = new TCPCanSocket(s);
+		TCPCanSocket cs = new TCPCanSocket(host);
 		CanMessage cm;
 
 		while(true)

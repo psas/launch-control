@@ -1,3 +1,5 @@
+package cansocket;
+
 import java.io.*;
 import java.net.*;
 
@@ -7,13 +9,23 @@ public class TCPCanSocket implements CanSocket
 	private DataInputStream din;
 	private DataOutputStream dout;
 
-	public static final int DEFAULT_SOCKET_PORT = 5349;
+	public static final int DEFAULT_PORT = 5349;
 	
 	public TCPCanSocket(Socket s) throws IOException
 	{ 
 		this.s = s;
 		din = new DataInputStream(new BufferedInputStream(s.getInputStream()));
 		dout = new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
+	}
+
+	public TCPCanSocket() throws IOException
+	{
+		this(new ServerSocket(DEFAULT_PORT).accept());
+	}
+
+	public TCPCanSocket(String host) throws IOException
+	{
+		this(new Socket(host, DEFAULT_PORT));
 	}
 	
 	public CanMessage read() throws IOException

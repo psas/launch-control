@@ -1,3 +1,5 @@
+package cansocket;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -8,9 +10,7 @@ public class TCPCanSocketServerTest
 	{
 		try
 		{
-			ServerSocket s = new ServerSocket(TCPCanSocket.DEFAULT_SOCKET_PORT);
-			Socket incoming = s.accept();
-			TCPCanSocket cs = new TCPCanSocket(incoming);
+			TCPCanSocket cs = new TCPCanSocket();
 			
 			Random rand = new Random();
 			
