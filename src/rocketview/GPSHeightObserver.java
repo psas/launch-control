@@ -19,7 +19,7 @@ class GPSHeightObserver extends JLabel implements Observer
     protected float gpsHeight = Float.MAX_VALUE;
 
     public GPSHeightObserver() {
-	this.setText( "GPS: -- no gps height from rocket yet --" );
+	this.setText( "GPS: -- no gps height --" );
     }
 
     public void update(Observable o, Object arg)

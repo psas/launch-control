@@ -19,7 +19,7 @@ class PressureHeightObserver extends JLabel implements Observer
     protected float pressHeight = Float.MAX_VALUE;
 
     public PressureHeightObserver() {
-	this.setText( "-- no pressure data from rocket yet --" );
+	this.setText( "pressure: -- no pressure data from rocket yet --" );
     }
 
     public void update(Observable o, Object arg)

@@ -20,7 +20,7 @@ import javax.swing.*;
 class GPSObserver extends JLabel implements Observer
 {
 	public GPSObserver() {
-	    this.setText( "GPS: -- no gps status from rocket yet --" );
+	    this.setText( "GPS: -- no gps status --" );
 	}
 
 	public void update(Observable o, Object arg)

@@ -23,7 +23,7 @@ import cansocket.*;
 class GPSPositionObserver extends JLabel implements Observer
 {
     public GPSPositionObserver() {
-	this.setText( "GPS: -- no position from rocket yet --" );
+	this.setText( "GPS: -- no position --" );
     }
 
     public void update(Observable o, Object arg)

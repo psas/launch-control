@@ -64,9 +64,7 @@ public class Rocketview extends JFrame
 		rvPane.add( leftCol );
 
 		// right side for stripcharts
-		JPanel stripChart = new JPanel();
-		addObserver( stripChart, new IMUObserver());
-		rvPane.add( stripChart );
+		addObserver( rvPane, new IMUObserver());
 
 
 		// top panel for status boxes
@@ -114,29 +112,26 @@ public class Rocketview extends JFrame
 		
 		// inertial nav: not implemented
 		JPanel ins = new JPanel();
+		// ins.setBorder(new TitledBorder( "INS" ));
 		ins.setBorder(BorderFactory.createLineBorder( Color.gray ));
 		ins.setLayout(new FlowLayout( FlowLayout.LEFT ));
 		ins.add( new JLabel( "INS: -- no information --" ));
 		subSys.add( ins );
 
-		// GPS position
-		JPanel gpsPos = new JPanel();
-		addUntitledObserver(gpsPos, new GPSPositionObserver ());
-		subSys.add( gpsPos );
+		// 3 GPS observers go in 1 panel
+		JPanel gps = new JPanel();
+		gps.setBorder(BorderFactory.createLineBorder( Color.gray ));
+		subSys.add( gps );
+		// addObserver( gps, "GPS", new GPSPositionObserver() );
+		addObserver( gps, new GPSPositionObserver() );
+		addObserver( gps, new GPSHeightObserver() );
+		addObserver( gps, new GPSObserver() );
 
-		// GPS status
-		JPanel gpsStat = new JPanel();
-		addUntitledObserver(gpsStat, new GPSObserver ());
-		subSys.add( gpsStat );
-
-		// GPS height
-		JPanel gpsHite = new JPanel();
-		addUntitledObserver(gpsHite, new GPSHeightObserver ());
-		subSys.add( gpsHite );
 
 		// APS panel
 		JPanel aps = new JPanel();
 		addUntitledObserver( aps, new APSObserver() );
+		// addObserver( aps, "APS", new APSObserver() );
 		subSys.add( aps );
 
 		pack();
