@@ -47,6 +47,7 @@ class TextObserver extends JTextArea implements Observer
 		case CanBusIDs.APS_DATA_VOLTS >> 5:
 		case CanBusIDs.APS_DATA_AMPS >> 5:
 		case CanBusIDs.APS_DATA_CHARGE >> 5:
+		case CanBusIDs.ATV_UART_RECIEVE >> 5:
 			return;
 	}
 
