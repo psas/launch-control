@@ -23,6 +23,16 @@ public class LogCanSocket implements CanSocket
 		base.write(log(msg));
 	}
 
+	/*** phony: keep interface definition happy ***/
+	public CanMessage recv() 
+	{
+	    return( new CanMessage( (short)98, 100, new byte[CanMessage.MSG_BODY] ));
+	}
+
+	public void send( CanMessage msg )
+	{}
+	/*** end phony ***/
+
 	protected CanMessage log(CanMessage msg) throws IOException
 	{
 		StringBuffer buf = new StringBuffer();
