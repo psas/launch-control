@@ -38,6 +38,7 @@ public class RocketState extends JLabel implements Observer
 	protected int detail = -1;
 	protected int signal = 0;		// units: dbm
 	protected int noise = 0;
+	protected String dateStr = "";
 
 	protected static final long delay = 1200; /* link timeout delay (millisecs) */
 	protected final java.util.Timer timer = new java.util.Timer(true /*daemon*/);
@@ -93,6 +94,7 @@ public class RocketState extends JLabel implements Observer
 	{
 		if(this.state != state)
 			detail = -1;
+		this.dateStr = df.format(new Date());
 		this.state = state;
 		updateText();
 	}
@@ -114,15 +116,15 @@ public class RocketState extends JLabel implements Observer
 	{
 		StringBuffer b = new StringBuffer("signal: ");
 		b.append(Integer.toString(signal)).append("dbm, noise: ");
-		b.append(Integer.toString(noise)).append("dbm, FC State: ");
+		b.append(Integer.toString(noise)).append("dbm, ");
 		if(state < 0)
 		{
-			b.append("unknown");
+			b.append("unknown FC state");
 			setText(b.toString());
 			setIcon(redled);
 			return;
 		}
-		b.append(df.format(new Date()));
+		b.append(dateStr);
 		if(state >= stateStrings.length)
 			b.append("unknown (").append(state).append(")");
 		else
