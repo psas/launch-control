@@ -22,18 +22,18 @@ public class LogCanSocket implements CanSocket
 		myformat = new SimpleDateFormat("HH:mm:ss:SSS ");
 	}
 
-	public NetMessage read() throws IOException
+	public CanMessage read() throws IOException
 	{
 		return log(base.read());
 	}
 
-	public void write(NetMessage msg) throws IOException
+	public void write(CanMessage msg) throws IOException
 	{
 		log.write( "-> ");		// distinguish commands from telemetry
 		base.write(log(msg));
 	}
 
-	protected NetMessage log(NetMessage msg) throws IOException
+	protected CanMessage log(CanMessage msg) throws IOException
 	{
 		log.write( myformat.format(new Date()) );
 		log.write( msg.toString() );

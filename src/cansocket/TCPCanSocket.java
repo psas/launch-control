@@ -8,8 +8,8 @@ public class TCPCanSocket implements CanSocket
     public static final int DEFAULT_PORT = 4437; // was 5349
 
 	protected Socket s;
-	protected InputStream din;
-	protected OutputStream dout;
+	protected DataInputStream din;
+	protected DataOutputStream dout;
 
 	/** constructor with a socket opens the data streams */
 	public TCPCanSocket(Socket s) throws IOException
@@ -17,9 +17,8 @@ public class TCPCanSocket implements CanSocket
 	    System.out.println(s.getInetAddress() + " " + s.getPort());
 		this.s = s;
 		System.out.println( "constructor: open socket data streams" );
-		din = new BufferedInputStream(s.getInputStream());
-		dout = new BufferedOutputStream(s.getOutputStream());
-		// dout.flush();
+		din = new DataInputStream(new BufferedInputStream(s.getInputStream()));
+		dout = new DataOutputStream(new BufferedOutputStream(s.getOutputStream()));
 	}
 
 	/** constructor with no arguments creates a server socket
@@ -56,21 +55,20 @@ public class TCPCanSocket implements CanSocket
 	System.out.println("Opening client socket: " + host + " "+ Integer.toString(port));
     }
 
-	public NetMessage read() throws IOException
+	public CanMessage read() throws IOException
 	{
-//		byte buf[] = new byte[NetMessage.MSG_SIZE];
-//		din.read(buf);
-		return NetMessage.newNetMessage(new DataInputStream(din));
+		return new CanMessage(din);
 	}
 	
-	public void write(NetMessage msg) throws IOException
+	public void write(CanMessage msg) throws IOException
 	{
-		dout.write(msg.toByteArray());
-		//dout.putMessage(dout);
+		msg.putMessage(dout);
 	}
 
 	public void close() throws IOException
 	{
+		dout.close();
+		din.close();
 		s.close();
 	}
 

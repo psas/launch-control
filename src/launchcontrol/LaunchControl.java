@@ -280,20 +280,6 @@ public class LaunchControl extends JFrame
 		try {
 			if (event.getActionCommand().equals("preflight"))
 			{
-				// get base / origin gps and pressure values
-				// from main.conf using Config.java
-				double pressure = Config.getDouble("basePressure", -101.5);
-				double temp = Config.getDouble("baseTemp", -20);
-				double altitude = Config.getDouble("baseAltitude", -60);
-				rocketSocket.write(new PressureBaseMessage(pressure,
-							temp, altitude));
-
-				double lat = Config.getDouble("originLatitude", -45.4704);
-				double lon = Config.getDouble("originLongitude", 122.6247);
-				double height = Config.getDouble("originHeight", 0);
-				rocketSocket.write(new GpsOriginMessage(
-							lat, lon, height));
-				
 				byte[] data = { CanBusIDs.PreflightCheckState };
 				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
 			}

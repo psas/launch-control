@@ -33,6 +33,7 @@ class TextObserver extends JTextArea implements Observer
 		case CanBusIDs.FC_REPORT_STATE >> 5:
 		case CanBusIDs.FC_REPORT_NODE_STATUS >> 5:
 		case CanBusIDs.FC_REPORT_LINK_QUALITY >> 5:
+		case CanBusIDs.GPS_UART_TRANSMIT >> 5:
 		case CanBusIDs.FC_GPS_NAVSOL >> 5:
 		case CanBusIDs.FC_GPS_LATLON >> 5:
 		case CanBusIDs.FC_GPS_HEIGHT >> 5:

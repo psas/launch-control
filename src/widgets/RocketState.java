@@ -77,12 +77,6 @@ public class RocketState extends JPanel implements Observer
 		//add(detailDisplay);
 	}
 
-	public void update(NetMessage msg)
-	{
-		update(null, msg);
-	}
-
-
 	public void update(Observable o, Object arg)
 	{
 		if (!(arg instanceof CanMessage))

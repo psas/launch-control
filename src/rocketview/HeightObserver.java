@@ -18,18 +18,16 @@ class HeightObserver extends JLabel implements Observer
 
 	public void update(Observable o, Object arg)
 	{
-		if (arg instanceof CanMessage) {
-			CanMessage msg = (CanMessage) arg;
-			if (msg.getId11() == (CanBusIDs.FC_GPS_HEIGHT >> 5)) {
-				gpsHeight = new Float(msg.getData32(0) / (float)100.0);
-			} else {
-				return;
-			}
-		} else if (arg instanceof PressureDataMessage) {
-			PressureDataMessage pressureData = (PressureDataMessage) arg;
-			altitude = new Float(pressureData.altitude);
+		if (!(arg instanceof CanMessage))
+			return;
+
+		CanMessage msg = (CanMessage) arg;
+		if (msg.getId() == CanBusIDs.FC_GPS_HEIGHT) {
+			gpsHeight = new Float(msg.getData32(0) / (float)100.0);
+		} else {
+			return;
 		}
-			
+
 		StringBuffer buf = new StringBuffer();
 
 		if(gpsHeight != null)

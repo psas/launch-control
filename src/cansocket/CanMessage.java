@@ -2,9 +2,8 @@ package cansocket;
 
 import java.io.*;
 
-public class CanMessage extends NetMessage
+public class CanMessage
 {
-	public static final short fifo_tag = FMT_CAN;
     /* match the C structure */
     protected int timestamp;	// 25us timestamp counter
     protected short id;		// id,rtr bit,length-of-body packed int 16bits
@@ -12,7 +11,7 @@ public class CanMessage extends NetMessage
 
     /* the really interesting id */
 	public int getId11() { return (id >>> 5) & 0x7ff; }	// 11-bit id
-	public int getRtr() { return (id >>> 4) & 1; }	// RTR bit
+	public boolean getRtr() { return (id & 0x10) != 0; }	// RTR bit
 	public int getLen() { return id & 0xf; }   // number of valid bytes in body
 
     // unused id for a stop sentinel
@@ -20,7 +19,7 @@ public class CanMessage extends NetMessage
 
     /* size in bytes of can message components */
     public static final int MSG_TS = 4; 	// length of timestamp
-    public static final int MSG_ID = 2; 	// length of id
+    public static final int MSG_ID = 4; 	// length of id
     public static final int MSG_BODY = 8; 	// length of body
     // total size
     public static final int MSG_SIZE = MSG_TS + MSG_ID + MSG_BODY; 
@@ -35,11 +34,10 @@ public class CanMessage extends NetMessage
      */
 	public CanMessage(DataInputStream dis) throws IOException
 	{
+		this.id = (short) dis.readInt();
 		this.timestamp = dis.readInt();
-		this.id = dis.readShort();
 		this.body = new byte[8];
-		if (getLen() > 0)					// is there data?
-			dis.read(body);
+		dis.read(body);
 	}
 
     /** Construct a can message from given id, timestamp, body.
@@ -87,7 +85,7 @@ public class CanMessage extends NetMessage
 	
     public byte[] toByteArray()
     {
-	ByteArrayOutputStream bos = new ByteArrayOutputStream(HEADER_SIZE+MSG_SIZE);
+	ByteArrayOutputStream bos = new ByteArrayOutputStream(MSG_SIZE);
 	DataOutputStream dos = new DataOutputStream(bos);
 	putMessage(dos);
 	return bos.toByteArray();
@@ -98,9 +96,8 @@ public class CanMessage extends NetMessage
 
 	try
 	{
-	    NetMessage.putHeader(dos, MSG_SIZE, fifo_tag);
+	    dos.writeInt(id);
 	    dos.writeInt(timestamp);
-	    dos.writeShort(id);
 	    dos.write(body);
 	    for(int i = body.length; i < 8; ++i)
 		dos.writeByte(0);
@@ -158,10 +155,11 @@ public class CanMessage extends NetMessage
 	StringBuffer buf = new StringBuffer( "0x" );
 
 	buf.append( Integer.toHexString (getId11()) );
-	buf.append(" ").append( Integer.toString (getRtr()) );
+	buf.append(" ").append( getRtr() ? '1' : '0' );
 	buf.append(" ").append( Integer.toString (len) );
-	for (int i = 0; i < len; i++)
-	    buf.append( " " ).append(Integer.toHexString((body[i]>>4)&15)).append(Integer.toHexString(body[i]&15));
+	if(!getRtr())
+	    for (int i = 0; i < len; i++)
+		buf.append( " " ).append(Integer.toHexString((body[i]>>4)&15)).append(Integer.toHexString(body[i]&15));
 
 	return buf.toString();
     }

@@ -20,7 +20,7 @@ public class Rocketview extends JFrame
 	    = new Dimension( 1024, 750 );
 	// preferredSize = new Dimension(750, 550);
 	// preferredSize = new Dimension(1024, 768);
-	protected final Dispatch dispatch;
+	protected final CanListener dispatch;
 
 	public static void main(String[] args) throws Exception
 	{
@@ -31,11 +31,11 @@ public class Rocketview extends JFrame
 		if (args.length > 0)
 			port = Integer.parseInt(args[0]);
 
-		Rocketview f = new Rocketview( InetAddress.getLocalHost() + ":" + port);
+		Rocketview f = new Rocketview(InetAddress.getLocalHost().toString(), port);
 		f.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		f.setVisible(true);
 
-		f.dispatch.run(new LogCanSocket(new UDPCanSocket(port), "RocketView.log"));
+		f.dispatch.run();
 
 		System.out.println( "Rocketview exits main()" );
 		System.exit(0);
@@ -43,11 +43,11 @@ public class Rocketview extends JFrame
 
 	// construct a Rocketview
 	// set up all panels, layout managers, and titles
-	public Rocketview(String host) throws Exception
+	public Rocketview(String host, int port) throws Exception
 	{
-		super("Rocketview: " + host);
+		super("Rocketview: " + host + ": " + port);
 
-		dispatch = new Dispatch();
+		dispatch = new CanListener(new LogCanSocket(new UDPCanSocket(port), "RocketView.log"));
 
 		// format a start-time string
 		DateFormat df
@@ -63,9 +63,6 @@ public class Rocketview extends JFrame
 		JPanel leftCol = new JPanel();
 		leftCol.setLayout( new BoxLayout( leftCol, BoxLayout.Y_AXIS ));
 		rvPane.add( leftCol );
-
-		// right side for stripcharts
-		addObserver( rvPane, new IMUObserver());
 
 
 		// top panel for status boxes

@@ -86,7 +86,7 @@ public class UDPCanSocket implements CanSocket
 	sendPort = remport;
     }
 
-    public NetMessage read() throws IOException
+    public CanMessage read() throws IOException
     {
 		if (dis.available() <= 0)
 		{
@@ -99,7 +99,7 @@ public class UDPCanSocket implements CanSocket
 			dis = new DataInputStream(new ByteArrayInputStream( packet.getData(), 0, packet.getLength() ));
 		}
 		try {
-			return NetMessage.newNetMessage( dis );
+			return new CanMessage( dis );
 		} catch (IOException e) {
 			int i;
 			System.out.print("bad UDP packet: ");
@@ -110,7 +110,7 @@ public class UDPCanSocket implements CanSocket
 		}
     }
 
-    public void write(NetMessage msg) throws IOException
+    public void write(CanMessage msg) throws IOException
     {
 	if (sendAddress == null)
 	    //throw new PortUnreachableException( "not configured for writing messages" );

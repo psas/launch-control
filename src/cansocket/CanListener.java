@@ -1,33 +1,24 @@
-/* CanListener.java
- * started June 20, 2003.
- *
- * based on Dave's rocketview.Dispatch. Karl
- *
- */
-
 package cansocket;
 
 import java.io.*;
 import java.util.*;
 
-// this should be renamed NetListener, but I'm too lazy
-public class CanListener extends Observable implements Runnable
+public class CanListener extends Observable
 {
-    public void run() {
-        // This is a run time exception FWIW. TODO: make method abstract?
+    protected final CanSocket sock;
 
-        throw new UnsupportedOperationException("CanListener.run() needs to be overloaded");
+    public CanListener(CanSocket sock)
+    {
+	this.sock = sock;
     }
 
-    public void run(CanSocket sock) throws IOException
+    public void run() throws IOException
     {
-	// TODO: Insert logging?
-
-        NetMessage m;
+        CanMessage m;
         while ((m = sock.read()) != null)
-            {
-                setChanged();
-                notifyObservers(m);
-            }
+	{
+	    setChanged();
+	    notifyObservers(m);
+	}
     }
 }

@@ -31,7 +31,7 @@ public class RocketPanel extends JPanel //implements ActionListener
 		public void run()
 		{
 			try {
-				NetMessage m;
+				CanMessage m;
 				while ((m = sock.read()) != null)
 				{
 					statusLabel.update(m);
