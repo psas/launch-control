@@ -65,10 +65,15 @@ public class RocketState extends JPanel implements Observer
 
 	public RocketState()
 	{
-		stateLabel = new JLabel();
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+		stateLabel = new JLabel();
+		//stateLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		stateLabel.setAlignmentX(0.0f);
 		updateText(); // get label ready for display 
 		add(stateLabel);
+
+		add(new JSeparator());
 
 		detailDisplay = new StateGrid();
 		add(detailDisplay);
