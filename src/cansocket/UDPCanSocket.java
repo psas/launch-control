@@ -23,15 +23,17 @@ public class UDPCanSocket implements CanSocket
     /* constructor with port argument creates a datagram socket
      * on the given port
      */
+
     public UDPCanSocket( int localport ) throws IOException
     {
-	this( localport, null, 0);
+	this( localport, (InetAddress) null, 0);
     }
 
     /* constructor with address argument opens a sending socket
      * on the default send port and remembers the address for
      * send()
      */
+
     public UDPCanSocket( String host ) throws IOException
     {
 	this( InetAddress.getByName( host ), PORT_SEND );
@@ -54,6 +56,13 @@ public class UDPCanSocket implements CanSocket
     {
 	this( PORT_RECV, addr, port );
     }
+
+    public UDPCanSocket( int localport, String host, int port )
+    throws IOException
+    {
+	this( localport, InetAddress.getByName( host ), port );
+    }
+
 
     public UDPCanSocket( int localport, InetAddress remaddr, int remport ) throws IOException
     {

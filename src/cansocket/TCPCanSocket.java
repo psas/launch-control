@@ -45,6 +45,11 @@ public class TCPCanSocket implements CanSocket
 		this(new Socket(host, DEFAULT_PORT));
 		System.out.println( "open client socket" );
 	}
+
+    /*
+     * Constructor with host and port arguments opens a client socket on
+     * the default port.
+     */
 	
     public TCPCanSocket(String host, int port) throws IOException {
 	this(new Socket(host,port));
