@@ -34,6 +34,8 @@ public class CanAction implements SchedulableAction {
         // might prevent runtime errors later in the dispatch() method.
 
         if ("tcp".equalsIgnoreCase(aProtocol)) {
+	    // ignore int localport. It isn't used.
+
             sock = new TCPCanSocket(remAddr, remPort);
             protocol = aProtocol;
             cmdDict = aCmdDict;
