@@ -22,6 +22,7 @@ public class TowerSimulator
 		// Load settings and wait for connection
 		Properties conf = new Properties();
 		conf.load(new FileInputStream("main.conf"));
+		System.out.println("Listening in on port "+ conf.getProperty("towerPort"));
 		Socket s = new ServerSocket(
 			Integer.parseInt(conf.getProperty("towerPort")),
 			/*backlog*/ 0

@@ -29,20 +29,22 @@ public class UDPCanListener extends CanListener {
 	init();
     }
 
+    /*
     public UDPCanListener(int localport, String remaddr, int remport )
     throws IOException {
-	sock = new UDPCanSocket(localport, 
-				InetAddress.getByName(remaddr), remport);
+        sock = new UDPCanSocket(localport, 
+            InetAddress.getByName(remaddr), remport);
 	init();
     }
+    */
 
-
-    
+    /*
     public UDPCanListener(int localport, InetAddress remaddr, int remport )
     throws IOException {
 	sock = new UDPCanSocket(localport, remaddr, remport);
 	init();
     }
+    */
 
     /*
      * init() starts the listener thread which is contained in the

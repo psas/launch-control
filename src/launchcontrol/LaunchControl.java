@@ -30,8 +30,8 @@ public class LaunchControl extends JFrame
                 String towerHost = (String) conf.getProperty("towerHost");
                 int towerPort = Integer.
                     parseInt(conf.getProperty("towerPort"));
-		//                int localPort = Integer.
-		//  parseInt(conf.getProperty("localTowerPort"));
+		int localPort = Integer.
+		    parseInt(conf.getProperty("localTowerPort"));
                                                  
 
                 TowerAction tower = new TowerAction(
@@ -43,15 +43,14 @@ public class LaunchControl extends JFrame
                 Scheduler.addSchedulableAction("tower", tower);
 
 
-                CanListener towerListener = new TCPCanListener(towerHost,
-                                                           towerPort);
+                CanListener towerListener = new UDPCanListener(localPort);
 
                 
                 String rocketHost = (String) conf.getProperty("rocketHost");
                 int rocketPort = Integer.
                     parseInt(conf.getProperty("rocketPort"));
                 int localPort2 = Integer.
-                    parseInt(conf.getProperty("localTowerPort"));
+                    parseInt(conf.getProperty("localRocketPort"));
 
 
                 RocketAction rocket = new RocketAction(
@@ -61,8 +60,7 @@ public class LaunchControl extends JFrame
                 );
                 Scheduler.addSchedulableAction("rocket", rocket);
 
-                CanListener rocketListener = new UDPCanListener(localPort2, rocketHost,
-                                                            rocketPort);
+                CanListener rocketListener = new UDPCanListener(localPort2);
 
                 content.add(new StatusPanel(towerListener, rocketListener));
                 Container statusBar = new JPanel();

@@ -46,7 +46,7 @@ public class TCPCanListener extends CanListener {
     */
 
     // The TCPCanSocket methods that are supported.
-
+    /*
     public TCPCanListener(String host) throws IOException {
 	sock = new TCPCanSocket (host);
 	init();
@@ -56,7 +56,18 @@ public class TCPCanListener extends CanListener {
 	sock = new TCPCanSocket (host, port);
 	init();
     }
-    
+    */
+
+    public TCPCanListener(int port) throws IOException {
+	sock = new TCPCanSocket(port, 100);
+	init();
+    }
+
+
+    public TCPCanListener(int port, int backlog) throws IOException {
+	sock = new TCPCanSocket(port, backlog);
+	init();
+    }
 
     /*
      * init() starts the listener thread which is contained in the

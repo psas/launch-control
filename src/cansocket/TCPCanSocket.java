@@ -32,6 +32,11 @@ public class TCPCanSocket implements CanSocket
 		System.out.println( "constructor: open server socket" );
 	}
 
+    public TCPCanSocket(int port, int backlog) throws IOException{
+	this(new ServerSocket(port, backlog).accept());
+	System.out.println( "constructor: open server socket" );
+    }
+
 	/* constructor with host argument opens a client socket
 	 * on the default port
 	 */

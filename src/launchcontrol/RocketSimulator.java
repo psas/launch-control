@@ -26,6 +26,7 @@ public class RocketSimulator
 			Integer.parseInt(conf.getProperty("rocketPort")),
 			/*backlog*/ 0
 		).accept();
+		System.out.println("Listening in on port "+ s.getLocalPort());
 		in = s.getInputStream();
 		out = s.getOutputStream();
 
