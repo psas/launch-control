@@ -36,6 +36,8 @@ public class RocketState extends JLabel implements Observer
 
 	protected int state = -1;
 	protected int detail = -1;
+	protected int signal = 0;		// units: dbm
+	protected int noise = 0;
 
 	protected static final long delay = 1200; /* link timeout delay (millisecs) */
 	protected final java.util.Timer timer = new java.util.Timer(true /*daemon*/);
@@ -73,13 +75,16 @@ public class RocketState extends JLabel implements Observer
 
 	public void update(CanMessage msg)
 	{
-		switch(msg.getId11())
+		switch(msg.getId())
 		{
-			case CanBusIDs.FC_REPORT_STATE >> 5:
+			case CanBusIDs.FC_REPORT_STATE:
 				setState((int) msg.getData8(0) & 0xff);
 				break;
-			case CanBusIDs.FC_REPORT_STATE_DETAIL >> 5:
+			case CanBusIDs.FC_REPORT_STATE_DETAIL:
 				setDetail(msg.getData32(0));
+				break;
+			case CanBusIDs.FC_REPORT_LINK_QUALITY:
+				setQuality(msg.getData16(0), msg.getData16(1));
 				break;
 		}
 	}
@@ -98,16 +103,26 @@ public class RocketState extends JLabel implements Observer
 		updateText();
 	}
 
+	protected void setQuality(short signal, short noise)
+	{
+		this.signal = -signal;
+		this.noise = -noise;
+		updateText();
+	}
+
 	protected void updateText()
 	{
+		StringBuffer b = new StringBuffer("signal: ");
+		b.append(Integer.toString(signal)).append("dbm, noise: ");
+		b.append(Integer.toString(noise)).append("dbm, FC State: ");
 		if(state < 0)
 		{
-			setText("unknown");
+			b.append("unknown");
+			setText(b.toString());
 			setIcon(redled);
 			return;
 		}
-
-		StringBuffer b = new StringBuffer(df.format(new Date()));
+		b.append(df.format(new Date()));
 		if(state >= stateStrings.length)
 			b.append("unknown (").append(state).append(")");
 		else
