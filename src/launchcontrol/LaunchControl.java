@@ -43,9 +43,16 @@ public class LaunchControl extends JFrame
 		statusLabel.setBorder(BorderFactory.createLoweredBevelBorder());
 		statusBar.add(statusLabel, BorderLayout.CENTER);
 		content.add(statusBar);
+		
+		UDPCanSocket rocketSocket = new UDPCanSocket(Config.getString("rocket.host"), Config.getInt("rocket.port", UDPCanSocket.PORT_RECV));
 
+		// also pass the rocket socket to a thread for listening
+		content.add(new RocketPanel(rocketSocket));
+		
+		try {
 		Scheduler.addSchedulableAction("tower", new SocketAction(new TCPCanSocket(Config.getString("tower.host"), Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT)), "tower"));
-		Scheduler.addSchedulableAction("rocket", new SocketAction(new UDPCanSocket(Config.getString("rocket.host"), Config.getInt("rocket.port", UDPCanSocket.PORT_RECV)), "rocket"));
+		} catch ( IOException e ) {}
+		Scheduler.addSchedulableAction("rocket", new SocketAction(rocketSocket, "rocket"));
 
 		ended(); // reset the button and label
 		sched.addScheduleListener(this, 100);
