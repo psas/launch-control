@@ -29,12 +29,14 @@
  * Docs for the parallel port stuff
  * is at http://java.sun.com/products/javacomm/javadocs/packages.html
  */
+package manualuplink;
+
 import java.io.*;
 import java.util.*;
 import java.lang.String.*;
 import gnu.io.*;
 import java.lang.Thread.*;
-import SimpleWrite;
+//import SimpleWrite;
 
 class commPortUplink{
 /**
