@@ -84,12 +84,6 @@ public class Rocketview extends JFrame
 		addObserver( fcState, "FC State", new FcStateObserver() );
 		top.add( fcState );
 
-		// rocket state
-		JPanel rockState = new JPanel();
-		addObserver( rockState, "Rocket State",
-			new RocketStateObserver() );
-		top.add( rockState );
-
 
 		// message box for scrolled text
 		TextObserver messArea = new TextObserver();
