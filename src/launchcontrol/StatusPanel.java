@@ -9,7 +9,7 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 
-public class StatusPanel extends Box implements Observer {
+public class StatusPanel extends Box implements Observer, ActionListener {
     private static final String statusbits[] =
     { "ready", null, "strobe", "siren", null, null, "igniter", "arm", null, "power" };
 
