@@ -1,3 +1,5 @@
+package cansocket;
+
 import java.io.*;
 
 public interface CanSocket
