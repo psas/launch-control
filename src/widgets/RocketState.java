@@ -115,9 +115,9 @@ public class RocketState extends JLabel implements Observer
 
 	protected void updateText()
 	{
-		StringBuffer b = new StringBuffer("signal: ");
-		b.append(Integer.toString(signal)).append("dbm, noise: ");
-		b.append(Integer.toString(noise)).append("dbm, ");
+		StringBuffer b = new StringBuffer("s/n: ");
+		b.append(Integer.toString(signal)).append("/");
+		b.append(Integer.toString(noise)).append("dBm, ");
 		if(state < 0)
 		{
 			b.append("unknown FC state");
