@@ -11,7 +11,7 @@ import java.util.*;
 import javax.swing.*;
 
 public class LaunchControl extends JFrame
-	implements ScheduleListener, ActionListener, ItemListener
+	implements ScheduleListener, ActionListener
 {
 	// Class constants
 	protected final static String startMsg = "Start Countdown";
@@ -23,11 +23,7 @@ public class LaunchControl extends JFrame
 	protected final Dimension windowSize = new Dimension((int)(300 * 1.61803399), 300);
 	protected JButton countdownButton = new JButton();
 	protected java.util.Timer powerSequence = null; // power on or off fc
-	protected JCheckBox shorePowerState = new JCheckBox("Shore");
-	// possible TODO: shorePowerState checkbutton can have image icon
-	//  displaying a power plug if we're using shore power, 
-	//  or a battery if we're using rocket battery (quite like a laptop
-	//  power display). Actually we might just put that in RocketState widget.
+	
 	protected JLabel clock = new JLabel();
 	protected JLabel statusLabel = new JLabel();
 	protected String startSound = Config.getString("startSound");
@@ -38,6 +34,10 @@ public class LaunchControl extends JFrame
 
 
 
+	/** A task, which when run, will set the shore power to
+	 * a desired state. 
+	 * This can be used by any code that needs to schedule
+	 * the shore power to be set to a certain state at a given time */
 	protected class ShorePowerTask extends TimerTask {
 		private boolean power;
 		private CanMessage powerOn;
@@ -65,14 +65,9 @@ public class LaunchControl extends JFrame
 			} else {
 				try {
 					if (power) {
-						System.out.println("ShorePowerTask->powerOn");
-						//BROKEN/BUG: setSelected doesn't fire actionevent,
-						//but it does appear to fire itemchanged event.
-						//this causes power message to be sent twice
-						//shorePowerState.setSelected(true);
+						System.out.println("LC: ShorePowerTask->powerOn");
 					} else {
-						System.out.println("ShorePowerTask->powerOff");
-						//shorePowerState.setSelected(false);
+						System.out.println("LC: ShorePowerTask->powerOff");
 					}
 
 					towerSocket.write(powerMessage);
@@ -104,6 +99,7 @@ public class LaunchControl extends JFrame
 		JButton fcPowerOnButton = new JButton("FC On");
 		JButton powerDownButton = new JButton("Powerdown FC");
 		JButton fcPowerOffButton = new JButton("FC Off");
+	
 
 		Box layout_box;
 		Dimension x_spacer_dim = new Dimension(5,0);
@@ -131,8 +127,6 @@ public class LaunchControl extends JFrame
 		content.add(Box.createRigidArea(y_spacer_dim));
 
 
-
-				
 		// Sequence buttons
 		layout_box = new Box(BoxLayout.X_AXIS);
 		Container countdown_pane = new JPanel();
@@ -184,19 +178,6 @@ public class LaunchControl extends JFrame
 		fcPowerOffButton.setActionCommand("fc_off");
 		fcPowerOffButton.addActionListener(this);
 		
-		layout_box.add(fcpower_pane);
-		layout_box.add(Box.createHorizontalGlue());
-		layout_box.add(Box.createRigidArea(new Dimension(30, 0)));
-		layout_box.add(shorePowerState);
-		layout_box.add(Box.createRigidArea(new Dimension(30, 0)));
-		shorePowerState.addItemListener(this);
-
-		content.add(layout_box);
-		content.add(Box.createRigidArea(y_spacer_dim));
-
-
-
-
 		try {
 			towerSocket = new TCPCanSocket(Config.getString("tower.host"), 
 					Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT));
@@ -204,9 +185,19 @@ public class LaunchControl extends JFrame
 		} catch(ConnectException e) {
 			e.printStackTrace();
 		}
+	
+		ShorePower shorePowerState = new ShorePower(towerSocket, "Shore");
+		layout_box.add(fcpower_pane);
+		layout_box.add(Box.createHorizontalGlue());
+		layout_box.add(Box.createRigidArea(new Dimension(30, 0)));
+		layout_box.add(shorePowerState);
+		layout_box.add(Box.createRigidArea(new Dimension(30, 0)));
+
+		content.add(layout_box);
+		content.add(Box.createRigidArea(y_spacer_dim));
+
 
 		Scheduler.addSchedulableAction("rocket", new SocketAction(rocketSocket));
-
 		ended(); // reset the button and label
 		sched.addScheduleListener(this, 100);
 
@@ -220,28 +211,6 @@ public class LaunchControl extends JFrame
 	}
 
 
-	public void itemStateChanged(ItemEvent event)
-	{
-		Object source = event.getItemSelectable();
-		if (source == shorePowerState)
-		{
-			short id = CanBusIDs.LTR_SET_SPOWER;
-			int timestamp = 0;
-			byte body[] = new byte[8];
-			if (event.getStateChange() == ItemEvent.DESELECTED)
-				body[0] = 0;
-			else
-				body[0] = 1;
-			try {
-				CanMessage myMessage = new CanMessage(id, timestamp, body);
-				towerSocket.write(myMessage);
-				towerSocket.flush();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
 
 	public void actionPerformed(ActionEvent event)
 	{
