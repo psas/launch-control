@@ -105,7 +105,7 @@ void doit ()
 {
     do_one ("redled.png", 1, 0, 0);
     do_one ("greenled.png", 0, 1, 0);
-    do_one ("grayled.png", .7, .7, .7);
+    do_one ("grayled.png", .4, .4, .4);
 }
 
 if (dim(argv) > 0)
