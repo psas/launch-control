@@ -49,9 +49,7 @@ public class LaunchControl extends JFrame
 		// also pass the rocket socket to a thread for listening
 		content.add(new RocketPanel(rocketSocket));
 		
-		try {
 		Scheduler.addSchedulableAction("tower", new SocketAction(new TCPCanSocket(Config.getString("tower.host"), Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT)), "tower"));
-		} catch ( IOException e ) {}
 		Scheduler.addSchedulableAction("rocket", new SocketAction(rocketSocket, "rocket"));
 
 		ended(); // reset the button and label
