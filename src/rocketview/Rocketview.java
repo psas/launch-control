@@ -18,8 +18,6 @@ public class Rocketview extends JFrame
 {
 	protected static final Dimension preferredSize
 	    = new Dimension( 1024, 750 );
-	// preferredSize = new Dimension(750, 550);
-	// preferredSize = new Dimension(1024, 768);
 	protected final CanListener dispatch;
 
 	public static void main(String[] args) throws Exception
@@ -27,6 +25,7 @@ public class Rocketview extends JFrame
 		System.out.println( "Rocketview UDP" );
 		System.out.flush();
 
+		//int port = 4446;
 		int port = UDPCanSocket.PORT_RECV;
 		if (args.length > 0)
 			port = Integer.parseInt(args[0]);
@@ -66,7 +65,8 @@ public class Rocketview extends JFrame
 
 
 		// top panel for status boxes
-		JPanel top = new JPanel(new GridLayout(2,1));
+		JPanel top = new JPanel();
+		top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));
 		leftCol.add( top );
 
 
@@ -83,21 +83,26 @@ public class Rocketview extends JFrame
 		top.add( fcState );
 
 
+		// bottom panel for state info, messages, and later charts
+		JPanel bottom = new JPanel();
+		bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
+		leftCol.add(bottom);
 
-		// message box for scrolled text
+		
+		
+		// message box for scrolled text, later add to split pane
 		TextObserver messArea = new TextObserver();
 		dispatch.addObserver( messArea );
 
 		JScrollPane messScroll = new JScrollPane( messArea );
 		messScroll.setBorder( new TitledBorder( "CanId  len  data" ));
-		leftCol.add( messScroll );
 
 
 		// subSys panel holds a labelled display for each subsystem
 		//   vertical box layout
 		JPanel subSys = new JPanel();
 		subSys.setLayout(new BoxLayout(subSys, BoxLayout.Y_AXIS ));
-		leftCol.add( subSys );
+		
 
 		// inertial nav: not implemented
 		/*
@@ -126,7 +131,36 @@ public class Rocketview extends JFrame
 		// addObserver( aps, "APS", new APSObserver() );
 		subSys.add( aps );
 
+		
+		//Split pane which holds subsystems info, message area, 
+		//and (XXX:later, using nested splitpanes) stripcharts.
+		JSplitPane splitPane = new JSplitPane(
+				JSplitPane.HORIZONTAL_SPLIT,
+				subSys, messScroll);
+		splitPane.setDividerLocation(.25);
+		splitPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+		splitPane.setBackground(Color.blue);
+		bottom.add(splitPane);
+		bottom.add(Box.createGlue());
+
+
+		//look at min, max and preferred size for components.
+		/*
+		outputSizes(this, "RocketView");
+		outputSizes(top, "top container");
+		outputSizes(bottom, "bottom jsplitpane");
+		outputSizes(subSys, "subsystems jpanel");
+		outputSizes(messScroll, "message area scrollpanel");
+		*/
+
 		pack();
+	}
+
+	public void outputSizes(Component c, String name) {
+		System.out.println(name + ":");
+		System.out.println("\tMAX: " + c.getMaximumSize());
+		System.out.println("\tMIN: " + c.getMinimumSize());
+		System.out.println("\tPREF: " + c.getPreferredSize());
 	}
 
 	public Dimension getPreferredSize()
@@ -158,9 +192,9 @@ public class Rocketview extends JFrame
 			// widget area, not just the space used (as was the case with jlabel)
 			jc.setBorder(new TitledBorder(title));
 			// try setting preferred size to as small as possible. 
-			int containerWidth = (int)jc.getPreferredSize().getWidth();
-			int compHeight = (int)o.getPreferredSize().getHeight();
-			jc.setPreferredSize( new Dimension(containerWidth, compHeight) );
+			//int containerWidth = (int)jc.getPreferredSize().getWidth();
+			//int compHeight = (int)o.getPreferredSize().getHeight();
+			//jc.setPreferredSize( new Dimension(containerWidth, compHeight) );
 		} else {
 			o.setBorder(new TitledBorder(title));
 		}
