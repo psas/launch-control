@@ -18,11 +18,13 @@ public class LaunchControl extends JFrame
 	protected final static String stoppedMsg = "Countdown stopped";
 	protected final DecimalFormat fmt = new DecimalFormat("T+0.0;T-0.0");
 
-	protected JButton button = new JButton();
+	protected JButton countdownButton = new JButton();
+	protected JCheckBox shorePowerState = new JCheckBox("Shore");
 	protected JLabel clock = new JLabel();
 	protected JLabel statusLabel = new JLabel();
 	protected String startSound = Config.getString("startSound");
 	protected String abortSound = Config.getString("abortSound");
+	protected TCPCanSocket towerSocket;
 
 	protected final Scheduler sched = new Scheduler();
 
@@ -34,7 +36,8 @@ public class LaunchControl extends JFrame
 
 		JPanel time = new JPanel();
 		time.setLayout(new BorderLayout());
-		time.add(button, BorderLayout.WEST);
+		time.add(countdownButton, BorderLayout.WEST);
+		time.add(shorePowerState, BorderLayout.EAST);
 		time.add(clock, BorderLayout.CENTER);
 		content.add(time);
 
@@ -43,14 +46,15 @@ public class LaunchControl extends JFrame
 		statusLabel.setBorder(BorderFactory.createLoweredBevelBorder());
 		statusBar.add(statusLabel, BorderLayout.CENTER);
 		content.add(statusBar);
-		
+
 		UDPCanSocket rocketSocket = new UDPCanSocket(Config.getString("rocket.host"), Config.getInt("rocket.port", UDPCanSocket.PORT_SEND));
 
 		// also pass the rocket socket to a thread for listening
-		content.add(new RocketPanel(rocketSocket));
+		content.add(new RocketPanel(rocketSocket, this));
 		
 		try {
-			Scheduler.addSchedulableAction("tower", new SocketAction(new TCPCanSocket(Config.getString("tower.host"), Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT)), "tower"));
+			towerSocket = new TCPCanSocket(Config.getString("tower.host"), Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT));
+			Scheduler.addSchedulableAction("tower", new SocketAction(towerSocket, "tower"));
 		} catch(ConnectException e) {
 			e.printStackTrace();
 		}
@@ -58,7 +62,9 @@ public class LaunchControl extends JFrame
 
 		ended(); // reset the button and label
 		sched.addScheduleListener(this, 100);
-		button.addActionListener(this);
+		countdownButton.addActionListener(this);
+		shorePowerState.setActionCommand("shore");
+		shorePowerState.addActionListener(this);
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -77,7 +83,19 @@ public class LaunchControl extends JFrame
 					sched.startCountdown();
 			}
 			else if(event.getActionCommand().equals("abort"))
+			{
 				sched.abortCountdown();
+			}
+			else if(event.getActionCommand().equals("shore"))
+			{
+				short id = CanBusIDs.LTR_SET_SPOWER;
+				int timestamp = 0;
+				byte body[] = new byte[8];
+				body[0] = 1;					//TODO: check state
+				CanMessage myMessage = new CanMessage(id, timestamp, body);
+				towerSocket.write(myMessage);
+				towerSocket.flush();
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -88,8 +106,8 @@ public class LaunchControl extends JFrame
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run()
 			{
-				button.setText(stopMsg);
-				button.setActionCommand("abort");
+				countdownButton.setText(stopMsg);
+				countdownButton.setActionCommand("abort");
 			}
 		});
 		setStatus("Countdown started");
@@ -105,7 +123,7 @@ public class LaunchControl extends JFrame
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run()
 			{
-				button.setEnabled(false);
+				countdownButton.setEnabled(false);
 			}
 		});
 	}
@@ -126,9 +144,9 @@ public class LaunchControl extends JFrame
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run()
 			{
-				button.setText(startMsg);
-				button.setActionCommand("start");
-				button.setEnabled(true);
+				countdownButton.setText(startMsg);
+				countdownButton.setActionCommand("start");
+				countdownButton.setEnabled(true);
 				clock.setText("");
 			}
 		});
