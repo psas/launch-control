@@ -16,7 +16,10 @@ public class LogCanSocket implements CanSocket
 		log = new FileWriter(logfile, /* append */ true);
 		/* timestamp log messages as e.g. "Fri, 15 Oct 2004 13:59:59:025 PDT": */
 		myformat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss:SSS z ");
-
+		// write a header with the complete date
+		log.write( myformat.format(new Date()) + " *** NEW SESSION ***\n");
+		// use a more compact date for telemetry
+		myformat = new SimpleDateFormat("HH:mm:ss:SSS ");
 	}
 
 	public NetMessage read() throws IOException
@@ -26,28 +29,15 @@ public class LogCanSocket implements CanSocket
 
 	public void write(NetMessage msg) throws IOException
 	{
+		log.write( "-> ");		// distinguish commands from telemetry
 		base.write(log(msg));
 	}
 
 	protected NetMessage log(NetMessage msg) throws IOException
 	{
-		StringBuffer buf = new StringBuffer();
-/*
-		if (msg instanceof CanMessage)
-		{
-			CanMessage cm = (CanMessage) msg;
-			//!!! why not use cm.toString?
-			byte body[] = cm.getBody();
-			buf.append(cm.getId())
-				.append(' ').append(cm.getTimestamp())
-				.append(' ').append(body.length);
-			for(int i = 0; i < body.length; ++i)
-				buf.append(' ').append(body[i]);
-		}
-		buf.append('\n');
-*/
-		log.write( myformat.format(new Date()) + msg.toString() );
-		log.write("\n");
+		log.write( myformat.format(new Date()) );
+		log.write( msg.toString() );
+		log.write( "\n" );
 		log.flush();
 
 		return msg;

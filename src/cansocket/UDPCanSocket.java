@@ -3,6 +3,10 @@ package cansocket;
 import java.io.*;
 import java.net.*;
 
+/* Goal: read a full UDP packet (~1500 bytes) which may contain
+   multiple NetMessages  (ie. perform buffering)
+*/
+
 public class UDPCanSocket implements CanSocket
 {
     public static final int PORT_SEND = 4439;
@@ -12,6 +16,12 @@ public class UDPCanSocket implements CanSocket
     private final InetAddress sendAddress;	// stored send address
     private final int sendPort;		// stored send port
 
+	// read buffering
+	private static final int MAX_PACKET_SIZE = 1500;
+	private byte[] buf;
+	private DatagramPacket packet;
+	private DataInputStream dis;
+	
     /* constructor with no arguments creates a datagram socket
      * on the default receive port
      */
@@ -66,6 +76,11 @@ public class UDPCanSocket implements CanSocket
 
     public UDPCanSocket( int localport, InetAddress remaddr, int remport ) throws IOException
     {
+		buf = new byte[MAX_PACKET_SIZE];
+		packet = new DatagramPacket(buf, MAX_PACKET_SIZE);
+		dis = new DataInputStream(new ByteArrayInputStream( buf ));
+		dis.skip(MAX_PACKET_SIZE);		// start empty
+
 	sock = new DatagramSocket( localport );
 	sendAddress = remaddr;
 	sendPort = remport;
@@ -73,18 +88,26 @@ public class UDPCanSocket implements CanSocket
 
     public NetMessage read() throws IOException
     {
-	// 
-	// System.out.println( "Usock: recv ");
+		if (dis.available() <= 0)
+		{
+			// System.out.println( "Usock: recv ");
+			// 
+			// get new data
+			sock.receive( packet );
 
-	/* create a packet to receive Can message */
-	byte buf[] = new byte [NetMessage.MAX_MSG_SIZE];
-	DatagramPacket packet = new DatagramPacket( buf, buf.length );
-
-	/* receive a packet */
-	sock.receive( packet );
-
-	/* return a new Can message constructed from receive buffer */
-	return( NetMessage.newNetMessage( buf ) );
+			// reset the stream to the actual received data length
+			dis = new DataInputStream(new ByteArrayInputStream( packet.getData(), 0, packet.getLength() ));
+		}
+		try {
+			return NetMessage.newNetMessage( dis );
+		} catch (IOException e) {
+			int i;
+			System.out.print("bad UDP packet: ");
+			for (i=0; i<packet.getLength(); i++)
+				System.out.print(" " + Integer.toHexString(buf[i]));
+			System.out.println(".");
+			throw e;
+		}
     }
 
     public void write(NetMessage msg) throws IOException
