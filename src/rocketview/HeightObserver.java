@@ -9,30 +9,33 @@ import javax.swing.*;
 class HeightObserver extends JLabel implements Observer
 {
 	protected Float gpsHeight;
-	protected Float imuHeight;
+	protected Float altitude;
+
+	public HeightObserver() 
+	{
+		setText("altitude: unknown");
+	}
 
 	public void update(Observable o, Object arg)
 	{
-		if (!(arg instanceof CanMessage))
-			return;
-			
-		CanMessage msg = (CanMessage) arg;
-		switch(msg.getId11())
-		{
-		case CanBusIDs.FC_GPS_HEIGHT >> 5:
-			gpsHeight = new Float(msg.getData32(0) / (float)100.0);
-			break;
-		case CanBusIDs.FC_IMU_HEIGHT >> 5:
-			imuHeight = new Float(msg.getData32(0) / (float)100.0);
-			break;
-		default:
-			return;
+		if (arg instanceof CanMessage) {
+			CanMessage msg = (CanMessage) arg;
+			if (msg.getId11() == (CanBusIDs.FC_GPS_HEIGHT >> 5)) {
+				gpsHeight = new Float(msg.getData32(0) / (float)100.0);
+			} else {
+				return;
+			}
+		} else if (arg instanceof PressureDataMessage) {
+			PressureDataMessage pressureData = (PressureDataMessage) arg;
+			altitude = new Float(pressureData.altitude);
 		}
+			
 		StringBuffer buf = new StringBuffer();
+
 		if(gpsHeight != null)
-			buf.append("gps: ").append(gpsHeight).append("m  ");
-		if(imuHeight != null)
-			buf.append("press: ").append(imuHeight).append("m");
+			buf.append("gps altitude: ").append(gpsHeight).append("m  ");
+		if(altitude != null)
+			buf.append("pressure altitude: ").append(altitude).append("m");
 		setText(buf.toString());
 	}
 }

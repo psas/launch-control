@@ -61,20 +61,6 @@ class IMUObserver extends JPanel implements Observer
 	protected final int HIST_LEN = 1;
 	protected int msgCount[] = { 0, 0, };
 
-	// constants to convert raw values to G's
-	// subscript 0: XYZ; subscript 1: pitch/yaw/roll
-	protected final double Gzero[][] = {
-	    { 2400.45, 2462.06, 1918.72 },
-	    { 0.0, 0.0, 0.0 }
-	};
-
-	protected final double Ggain[][] = {
-	    { 392.8, 386.9, 77.0 },
-	    { 0.0, 0.0, 0.0 }
-	};
-
-	protected final double Qzero[] = { 1907.53, 0.0 };
-	protected final double Qgain[] = { 75.4, 0.0 };
 
 	public IMUObserver()
 	{
@@ -94,59 +80,32 @@ class IMUObserver extends JPanel implements Observer
 
 	public void update(Observable o, Object arg)
 	{
-		if (!(arg instanceof CanMessage))
-			return;
-			
-		CanMessage msg = (CanMessage) arg;
-		switch(msg.getId11())
-		{
-		case CanBusIDs.IMU_ACCEL_DATA >> 5:
-			addGValues(IMU_ACCEL, msg);
-			break;
-		case CanBusIDs.IMU_GYRO_DATA >> 5:
-			addRawValues(IMU_GYRO, msg);
-			break;
-		default:	// message not for me; ignore
+
+		if (arg instanceof ImuAccelMessage) {
+			addAccelValues(IMU_ACCEL, (ImuAccelMessage) arg);
+		} else if (arg instanceof ImuGyroMessage) {
+			addGyroValues(IMU_GYRO, (ImuGyroMessage) arg);
 		}
 	}
 
 	// use conversion constants to convert X/Y/Z to G's
 	// h = horizontal axis; v = vertical axis
-	protected void addGValues(int type, CanMessage msg)
+	protected void addAccelValues(int type, ImuAccelMessage msg)
 	{
 		Integer h = new Integer(msgCount[type]++);
-		for(int i = 0; i < data[type].length; ++i)
-		{
-		    short raw = (short) (msg.getData16(i));
-		    short vShort = (short)
-			(((double) raw - Gzero[type][i]) / Ggain[type][i]);
-		    Short v = new Short( vShort );
-
-		    // System.out.println( "type:  " + type
-			// + "  index: " + i
-			// + "    raw: " + raw
-			// + "   zero: " + Gzero[type][i]
-			// + "   gain: " + Ggain[type][i]
-			// + "   h: " + h
-			// + "   v: " + v );
-		    data[type][i].addXYValue( h, v );
-		}
+		data[type][0].addXYValue( h, new Double(msg.Ax) );
+		data[type][1].addXYValue( h, new Double(msg.Ay) );
+		data[type][2].addXYValue( h, new Double(msg.Az) );
 	}
 
 	// until we get conversion constants, Yaw/Pitch/Roll
 	// just display raw values
-	protected void addRawValues(int type, CanMessage msg)
+	protected void addGyroValues(int type, ImuGyroMessage msg)
 	{
-		Integer x = new Integer(msgCount[type]++);
-		for(int i = 0; i < data[type].length; ++i)
-		{
-		    Short y = new Short(msg.getData16(i));
-		    // System.out.println( "type:  " + type
-			// + "  index: " + i
-			// + "   x: " + x
-			// + "   y: " + y );
-		    data[type][i].addXYValue(x, y);
-		}
+		Integer h = new Integer(msgCount[type]++);
+		data[type][0].addXYValue( h, new Double(msg.Pdot) );
+		data[type][1].addXYValue( h, new Double(msg.Ydot) );
+		data[type][2].addXYValue( h, new Double(msg.Rdot) );
 	}
 
 	// Here we create each chart and set all settings

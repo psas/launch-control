@@ -7,6 +7,11 @@ import javax.swing.*;
 
 class GPSPositionObserver extends JLabel implements Observer
 {
+	public GPSPositionObserver()
+	{
+		setText("gps: unknown");
+	}
+
 	public void update(Observable o, Object arg)
 	{
 		if (!(arg instanceof CanMessage))

@@ -71,7 +71,7 @@ public class Rocketview extends JFrame
 
 
 		// top panel for status boxes
-		JPanel top = new JPanel();
+		JPanel top = new JPanel(new GridLayout(2,1));
 		leftCol.add( top );
 
 		// time title is TC date/time at startup
@@ -102,11 +102,22 @@ public class Rocketview extends JFrame
 		leftCol.add( subSys );
 
 		// inertial nav: not implemented
+		/*
 		JPanel ins = new JPanel();
 		ins.setBorder(BorderFactory.createLineBorder( Color.gray ));
 		ins.setLayout(new FlowLayout( FlowLayout.LEFT ));
 		ins.add( new JLabel( "INS: -- no information --" ));
 		subSys.add( ins );
+		*/
+		
+		
+		// height data from pressure and/or gps
+		JPanel height = new JPanel();
+		height.setBorder(BorderFactory.createLineBorder( Color.gray ));
+		height.setLayout(new FlowLayout( FlowLayout.LEFT ));
+		addObserver( height, new HeightObserver());
+		//addObserver( height, "Altitude Info", new HeightObserver());
+		subSys.add( height );
 
 		// 2 GPS observers go in 1 panel
 		JPanel gps = new JPanel();
