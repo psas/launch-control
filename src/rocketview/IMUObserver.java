@@ -31,20 +31,24 @@ class IMUObserver extends JPanel implements Observer
 		},
 	};
 	protected final int freq[] = { 250, 100, };
-	protected final int HIST_LEN = 30;
+	protected final int HIST_LEN = 10;
 	protected int msgCount[] = { 0, 0, };
 
 	public IMUObserver()
 	{
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		data = new StreamXYDataset[title.length][];
 		for(int i = 0; i < data.length; ++i)
 		{
+			JPanel c = new JPanel();
+			add(c);
+			c.setLayout(new BoxLayout(c, BoxLayout.Y_AXIS));
 			data[i] = new StreamXYDataset[title[i].length];
 			for(int j = 0; j < data[i].length; ++j)
 			{
-				data[i][j] = new StreamXYDataset(freq[i] * HIST_LEN);
-				add(createChart(title[i][j], data[i][j]));
+				int len = freq[i] * HIST_LEN;
+				data[i][j] = new StreamXYDataset(len);
+				c.add(createChart(title[i][j], data[i][j], len));
 			}
 		}
 	}
@@ -73,7 +77,7 @@ class IMUObserver extends JPanel implements Observer
 		}
 	}
 
-	protected JComponent createChart(String title, StreamXYDataset data)
+	protected JComponent createChart(String title, StreamXYDataset data, int len)
 	{
 		NumberAxis xAxis;
 		NumberAxis yAxis;
@@ -84,6 +88,7 @@ class IMUObserver extends JPanel implements Observer
 
 		xAxis = new HorizontalNumberAxis(null);
 		xAxis.setAutoRangeIncludesZero(false);
+		xAxis.setFixedAutoRange(len);
 		xAxis.setTickLabelsVisible(false);
 
 		yAxis = new VerticalNumberAxis(null);

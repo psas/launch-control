@@ -26,8 +26,12 @@ class GPSObserver extends JLabel implements Observer
 	protected StringBuffer appendBinary(StringBuffer buf, byte v)
 	{
 		String s = Integer.toBinaryString(v);
-		for(int i = 8 - s.length(); i > 0; --i)
-			buf.append('0');
+		int i = s.length();
+		if(i > 8)
+			s = s.substring(i - 8);
+		else
+			for(i = 8 - i; i > 0; --i)
+				buf.append('0');
 		buf.append(s);
 		return buf;
 	}
