@@ -18,12 +18,13 @@ class GPSObserver extends JLabel implements Observer
 			return;
 
 		StringBuffer buf = new StringBuffer( "GPS: " );
-		if(msg.getData16(0) != 0 || msg.getData16(1) != 0)
+		// testing bits 0 2 3 4 16 17 19
+		// indicating: Altitude used, Not enough sattillites, Exceeded max EHorPE
+		//  Exceeded EVelPE, Propogated SOL, Altitude Used, PM
+		if((msg.getData32(0) & 0xb001d) != 0)
 			buf.append("not ");
 		buf.append("locked: 0x");
-		buf.append(Integer.toHexString(msg.getData16(0)));
-		buf.append(" 0x");
-		buf.append(Integer.toHexString(msg.getData16(1)));
+		buf.append(Integer.toHexString(msg.getData32(0)));
 		setText(buf.toString());
 	}
 }

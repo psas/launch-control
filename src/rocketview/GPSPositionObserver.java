@@ -2,11 +2,14 @@ package rocketview;
 
 import cansocket.*;
 
+import java.lang.*;
 import java.util.*;
+import java.text.*;
 import javax.swing.*;
 
 class GPSPositionObserver extends JLabel implements Observer
 {
+	protected static DecimalFormat minFmt = new DecimalFormat("00.000");
 	public GPSPositionObserver()
 	{
 		setText("gps: unknown");
@@ -32,6 +35,9 @@ class GPSPositionObserver extends JLabel implements Observer
 	{
 		char sgn = mag < 0 ? neg : pos;
 		float rad = Math.abs(mag) / (float)100000000.0;
-		b.append(Math.toDegrees(rad)).append(sgn);
+		double deg = Math.toDegrees(rad);
+		double degOnly = Math.floor(deg);
+		double minutes = (deg - degOnly) * 60.0;
+		b.append(Math.round(degOnly)).append("¡ ").append(minFmt.format(minutes)).append(sgn);
 	}
 }
