@@ -31,13 +31,11 @@ class TextObserver extends JTextArea implements Observer
 	switch(msg.getId11())
 	{
 		case CanBusIDs.FC_REPORT_STATE >> 5:
+		case CanBusIDs.FC_REPORT_STATE_DETAIL >> 5:
 		case CanBusIDs.IMU_ACCEL_DATA >> 5:
 		case CanBusIDs.IMU_GYRO_DATA >> 5:
 		case CanBusIDs.PRESS_REPORT_DATA >> 5:
 		case CanBusIDs.TEMP_REPORT_DATA >> 5:
-		case CanBusIDs.PWR_REPORT_VOLTAGE >> 5:
-		case CanBusIDs.PWR_REPORT_CURRENT >> 5:
-		case CanBusIDs.PWR_REPORT_CHARGE >> 5:
 			return;
 	}
 
