@@ -11,6 +11,8 @@
   <property name="src_tests" location="src"/>
 
   <property name="classpath" location="${build}"/>
+  <property name="freechartpath" location="ext/jcommon.jar:ext/jfreechart.jar"/>
+  <property name="rxtxpath" location="ext/RXTXcomm.jar"/>
   <property name="extlist" value=""/>
 
   <target name="init">
@@ -31,11 +33,11 @@
 
   <!-- programs -->
   <target name="rocketview" depends="stripchart,cansocket" description="compile rocketview">
-    <javac srcdir="${src}" includes="rocketview/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
+    <javac srcdir="${src}" includes="rocketview/*.java" destdir="${build}" classpath="${classpath}:${freechartpath}" debug="${debug}" deprecation="on"/>
   </target>
 
   <target name="run-rocketview" depends="rocketview" description="run rocketview">
-    <java classname="rocketview.Rocketview" classpath="${classpath}:ext/jcommon.jar:ext/jfreechart.jar" fork="yes"/>
+    <java classname="rocketview.Rocketview" classpath="${classpath}:${freechartpath}" fork="yes"/>
   </target>
 
   <target name="launchcontrol" depends="cansocket" description="compile launchcontrol">
@@ -47,7 +49,7 @@
   </target>
 
   <target name="manualuplink" depends="init" description="compile manualuplink">
-    <javac srcdir="${src}" includes="manualuplink/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
+    <javac srcdir="${src}" includes="manualuplink/*.java" destdir="${build}" classpath="${classpath}:${rxtxpath}" debug="${debug}" deprecation="on"/>
   </target>
 
   <!-- build everything -->
