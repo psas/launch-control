@@ -37,7 +37,7 @@
   </target>
 
   <target name="rocketview" depends="compile" description="run rocketview">
-    <java classname="rocketview.Rocketview" classpath="${classpath}" fork="yes"/>
+    <java classname="rocketview.Rocketview" classpath="${classpath}:ext/jcommon.jar:ext/jfreechart.jar" fork="yes"/>
   </target>
 
   <target name="jar" depends="compile" description="build a jar archive">
