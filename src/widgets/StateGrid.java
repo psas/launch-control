@@ -42,7 +42,20 @@ public class StateGrid extends JPanel
 		"IMU_TEMPERATURE",
 
 		"GPS_UART_TRANSMIT",
+
+		/* enum sequencer_test */
+		"SANE_ANTENNAS",
+		"SANE_IMU_ACCEL",
+		"QUIET_PRESSURE_BASE",
+		"GOT_GPS",
+		"GPS_LOCKED",
+		"SANE_HEIGHT",
+		"SANE_GPS",
+		"TOUCHDOWN_GPS",
+		"TOUCHDOWN_PRESSURE",
+		"ZERO_IMU_GYRO"
 	};
+
 	protected ImageIcon greenled = new ImageIcon(ClassLoader.getSystemResource("widgets/greenled.png"));
 	protected ImageIcon redled = new ImageIcon(ClassLoader.getSystemResource("widgets/redled.png"));
 
