@@ -89,7 +89,8 @@ public class UDPCanSocket implements CanSocket
     public void write(CanMessage msg) throws IOException
     {
 	if (sendAddress == null)
-	    throw new PortUnreachableException( "not configured for writing messages" );
+	    //throw new PortUnreachableException( "not configured for writing messages" );
+	    throw new SocketException( "not configured for writing messages" );
 
 	// System.out.println( "Usock: send " + msg.getId());
 
