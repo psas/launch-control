@@ -37,6 +37,15 @@ public class UDPCanSocket implements CanSocket
 	this( InetAddress.getByName( host ), PORT_SEND );
     }
 
+    /*
+     * Construct with address and port. Address and port will be remembered.
+     */
+
+    public UDPCanSocket( String host, int port ) throws IOException
+    {
+	this( InetAddress.getByName( host ), port );
+    }
+
     /* constructor with address & port opens a sending socket
      * on the default send port and remembers the address/port
      * for later send()

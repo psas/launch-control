@@ -76,6 +76,13 @@ public class RocketAction implements SchedulableAction
 	        sock = new TCPCanSocket(hostname);
        	        //sock = new UDPCanSocket(hostname);
 	}
+
+
+	public RocketAction(String hostname, int port) throws IOException
+	{
+	        sock = new TCPCanSocket(hostname,port);
+       	        //sock = new UDPCanSocket(hostname);
+	}
 	
 
 	/** dispatch method

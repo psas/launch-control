@@ -40,6 +40,11 @@ public class TCPCanSocket implements CanSocket
 		System.out.println( "open client socket" );
 	}
 	
+    public TCPCanSocket(String host, int port) throws IOException {
+	this(new Socket(host,port));
+	System.out.println("Open client socket: " + host + Integer.toString(port));
+    }
+
 	public CanMessage read() throws IOException
 	{
 		byte buf[] = new byte[CanMessage.MSG_SIZE];

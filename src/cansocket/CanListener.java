@@ -10,7 +10,7 @@ package cansocket;
 import java.io.*;
 import java.util.*;
 
-class CanListener extends Observable implements Runnable
+public class CanListener extends Observable implements Runnable
 {
     public void run() {
         // This is a run time exception FWIW. TODO: make method abstract?

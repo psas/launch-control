@@ -51,6 +51,11 @@ public class TCPCanListener extends CanListener {
 	sock = new TCPCanSocket (host);
 	init();
     }
+
+    public TCPCanListener(String host, int port) throws IOException {
+	sock = new TCPCanSocket (host, port);
+	init();
+    }
     
 
     /*
