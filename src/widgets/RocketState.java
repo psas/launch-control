@@ -31,8 +31,8 @@ public class RocketState extends JLabel implements Observer
 
 	protected static final DateFormat df = new SimpleDateFormat("HH:mm:ss.SSS: ");
 
-	protected ImageIcon greenled = new ImageIcon("src/widgets/greenled.png");
-	protected ImageIcon redled = new ImageIcon("src/widgets/redled.png");
+	protected ImageIcon greenled = new ImageIcon(ClassLoader.getSystemResource("widgets/greenled.png"));
+	protected ImageIcon redled = new ImageIcon(ClassLoader.getSystemResource("widgets/redled.png"));
 
 	protected int state = -1;
 	protected int detail = -1;

@@ -13,13 +13,33 @@
   <property name="classpath" location="${build}"/>
   <property name="freechartpath" location="ext/jcommon.jar:ext/jfreechart.jar"/>
   <property name="rxtxpath" location="ext/RXTXcomm.jar"/>
-  <property name="extlist" value=""/>
 
   <target name="init">
     <!-- Create the time stamp -->
     <tstamp/>
 
     <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
+
+    <unjar src="ext/jcommon.jar" dest="${build}">
+      <patternset>
+        <exclude name="META-INF/**"/>
+      </patternset>
+    </unjar>
+    <unjar src="ext/jfreechart.jar" dest="${build}">
+      <patternset>
+        <exclude name="META-INF/**"/>
+      </patternset>
+    </unjar>
+
+    <copy todir="${build}">
+      <fileset dir="${src}">
+        <include name="widgets/*.png"/>
+      </fileset>
+      <fileset dir="${src}/launchcontrol">
+        <include name="sounds/*"/>
+      </fileset>
+    </copy>
   </target>
 
   <!-- libraries -->
@@ -37,19 +57,11 @@
 
   <!-- programs -->
   <target name="rocketview" depends="stripchart,cansocket,widgets" description="compile rocketview">
-    <javac srcdir="${src}" includes="rocketview/*.java" destdir="${build}" classpath="${classpath}:${freechartpath}" debug="${debug}" deprecation="on"/>
-  </target>
-
-  <target name="run-rocketview" depends="rocketview" description="run rocketview">
-    <java classname="rocketview.Rocketview" classpath="${classpath}:${freechartpath}" fork="yes"/>
+    <javac srcdir="${src}" includes="rocketview/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
 
   <target name="launchcontrol" depends="cansocket,widgets" description="compile launchcontrol">
     <javac srcdir="${src}" includes="launchcontrol/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
-  </target>
-
-  <target name="run-launchcontrol" depends="launchcontrol" description="run launchcontrol">
-    <java classname="launchcontrol.LaunchControl" classpath="${classpath}" fork="yes"/>
   </target>
 
   <target name="manualuplink" depends="init" description="compile manualuplink">
@@ -61,27 +73,50 @@
     <javac srcdir="${src}" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
 
-  <target name="jar" depends="all" description="build a jar archive">
-    <copy todir="${build}">
-      <fileset dir="${src}">
-        <include name="META-INF/**"/>
+  <!-- distributable bits -->
+  <target name="jar-rocketview" depends="rocketview" description="build a jar of rocketview">
+    <manifest file="${build}/rocketview-manifest">
+      <attribute name="Main-Class" value="rocketview.Rocketview"/>
+    </manifest>
+    <jar jarfile="${dist}/rocketview.jar" manifest="${build}/rocketview-manifest">
+      <fileset dir="${build}">
+	<include name="com/**"/>
+	<include name="org/**"/>
+	<include name="stripchart/*.class"/>
+	<include name="cansocket/*.class"/>
+        <include name="widgets/*.png"/>
+	<include name="widgets/*.class"/>
+	<include name="rocketview/*.class"/>
       </fileset>
-    </copy>
-
-    <mkdir dir="${dist}/${name}"/>
-
-    <copy todir="${dist}/${name}">
-      <fileset dir="${java.ext.dirs}" includes="${extlist}"/>
-    </copy>
-
-    <jar jarfile="${dist}/${name}/${name}.jar" basedir="${build}"/>
+    </jar>
   </target>
 
-  <target name="dist" depends="jar" description="create distributable files">
-    <zip destfile="${dist}/${name}-${DSTAMP}.zip" basedir="${dist}" includes="${name}/**"/>
-    <tar destfile="${dist}/${name}-${DSTAMP}.tgz" basedir="${dist}" includes="${name}/**" compression="gzip"/>
+  <target name="run-rocketview" depends="jar-rocketview" description="run rocketview">
+    <java jar="${dist}/rocketview.jar" fork="yes"/>
   </target>
 
+  <target name="jar-launchcontrol" depends="launchcontrol" description="build a jar of launchcontrol">
+    <manifest file="${build}/launchcontrol-manifest">
+      <attribute name="Main-Class" value="launchcontrol.LaunchControl"/>
+    </manifest>
+    <jar jarfile="${dist}/launchcontrol.jar" manifest="${build}/launchcontrol-manifest">
+      <fileset dir="${build}">
+        <include name="sounds/*"/>
+	<include name="cansocket/*.class"/>
+        <include name="widgets/*.png"/>
+	<include name="widgets/*.class"/>
+	<include name="launchcontrol/*.class"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="run-launchcontrol" depends="jar-launchcontrol" description="run launchcontrol">
+    <java jar="${dist}/launchcontrol.jar" fork="yes"/>
+  </target>
+
+  <target name="jar" depends="jar-rocketview,jar-launchcontrol" description="build all jars"/>
+
+  <!-- run any tests (we don't have any) -->
   <target name="run-tests" depends="all">
     <junit printsummary="true">
        <classpath path="${classpath}"/>
