@@ -132,12 +132,14 @@ public interface CanBusIDs {
 	public static final int FC_STATE = 0x0020; /* from fc_exports */
 	public static final int FC_ABORT = 0x0040; /* from fc_exports */
 	public static final int FC_STATE_DETAIL = 0x0060; /* from fc_exports */
+	public static final int FC_LINK_QUALITY = 0x0080; /* from fc_exports */
 	public static final int FC_REPORT_STATE = 0x0121; /* from fc_exports */
 	public static final int FC_FORCE_STATE = 0x0221; /* from fc_exports */
 	public static final int FC_REQUEST_STATE = 0x0021; /* from fc_exports */
 	public static final int FC_ABORT_LAUNCH = 0x0040; /* from fc_exports */
 	public static final int FC_REPORT_STATE_DETAIL = 0x0164; /* from fc_exports */
 	public static final int FC_FORCE_STATE_DETAIL = 0x0264; /* from fc_exports */
+	public static final int FC_REPORT_LINK_QUALITY = 0x0184; /* from fc_exports */
 	public static final int FC_IMU_HEIGHT = 0xf004; /* from fc_exports */
 	public static final int FC_GPS_NAVSOL = 0xf804; /* from fc_exports */
 	public static final int FC_GPS_TIME = 0xf827; /* from fc_exports */
