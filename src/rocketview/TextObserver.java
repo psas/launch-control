@@ -14,6 +14,11 @@ class TextObserver extends JTextArea implements Observer
 {
 	String msgSyms[];
 
+    protected int discardLength(int id)
+    {
+	return (id >>> 4) & 0xfff;
+    }
+
     public TextObserver() throws IllegalAccessException {
 	super( 15, 40 ); // row, column
 
@@ -23,7 +28,7 @@ class TextObserver extends JTextArea implements Observer
 	Field fields[] = CanBusIDs.class.getFields();
 	for (i=0; i<fields.length; i++)
 	{
-		msg = fields[i].getInt(null) >> 4;
+		msg = discardLength(fields[i].getInt(null));
 		msgSyms[msg] = fields[i].getName();
 	}
 
@@ -39,39 +44,41 @@ class TextObserver extends JTextArea implements Observer
 			
 	CanMessage msg = (CanMessage) arg;
 
-	// filter out TEST, INFO, SET, ACK verbs
-	int verb = msg.getId() & 0x0600;
-	if (verb == 0x0400 || verb == 0x0200)
-		return;
-
-	// filter out all id's that are handled elsewhere
-	switch(msg.getId11())
+	int nid = msg.getId() & (0x1f << 11);
+	switch(nid)
 	{
-		case CanBusIDs.FC_REPORT_STATE >> 5:
-		case CanBusIDs.FC_REPORT_NODE_STATUS >> 5:
-		case CanBusIDs.FC_REPORT_LINK_QUALITY >> 5:
-		case CanBusIDs.GPS_UART_TRANSMIT >> 5:
-		case CanBusIDs.FC_GPS_NAVSOL >> 5:
-		case CanBusIDs.FC_GPS_LATLON >> 5:
-		case CanBusIDs.FC_GPS_HEIGHT >> 5:
-		case CanBusIDs.FC_GPS_TIME >> 5:
-		case CanBusIDs.FC_GPS_SATS_USED >> 5:
-		case CanBusIDs.FC_GPS_SATS_VIS >> 5:
-		case CanBusIDs.IMU_ACCEL_DATA >> 5:
-		case CanBusIDs.IMU_GYRO_DATA >> 5:
-		case CanBusIDs.PRESS_REPORT_DATA >> 5:
-		case CanBusIDs.TEMP_REPORT_DATA >> 5:
-		case CanBusIDs.APS_DATA_VOLTS >> 5:
-		case CanBusIDs.APS_DATA_AMPS >> 5:
-		case CanBusIDs.APS_DATA_CHARGE >> 5:
-		case CanBusIDs.ATV_UART_RECIEVE >> 5:
-		case 0xd:		//???
-		case 0x48:		//???
+		case CanBusIDs.FC_NID:
+		case CanBusIDs.FC_IMU_NID:
+		case CanBusIDs.FC_GPS_NID:
 			return;
 	}
 
-	if (msgSyms[msg.getId()>>4] != null)
-		append( msgSyms[msg.getId()>>4] + ": ");
+	int verb = msg.getId() & ((0x3 << 8) | CanBusIDs.CID_REQUEST);
+	switch(verb)
+	{
+		/* XXX: would like to filter CID_REPORT, but it's the
+		 * same verb as CID_ERROR, so we can't. For the same
+		 * reason, don't block CID_INFO or related. */
+		case CanBusIDs.CID_ACTION_BC:
+		case CanBusIDs.CID_TEST:
+		case CanBusIDs.CID_SET:
+		case CanBusIDs.CID_ACK:
+		case CanBusIDs.CID_GET:
+		case CanBusIDs.CID_DATA:
+			return;
+	}
+
+	// filter out all id's that are handled elsewhere
+	switch(msg.getId())
+	{
+		case CanBusIDs.REC_REPORT_MODE:
+		case CanBusIDs.REC_REPORT_PYRO:
+		case CanBusIDs.REC_REPORT_TIMER:
+			return;
+	}
+
+	if (msgSyms[discardLength(msg.getId())] != null)
+		append( msgSyms[discardLength(msg.getId())] + ": ");
 	append( msg.toString() );
 	append( "\n" );
 	//Try to keep the scrollpane looking at the tail of the log
