@@ -47,23 +47,55 @@ public class StateGrid extends JPanel
 		"GPS_UART_TRANSMIT",
 
 		/* enum sequencer_test */
+		/* Shared tests */
+		"ZERO_IMU_GYRO",
+		"PRESSURE_VALID",
+		"GPS_LOCKED",
+	
+		/* Preflight check tests. */
 		"SANE_ANTENNAS",
 		"SANE_IMU_ACCEL",
 		"QUIET_PRESSURE_BASE",
 		"GOT_GPS",
-		"GPS_LOCKED",
 		"SANE_HEIGHT",
 		"SANE_GPS",
+	
+		/* Arming tests. */
+		"ARMING_IMU_FAST",
+	
+		/* Boost tests */
 		"BOOST_GPS",
 		"BOOST_IMU",
 		"BOOST_UMB",
 		"BOOST_PRESSURE",
-		"PRESSURE_CONSTANT",
+	
+		/* Coast tests */
 		"APOGEE_Z",
 		"APOGEE_PRESSURE",
+	
+		/* Deploy drogue tests */
+		"DROGUE_PRESSURE",
+		"DROGUE_GPS",
+		"DROGUE_IMU",
+		"DROGUE_WORKING",
+	
+		/* Descent drogue tests */
+		"DESCEND_GPS",
+		"DESCEND_PRESSURE",
+		"DESCEND_HEIGHT_MATCH",
+		"DESCEND_GPS_SPEED",
+		"DESCEND_PRESS_SPEED",
+		"DESCEND_SPEED_MATCH",
+		"DESCEND_MAIN_FUTURE",
+	
+		/* Descend main tests */
 		"TOUCHDOWN_GPS",
 		"TOUCHDOWN_PRESSURE",
-		"ZERO_IMU_GYRO",
+	
+		/* Recovery wait tests */
+		"RECOVERY_VOLTS",
+	
+		"SEQUENCER_TEST_LAST"
 	};
 
 	protected ImageIcon greenled = new ImageIcon(ClassLoader.getSystemResource("widgets/greenled.png"));
