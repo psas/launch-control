@@ -47,6 +47,7 @@ public class RocketState extends JPanel implements Observer
 	protected final java.util.Timer timer = new java.util.Timer(true /*daemon*/);
 	protected LinkStateChecker task;
 
+	protected JLabel zLabel;	// Z IMU
 	protected JLabel stateLabel;
 	protected StateGrid detailDisplay;
 
@@ -66,6 +67,9 @@ public class RocketState extends JPanel implements Observer
 	public RocketState()
 	{
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+		zLabel = new JLabel();
+		add(zLabel);
 
 		stateLabel = new JLabel();
 		//stateLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -91,6 +95,9 @@ public class RocketState extends JPanel implements Observer
 	{
 		switch(msg.getId())
 		{
+			case CanBusIDs.IMU_ACCEL_DATA:
+				setZ(msg.getData16(2));
+				break;
 			case CanBusIDs.FC_REPORT_STATE:
 				setState((int) msg.getData8(0) & 0xff);
 				break;
@@ -104,6 +111,14 @@ public class RocketState extends JPanel implements Observer
 				setQuality(msg.getData16(0), msg.getData16(1));
 				break;
 		}
+	}
+
+	protected void setZ(int rawZ)
+	{
+		// zero: 1918.72
+		// gain: 77.0
+		double accel = ((double)rawZ - 1918.72)/77.0;
+		zLabel.setText(Double.toString(accel));
 	}
 
 	protected void setState(int state)
