@@ -74,16 +74,19 @@ public class Rocketview extends JFrame
 		JPanel top = new JPanel(new GridLayout(2,1));
 		leftCol.add( top );
 
+
 		// time title is TC date/time at startup
 		JPanel time = new JPanel();
 		String startTitle = "rv start: " + startTime;
 		addObserver( time, startTitle, new TimeObserver() );
 		top.add( time );
+	
 
 		// flight computer state
 		JPanel fcState = new JPanel();
 		addObserver( fcState, "FC State", new RocketState() );
 		top.add( fcState );
+
 
 
 		// message box for scrolled text
@@ -141,13 +144,26 @@ public class Rocketview extends JFrame
 		addObserver(c, o);
 	}
 
-	// add title to JComponent
-	// set left-align flow layout on Container
+	// add title to JComponent (or Container if possible)
+	// set left-align flow layout on Container with no vertical spacing
+	// set preferred size as small as possible
 	// add them as a Dispatch observer
 	protected void addObserver(Container c, String title, JComponent o)
 	{
-		o.setBorder(new TitledBorder(title));
-		c.setLayout(new FlowLayout( FlowLayout.LEFT ));
+		if (c instanceof JComponent) {
+			JComponent jc = (JComponent) c;
+			// setting the border around the container (e.g. jpanel) if possible  
+			// seems to give the desired layout effect: border is drawn around entire
+			// widget area, not just the space used (as was the case with jlabel)
+			jc.setBorder(new TitledBorder(title));
+			// try setting preferred size to as small as possible. 
+			int containerWidth = (int)jc.getPreferredSize().getWidth();
+			int compHeight = (int)o.getPreferredSize().getHeight();
+			jc.setPreferredSize( new Dimension(containerWidth, compHeight) );
+		} else {
+			o.setBorder(new TitledBorder(title));
+		}
+		c.setLayout(new FlowLayout( FlowLayout.LEFT, 5, 0 /* no vert spacing */));
 		addObserver(c, o);
 	}
 
