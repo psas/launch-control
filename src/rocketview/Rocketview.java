@@ -35,9 +35,7 @@ public class Rocketview extends JFrame
 		f.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		f.setVisible(true);
 
-		// f.dispatch.run(new LogCanSocket(new TCPCanSocket(host),host));
-		// f.dispatch.run(new LogCanSocket(new TCPCanSocket(), host));
-		f.dispatch.run(new UDPCanSocket(port));
+		f.dispatch.run(new LogCanSocket(new UDPCanSocket(port), "RocketView.log"));
 
 		System.out.println( "Rocketview exits main()" );
 		System.exit(0);
