@@ -15,12 +15,9 @@ class TextObserver extends JTextArea implements Observer
     public TextObserver() {
 
 	// construct a JTextArea
-	super( "-- no messages from rocket yet --" + "\n",
-		30, 40 ); // row, column
+	super( 30, 40 ); // row, column
 	this.setLineWrap( true );
 	this.setFont( new Font( "Monospaced", Font.PLAIN, 10 ));
-
-	// System.out.println ("textObserver constructor" );
     }
 
     public void update(Observable o, Object arg)
@@ -29,24 +26,22 @@ class TextObserver extends JTextArea implements Observer
 		return;
 			
 	CanMessage msg = (CanMessage) arg;
-	int id = msg.getId11();
 
 	// filter out all id's that are handled elsewhere
-	if( id == CanBusIDs.GPSHeight ||
-	    id == CanBusIDs.GPSID ||
-	    id == CanBusIDs.GPSLatLon ||
-	    id == CanBusIDs.IMUAccel ||
-	    id == CanBusIDs.IMUGyro ||
-	    id == CanBusIDs.PressValue ||
-	    id == CanBusIDs.GPSTime ) {
-
-	    return;
+	switch(msg.getId11())
+	{
+		case CanBusIDs.FC_REPORT_STATE >> 5:
+		case CanBusIDs.IMU_ACCEL_DATA >> 5:
+		case CanBusIDs.IMU_GYRO_DATA >> 5:
+		case CanBusIDs.PRESS_REPORT_DATA >> 5:
+		case CanBusIDs.TEMP_REPORT_DATA >> 5:
+		case CanBusIDs.PWR_REPORT_VOLTAGE >> 5:
+		case CanBusIDs.PWR_REPORT_CURRENT >> 5:
+		case CanBusIDs.PWR_REPORT_CHARGE >> 5:
+			return;
 	}
 
-	StringBuffer buf = new StringBuffer( msg.toString() );
-	String str = new String( buf.toString() + "\n" );
-	// System.out.print ("text got a message: " + str );
-
-	this.append( str );
+	append( msg.toString() );
+	append( "\n" );
     }
 }

@@ -8,8 +8,8 @@ import javax.swing.*;
 
 class HeightObserver extends JLabel implements Observer
 {
-	protected float pressHeight = Float.MAX_VALUE;
-	protected float gpsHeight = Float.MAX_VALUE;
+	protected Float gpsHeight;
+	protected Float imuHeight;
 
 	public void update(Observable o, Object arg)
 	{
@@ -17,27 +17,22 @@ class HeightObserver extends JLabel implements Observer
 			return;
 			
 		CanMessage msg = (CanMessage) arg;
-		switch(msg.getId())
+		switch(msg.getId11())
 		{
-		case CanBusIDs.GPSHeight:
-			gpsHeight = msg.getData32(0) / (float)100.0;
+		case CanBusIDs.FC_GPS_HEIGHT >> 5:
+			gpsHeight = new Float(msg.getData32(0) / (float)100.0);
 			break;
-		case CanBusIDs.PressValue:
-			pressHeight = toHeight(msg.getData16(0));
+		case CanBusIDs.FC_IMU_HEIGHT >> 5:
+			imuHeight = new Float(msg.getData32(0) / (float)100.0);
 			break;
 		default:
 			return;
 		}
 		StringBuffer buf = new StringBuffer();
-		if(gpsHeight < Float.MAX_VALUE)
-			buf.append("gps:").append(gpsHeight).append("m ");
-		if(pressHeight < Float.MAX_VALUE)
-			buf.append("press:").append(pressHeight).append("m ");
+		if(gpsHeight != null)
+			buf.append("gps: ").append(gpsHeight).append("m  ");
+		if(imuHeight != null)
+			buf.append("press: ").append(imuHeight).append("m");
 		setText(buf.toString());
-	}
-
-	protected float toHeight(short pressure)
-	{
-		return (float) (44331.514 - Math.pow(18411.8956 * pressure, 0.1902632));
 	}
 }

@@ -90,8 +90,7 @@ public class Rocketview extends JFrame
 		dispatch.addObserver( messArea );
 
 		JScrollPane messScroll = new JScrollPane( messArea );
-		messScroll.setBorder( new TitledBorder(
-			    "time  CanId  len  data  message" ));
+		messScroll.setBorder( new TitledBorder( "CanId  len  data" ));
 		leftCol.add( messScroll );
 
 
@@ -101,11 +100,6 @@ public class Rocketview extends JFrame
 		subSys.setLayout(new BoxLayout(subSys, BoxLayout.Y_AXIS ));
 		leftCol.add( subSys );
 
-		// pressure (barometric altitude)
-		JPanel pressure = new JPanel();
-		addUntitledObserver( pressure, new PressureHeightObserver() );
-		subSys.add( pressure );
-		
 		// inertial nav: not implemented
 		JPanel ins = new JPanel();
 		ins.setBorder(BorderFactory.createLineBorder( Color.gray ));
@@ -113,10 +107,9 @@ public class Rocketview extends JFrame
 		ins.add( new JLabel( "INS: -- no information --" ));
 		subSys.add( ins );
 
-		// 3 GPS observers go in 1 panel
+		// 2 GPS observers go in 1 panel
 		JPanel gps = new JPanel();
 		addUntitledObserver( gps, new GPSPositionObserver() );
-		addObserver( gps, new GPSHeightObserver() );
 		addObserver( gps, new GPSObserver() );
 		subSys.add( gps );
 

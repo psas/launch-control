@@ -11,7 +11,7 @@ public class CanMessage extends NetMessage
     protected byte body[];	// 8 bytes of body
 
     /* the really interesting id */
-	public int getId11() { return id >>> 5; }		// 11-bit id
+	public int getId11() { return (id >>> 5) & 0x7ff; }	// 11-bit id
 	public int getRtr() { return (id >>> 4) & 1; }	// RTR bit
 	public int getLen() { return id & 0xf; }   // number of valid bytes in body
 
@@ -159,29 +159,29 @@ public class CanMessage extends NetMessage
 	int len = getLen();
 	StringBuffer buf = new StringBuffer( "0x" );
 
-	buf.append( Integer.toHexString (timestamp) + " 0x" );
-	buf.append( Integer.toHexString (getId11()) + " 0x" );
-	buf.append( Integer.toHexString (getRtr()) + " 0x" );
-	buf.append( Integer.toHexString (len) + " " );
-	for (int i = 0; i < len; i++) {
-	    buf.append( hexByte (body[i]) + " " );
-	}
+	buf.append( Integer.toHexString (getId11()) );
+	buf.append( " 0x" );
+	buf.append( Integer.toHexString (getRtr()) );
+	buf.append( " 0x" );
+	buf.append( Integer.toHexString (len) );
+	for (int i = 0; i < len; i++)
+	    buf.append( " " ).append( hexByte(body[i]) );
 
-	return (new String( buf.toString() ));
+	return buf.toString();
     }
 
     /* format a byte into 2 hex digits
      */
-    public static String hexByte( byte byt )
+    private static String hexByte( byte byt )
     {
-	StringBuffer buf = new StringBuffer( " " );
+	StringBuffer buf = new StringBuffer();
 	int index;
 
 	index = byt & 0xff;
 	if( index < 0x10 ) buf.append( "0" );
 	buf.append( Integer.toHexString (index) );
 
-	return( new String( buf ));
+	return buf.toString();
     }
 
 } // end class CanMessage

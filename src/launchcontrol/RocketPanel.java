@@ -9,9 +9,10 @@ import javax.swing.*;
 
 public class RocketPanel extends JPanel
 {
-	int rocketState;
+	private JLabel statusLabel = new JLabel();
+
+	protected int state;
 	protected CanSocket sock;
-	protected JLabel statusLabel = new JLabel("ROCKET SAFE");
 
 	protected static final int StatusID = Config.getInt("rocket.status", 8);
 	protected static final int RocketReadyState = Config.getInt("rocket.stReady", 7);
@@ -41,7 +42,6 @@ public class RocketPanel extends JPanel
 
 	public RocketPanel(CanSocket socket)
 	{
-		rocketState = 0;
 		sock = socket;
 
 		// add buttons for manual commands
@@ -49,7 +49,28 @@ public class RocketPanel extends JPanel
 		setLayout(new BorderLayout());
 		add(statusLabel, BorderLayout.CENTER);
 
+		setState(-1);
 		new ReaderThread().start();
+	}
+
+	protected void setState(int state)
+	{
+		this.state = state;
+		if(state < 0)
+			statusLabel.setText("Unknown state");
+		else if(state >= stateStrings.length)
+			statusLabel.setText("Unknown state (" + Integer.toString(state) + ")");
+		else
+			statusLabel.setText(stateStrings[state]);
+	}
+
+	protected void changeState() throws IOException
+	{
+		if(state == CanBusIDs.IdleState)
+		{
+			byte[] preflight = { CanBusIDs.PreflightCheckState };
+			sock.write(new CanMessage(0, CanBusIDs.FC_REQUEST_STATE >> 5, 0, 1, preflight));
+		}
 	}
 
 	private class ReaderThread extends Thread
@@ -64,22 +85,11 @@ public class RocketPanel extends JPanel
 						continue;
 
 					CanMessage c = (CanMessage) m;
-					if ( c.getId11() != StatusID )
+					if(c.getId11() != CanBusIDs.FC_REPORT_STATE >> 5)
 						continue;
 
-					rocketState = c.getData8(0);
-					if (rocketState >= 0 && rocketState < stateStrings.length)
-						statusLabel.setText(stateStrings[rocketState]);
-					else
-						statusLabel.setText("Unknown state(" + Integer.toString(rocketState) + ")");
-						
-					if (rocketState == 3)  // IDLE
-					{
-						byte[] preflight = new byte[1];
-						preflight[0] = 4;  // PREFLIGHT
-						CanMessage preflightMsg = new CanMessage(0, StatReqID, 0, 1, preflight );
-						sock.write(preflightMsg);
-					}
+					setState(c.getData8(0));
+					changeState();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

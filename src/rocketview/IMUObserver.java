@@ -100,12 +100,10 @@ class IMUObserver extends JPanel implements Observer
 		CanMessage msg = (CanMessage) arg;
 		switch(msg.getId11())
 		{
-		case CanBusIDs.IMUAccel:
-			// System.out.println( "imuaccel" );
+		case CanBusIDs.IMU_ACCEL_DATA >> 5:
 			addGValues(IMU_ACCEL, msg);
 			break;
-		case CanBusIDs.IMUGyro:
-			// System.out.println( "imugyro" );
+		case CanBusIDs.IMU_GYRO_DATA >> 5:
 			addRawValues(IMU_GYRO, msg);
 			break;
 		default:	// message not for me; ignore
