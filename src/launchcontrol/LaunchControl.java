@@ -28,7 +28,12 @@ public class LaunchControl extends JFrame
 			Integer.parseInt(conf.getProperty("towerPort"))
 		);
 		content.add(tower.getControls());
-		Scheduler.addSchedulableAction("tower", (SchedulableAction)tower);
+		Scheduler.addSchedulableAction("tower", tower);
+
+		RocketAction rocket = new RocketAction(
+		        conf.getProperty("rocketHost")
+		);
+		Scheduler.addSchedulableAction("rocket", rocket);
 
 		Container statusBar = new JPanel();
 		statusBar.setLayout(new BorderLayout());
