@@ -11,15 +11,16 @@ package stripchart;
 * Changes
 * --------------------------
 * 29-Jun-2002 : Created with SampleXYDataset as a model (dgc);
+* 08-Jun-2003 : Incorporated JFreeChart 0.9.8
 */
 
-import com.jrefinery.data.*;
-import com.jrefinery.chart.*;
+import org.jfree.chart.*;
+import org.jfree.data.*;
 
 /**
  * A streaming dataset for an XY plot:
  *      AbstractSeriesDataset and XYDataset are from JFreeChart
- *      CanRenderer is for messages from the CANBus
+ *	addXYValue() is for messages from the CanBus
  */
 public class StreamXYDataset extends AbstractSeriesDataset implements XYDataset
 {
@@ -101,6 +102,8 @@ public class StreamXYDataset extends AbstractSeriesDataset implements XYDataset
 		return (next - earliest + x.length) % x.length;
 	}
 
+	// This is where the IMUObserver inserts x,y values
+	// to be displayed
 	public void addXYValue(Number xv, Number yv)
 	{
 		if ( earliest == ((next + 1) % x.length) )
