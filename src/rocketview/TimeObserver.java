@@ -7,6 +7,10 @@ import javax.swing.*;
 
 class TimeObserver extends JLabel implements Observer
 {
+	public TimeObserver() {
+		setText("rocket time: as of yet unknown");
+	}
+
 	public void update(Observable o, Object arg)
 	{
 		if (!(arg instanceof CanMessage))
