@@ -1,7 +1,6 @@
 package rocketview;
 
 import cansocket.*;
-import stripchart.*;
 
 import java.util.*;
 import javax.swing.*;

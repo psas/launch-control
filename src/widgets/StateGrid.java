@@ -51,13 +51,17 @@ public class StateGrid extends JPanel
 		"ZERO_IMU_GYRO",
 		"PRESSURE_VALID",
 		"GPS_LOCKED",
+		"SAFE_DESCENT_GPS",
+		"DROGUE_DEPLOY_SAFE_GPS",
+		"SAFE_DESCENT_PRESSURE",
+		"DROGUE_DEPLOY_SAFE_PRESSURE",
+		"HEIGHT_MATCH_GPS_PRESSURE",
 	
 		/* Preflight check tests. */
 		"SANE_ANTENNAS",
 		"SANE_IMU_ACCEL",
 		"QUIET_PRESSURE_BASE",
 		"GOT_GPS",
-		"SANE_HEIGHT",
 		"SANE_GPS",
 	
 		/* Arming tests. */
@@ -70,7 +74,6 @@ public class StateGrid extends JPanel
 		"BOOST_PRESSURE",
 	
 		/* Coast tests */
-		"APOGEE_Z",
 		"APOGEE_PRESSURE",
 	
 		/* Deploy drogue tests */
@@ -82,10 +85,6 @@ public class StateGrid extends JPanel
 		/* Descent drogue tests */
 		"DESCEND_GPS",
 		"DESCEND_PRESSURE",
-		"DESCEND_HEIGHT_MATCH",
-		"DESCEND_GPS_SPEED",
-		"DESCEND_PRESS_SPEED",
-		"DESCEND_SPEED_MATCH",
 		"DESCEND_MAIN_FUTURE",
 	
 		/* Descend main tests */
@@ -94,8 +93,6 @@ public class StateGrid extends JPanel
 	
 		/* Recovery wait tests */
 		"RECOVERY_VOLTS",
-	
-		"SEQUENCER_TEST_LAST"
 	};
 
 	protected ImageIcon greenled = new ImageIcon(ClassLoader.getSystemResource("widgets/greenled.png"));
