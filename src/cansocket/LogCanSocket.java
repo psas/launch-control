@@ -34,6 +34,7 @@ public class LogCanSocket implements CanSocket
 			buf.append(' ').append(body[i]);
 		buf.append('\n');
 		log.write(buf.toString());
+		log.flush();
 		return msg;
 	}
 
@@ -46,6 +47,5 @@ public class LogCanSocket implements CanSocket
 	public void flush() throws IOException
 	{
 		base.flush();
-		log.flush();
 	}
 }

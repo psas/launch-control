@@ -55,15 +55,15 @@ public class CanMessage
   public short getData16(int i)
   {
     i <<= 1;
-    return (short) (body[i] << 8 | body[i + 1]);
+    return (short) (body[i] << 8 | (body[i + 1] & 0xff));
   }
 
   public int getData32(int i)
   {
     i <<= 2;
-    return body[i] << 24 |
-           body[i + 1] << 16 |
-           body[i + 2] << 8 |
-           body[i + 3];
+    return (body[i] & 0xff) << 24 |
+           (body[i + 1] & 0xff) << 16 |
+           (body[i + 2] & 0xff) << 8 |
+           (body[i + 3] & 0xff);
   }
 }
