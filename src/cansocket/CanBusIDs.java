@@ -131,14 +131,13 @@ public interface CanBusIDs {
 	public static final int ATV_UART_RECIEVE = 0x7b00; /* from atv/atv_exports */
 	public static final int FC_STATE = 0x0020; /* from fc_exports */
 	public static final int FC_ABORT = 0x0040; /* from fc_exports */
-	public static final int FC_STATE_DETAIL = 0x0060; /* from fc_exports */
+	public static final int FC_NODE_STATUS = 0x0060; /* from fc_exports */
 	public static final int FC_LINK_QUALITY = 0x0080; /* from fc_exports */
 	public static final int FC_REPORT_STATE = 0x0121; /* from fc_exports */
 	public static final int FC_FORCE_STATE = 0x0221; /* from fc_exports */
 	public static final int FC_REQUEST_STATE = 0x0021; /* from fc_exports */
 	public static final int FC_ABORT_LAUNCH = 0x0040; /* from fc_exports */
-	public static final int FC_REPORT_STATE_DETAIL = 0x0164; /* from fc_exports */
-	public static final int FC_FORCE_STATE_DETAIL = 0x0264; /* from fc_exports */
+	public static final int FC_REPORT_NODE_STATUS = 0x0168; /* from fc_exports */
 	public static final int FC_REPORT_LINK_QUALITY = 0x0184; /* from fc_exports */
 	public static final int FC_IMU_HEIGHT = 0xf004; /* from fc_exports */
 	public static final int FC_GPS_NAVSOL = 0xf804; /* from fc_exports */
@@ -212,6 +211,7 @@ public interface CanBusIDs {
 	public static final int IMU_MODE_ARMED = 0x0088; /* from imu/imu_exports */
 	public static final int IMU_RESET = 0x0000; /* from imu/imu_exports */
 	public static final int IMU_ERROR = 0x0020; /* from imu/imu_exports */
+	public static final int IMU_TEST = 0x0040; /* from imu/imu_exports */
 	public static final int IMU_MODE = 0x0060; /* from imu/imu_exports */
 	public static final int ACCEL_DATA = 0x0080; /* from imu/imu_exports */
 	public static final int GYRO_DATA = 0x00a0; /* from imu/imu_exports */
@@ -227,8 +227,11 @@ public interface CanBusIDs {
 	public static final int IMU_REPORT_MODE = 0x1b61; /* from imu/imu_exports */
 	public static final int IMU_ENABLE_ACCEL = 0x1b90; /* from imu/imu_exports */
 	public static final int IMU_ACCEL_DATA = 0x1b88; /* from imu/imu_exports */
+	public static final int IMU_SET_ACCEL = 0x1a82; /* from imu/imu_exports */
 	public static final int IMU_ENABLE_GYRO = 0x1bb0; /* from imu/imu_exports */
 	public static final int IMU_GYRO_DATA = 0x1ba6; /* from imu/imu_exports */
+	public static final int IMU_SET_GYRO = 0x1aa2; /* from imu/imu_exports */
+	public static final int IMU_SET_TEST = 0x1a41; /* from imu/imu_exports */
 	public static final int PRESS_ENABLE_DATA = 0x6330; /* from imu/imu_exports */
 	public static final int PRESS_REPORT_DATA = 0x6322; /* from imu/imu_exports */
 	public static final int TEMP_ENABLE_DATA = 0x6b30; /* from imu/imu_exports */
@@ -264,6 +267,9 @@ public interface CanBusIDs {
 	public static final int REC_MODE_ARMED_2M = 0x0056; /* from recovery/recovery_exports */
 	public static final int REC_MODE_ARMED = 0x007a; /* from recovery/recovery_exports */
 	public static final int REC_MODE_ABORT = 0x0066; /* from recovery/recovery_exports */
+	public static final int REC_CHARGING_OFF = 0x0000; /* from recovery/recovery_exports */
+	public static final int REC_CHARGING_TRICKLE = 0x0001; /* from recovery/recovery_exports */
+	public static final int REC_CHARGING_FAST = 0x0002; /* from recovery/recovery_exports */
 	public static final int REC_PYRO_FIRE_KEY = 0x00f1; /* from recovery/recovery_exports */
 	public static final int REC_PYRO = 0x0000; /* from recovery/recovery_exports */
 	public static final int REC_TIMER = 0x0020; /* from recovery/recovery_exports */
@@ -271,6 +277,7 @@ public interface CanBusIDs {
 	public static final int REC_RESET = 0x0060; /* from recovery/recovery_exports */
 	public static final int REC_ERROR = 0x0080; /* from recovery/recovery_exports */
 	public static final int REC_DTMF = 0x00a0; /* from recovery/recovery_exports */
+	public static final int REC_BATTERY = 0x00c0; /* from recovery/recovery_exports */
 	public static final int REC_RESET_NODE = 0x0861; /* from recovery/recovery_exports */
 	public static final int REC_SET_ERROR = 0x0881; /* from recovery/recovery_exports */
 	public static final int REC_REPORT_ERROR = 0x0984; /* from recovery/recovery_exports */
@@ -283,4 +290,5 @@ public interface CanBusIDs {
 	public static final int REC_GET_TIMER = 0x0b30; /* from recovery/recovery_exports */
 	public static final int REC_REPORT_TIMER = 0x0923; /* from recovery/recovery_exports */
 	public static final int REC_REPORT_DTMF = 0x09a3; /* from recovery/recovery_exports */
+	public static final int REC_REPORT_BATTERY = 0x09c1; /* from recovery/recovery_exports */
 }
