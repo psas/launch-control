@@ -11,7 +11,7 @@ public abstract class NetMessage
 	   remainder: type specific payload
 	*/
 	public static final int HEADER_SIZE               = 2 + 2 + 2;
-	public static final int MAX_MSG_SIZE              = HEADER_SIZE + CanMessage.MSG_SIZE;  // later: use max(...)
+	public static final int MAX_MSG_SIZE              = 512;
 
 	public static final short FC_PROT_VER             = 2;
 
