@@ -54,7 +54,6 @@ public class RocketState extends JLabel implements Observer
 
 	public RocketState()
 	{
-		System.out.println("green width: " + greenled.getIconWidth());
 		updateText();
 	}
 
