@@ -1,8 +1,8 @@
 package rocketview;
 
 import cansocket.*;
-// import stripchart.*;
 
+import java.awt.Font;
 import java.util.*;
 import javax.swing.*;
 
@@ -17,8 +17,9 @@ class TextObserver extends JTextArea implements Observer
 	// construct a JTextArea
 	super( "-- no messages from rocket yet --" + "\n",
 		30, 40 ); // row, column
-
 	this.setLineWrap( true );
+	this.setFont( new Font( "Monospaced", Font.PLAIN, 10 ));
+
 	// System.out.println ("textObserver constructor" );
     }
 

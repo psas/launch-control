@@ -112,7 +112,6 @@ public class Rocketview extends JFrame
 		
 		// inertial nav: not implemented
 		JPanel ins = new JPanel();
-		// ins.setBorder(new TitledBorder( "INS" ));
 		ins.setBorder(BorderFactory.createLineBorder( Color.gray ));
 		ins.setLayout(new FlowLayout( FlowLayout.LEFT ));
 		ins.add( new JLabel( "INS: -- no information --" ));
