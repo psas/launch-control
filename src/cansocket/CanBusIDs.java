@@ -145,6 +145,8 @@ public interface CanBusIDs {
 	public static final int FC_GPS_TIME = 0xf827; /* from fc_exports */
 	public static final int FC_GPS_LATLON = 0xf848; /* from fc_exports */
 	public static final int FC_GPS_HEIGHT = 0xf864; /* from fc_exports */
+	public static final int FC_GPS_SATS_VIS = 0xf881; /* from fc_exports */
+	public static final int FC_GPS_SATS_USED = 0xf8a1; /* from fc_exports */
 	public static final int EvaluatePowerupState = 0x0000; /* from fc_exports */
 	public static final int InitializeState = 0x0001; /* from fc_exports */
 	public static final int IdleState = 0x0002; /* from fc_exports */
