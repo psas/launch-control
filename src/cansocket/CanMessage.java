@@ -30,7 +30,6 @@ public class CanMessage
 	
     /** Construct a can message from a data input stream,
 	 * which is wrapping the payload of a network packet.
-	 * The header (version, size, type) has already been read.
      */
 	public CanMessage(DataInputStream dis) throws IOException
 	{
@@ -99,7 +98,7 @@ public class CanMessage
 	    dos.writeInt(id);
 	    dos.writeInt(timestamp);
 	    dos.write(body);
-	    for(int i = body.length; i < 8; ++i)
+	    for(int i = body.length; i < MSG_BODY; ++i)
 		dos.writeByte(0);
 	} catch(IOException e) {
 	    // never happens.
@@ -122,22 +121,23 @@ public class CanMessage
 
 	/** Get one byte of this CanMessage's body starting at byte i */
     public byte getData8(int i) {
-	return body[i];
+		if (i<body.length) return body[i];
+		return 0;
     }
 
     public short getData16(int i)
     {
 	i <<= 1;
-	return (short) (body[i] << 8 | (body[i + 1] & 0xff));
+	return (short) (getData8(i) << 8 | (getData8(i+1) & 0xff));
     }
 
     public int getData32(int i)
     {
 	i <<= 2;
-	return (body[i] & 0xff) << 24 |
-	       (body[i + 1] & 0xff) << 16 |
-	       (body[i + 2] & 0xff) << 8 |
-	       (body[i + 3] & 0xff);
+	return (getData8(i)   & 0xff) << 24 |
+	       (getData8(i+1) & 0xff) << 16 |
+	       (getData8(i+2) & 0xff) <<  8 |
+	       (getData8(i+3) & 0xff);
     }
 
     /** print can message to standard output
@@ -159,8 +159,10 @@ public class CanMessage
 	buf.append(" ").append( getRtr() ? '1' : '0' );
 	buf.append(" ").append( Integer.toString (len) );
 	if(!getRtr())
-	    for (int i = 0; i < len; i++)
-		buf.append( " " ).append(Integer.toHexString((body[i]>>4)&15)).append(Integer.toHexString(body[i]&15));
+		for (int i = 0; i < len; i++)
+			buf.append( " " )
+			   .append(Integer.toHexString((getData8(i)>>4)&15))
+			   .append(Integer.toHexString( getData8(i)    &15));
 
 	return buf.toString();
     }
