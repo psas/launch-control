@@ -21,6 +21,9 @@ class APSObserver extends JLabel implements Observer
 
     public void update(Observable o, Object arg)
     {
+	if (!(arg instanceof CanMessage))
+		return;
+			
 	// filter on id
 	CanMessage msg = (CanMessage) arg;
 	if( msg.getId11() != CanBusIDs.PowerID )

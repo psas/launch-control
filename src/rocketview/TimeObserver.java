@@ -28,6 +28,9 @@ class TimeObserver extends JLabel implements Observer
 
 	public void update(Observable o, Object arg)
 	{
+		if (!(arg instanceof CanMessage))
+			return;
+			
 		CanMessage msg = (CanMessage) arg;
 		switch(msg.getId11())
 		{

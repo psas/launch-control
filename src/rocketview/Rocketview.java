@@ -4,6 +4,7 @@ import cansocket.*;
 
 import java.awt.*;
 import java.util.*;
+import java.net.*;
 import java.text.DateFormat;
 
 import javax.swing.*;
@@ -24,18 +25,18 @@ public class Rocketview extends JFrame
 	{
 		System.out.println( "Rocketview UDP" );
 		System.out.flush();
-		Rocketview f = new Rocketview( "localhost" );
+
+		int port = UDPCanSocket.PORT_RECV;
+		if (args.length > 0)
+			port = Integer.parseInt(args[0]);
+
+		Rocketview f = new Rocketview( InetAddress.getLocalHost() + ":" + port);
 		f.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		f.setVisible(true);
 
 		// f.dispatch.run(new LogCanSocket(new TCPCanSocket(host),host));
 		// f.dispatch.run(new LogCanSocket(new TCPCanSocket(), host));
-		CanSocket sock;
-		if(args.length > 0)
-			sock = new UDPCanSocket(Integer.parseInt(args[0]));
-		else
-			sock = new UDPCanSocket();
-		f.dispatch.run(sock);
+		f.dispatch.run(new UDPCanSocket(port));
 
 		System.out.println( "Rocketview exits main()" );
 		System.exit(0);

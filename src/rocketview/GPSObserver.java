@@ -25,6 +25,9 @@ class GPSObserver extends JLabel implements Observer
 
 	public void update(Observable o, Object arg)
 	{
+		if (!(arg instanceof CanMessage))
+			return;
+			
 		// filter out non-GPS messages
 		CanMessage msg = (CanMessage) arg;
 		if(msg.getId11() != CanBusIDs.GPSID)
