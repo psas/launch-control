@@ -113,10 +113,7 @@ public class Rocketview extends JFrame
 		
 		// height data from pressure and/or gps
 		JPanel height = new JPanel();
-		height.setBorder(BorderFactory.createLineBorder( Color.gray ));
-		height.setLayout(new FlowLayout( FlowLayout.LEFT ));
-		addObserver( height, new HeightObserver());
-		//addObserver( height, "Altitude Info", new HeightObserver());
+		addUntitledObserver( height, new HeightObserver());
 		subSys.add( height );
 
 		// 2 GPS observers go in 1 panel
