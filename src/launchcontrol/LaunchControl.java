@@ -1,5 +1,7 @@
 package launchcontrol;
 
+import cansocket.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -41,6 +43,9 @@ public class LaunchControl extends JFrame
 		statusLabel.setBorder(BorderFactory.createLoweredBevelBorder());
 		statusBar.add(statusLabel, BorderLayout.CENTER);
 		content.add(statusBar);
+
+		Scheduler.addSchedulableAction("tower", new SocketAction(new TCPCanSocket(Config.getString("tower.host"), Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT)), "tower"));
+		Scheduler.addSchedulableAction("rocket", new SocketAction(new UDPCanSocket(Config.getString("rocket.host"), Config.getInt("rocket.port", UDPCanSocket.PORT_RECV)), "rocket"));
 
 		ended(); // reset the button and label
 		sched.addScheduleListener(this, 100);

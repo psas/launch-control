@@ -1,30 +1,24 @@
 package launchcontrol;
 
-/** Class RocketAction
+/** Class SocketAction
  *
- * By Larry Leach
+ * By Ian Osgood
  * for the Portland State Aerospace Society
- * 2 Jul 02
+ * 17 Jul 04
  *
- * Last Modified 4 Jul 02
+ * Last Modified 17 Jul 04
  *
- * This class will send a CAN message to the rocket via the
+ * This class will send a CAN message to the launch tower via the
  * TCPCanSocket class.  This message will be a valid CAN
- * message with an ID ( always 11 bits), a body ( 0 to 8 bytes )
+ * message with an ID ( always 11 bits), and body ( 0 to 8 bytes )
  *
  *
  */  
 
 /** ************* Changelog ****************
  *
- * 2 Jul Created at avionics meeting
- *
- * 4 July :
- * - modified to JavaDoc standard
- * - added commentary (larry's usual stuff that'll likely
- *   get stripped out when deliverable is shipped
- *
- * 20 July :
+ * 17 July :
+ * - copied from RocketAction
  * - Wrote the code in Dispatch method
  */
 
@@ -38,8 +32,8 @@ import java.net.*;
 import java.util.*;
 
 
-/** RocketaAction class
- 	* This class implements the "t -5 signal"
+/** SocketAction class
+ 	* This class implements communication to the launch tower
 	* i.e. this class will send a CAN Message
 	* VIA the CAN bus.
 	* The message will be arbitrary, informing
@@ -51,30 +45,35 @@ import java.util.*;
 	* POST :
 	*
 	*/
-public class RocketAction implements SchedulableAction
+public class SocketAction implements SchedulableAction
 {
-	protected TCPCanSocket sock;
+	protected CanSocket sock;
+	protected String type;
+	
 	/**
-	*     RocketAction Method 
+	*     SocketAction Method 
 	* This method is the constructor for the
-	* RocketAction class
+	* SocketAction class
 	*
-	* PARAMETERS : The 
+	* PARAMETERS : The socket bound to the launch tower
 	*
-	* PRE : The hostname is a valid string
+	* PRE :
 	*
-	* POST : we have parsed the string into
-	* a new CAN message
+	* POST :
 	*/
-	public RocketAction(String hostname) throws IOException
+	public SocketAction(CanSocket sock, String type) throws IOException
 	{
-		sock = new TCPCanSocket(hostname);
+		this.sock = sock;
+		this.type = type;
 	}
 	
 
 	/** dispatch method
 	* This method will parse a string into a CAN message
-	* and send that CAN message out VIA a TCPSocket sock
+	* and send that CAN message out VIA a CanSocket sock
+	*
+	* it maps the logical relay names and on/off parameter to the
+	* appropriate LTC node commands and parameters
 	*
 	* Remember, a well formed CAN message will have a
 	* ID           short
@@ -91,28 +90,35 @@ public class RocketAction implements SchedulableAction
 	public void dispatch(String cmd) throws Exception
 	{
 		short id;
-		short timestamp = 12;
+		short timestamp = 0;
 		byte[] can_Body = new byte[8];
 		byte b;
-		int i = 0;
+		int len = 0;
+		String command;
 		StringTokenizer tkn = new StringTokenizer(cmd);
 
-		// Set ID
-		id = Short.parseShort( tkn.nextToken(), 16 );
+		// Set command
+		command = tkn.nextToken();
+		
+		// convert to CAN id
+		id = Config.getInt(type + "." + command).shortValue();
 
 		// Set Body
 		while (tkn.hasMoreTokens() )
 		{
 			b = (byte) Short.parseShort( tkn.nextToken(), 16 );
-			can_Body[i] = b;
-			i++;
+			can_Body[len] = b;
+			len++;
 		}
-		byte[] body_Buffer = new byte[i];
+		// why bother with this? why not just use can_Body?
+		byte[] body_Buffer = new byte[len];
+		int i = len;
 		while ( --i >= 0 )
 		{
 			body_Buffer[i] = can_Body[i];
 		}
-		CanMessage myMessage = new CanMessage(id, timestamp , body_Buffer);
+		// this supports smaller IDs with no RTR
+		CanMessage myMessage = new CanMessage(timestamp, id, 0, len, body_Buffer);
 		sock.write(myMessage);
 		sock.flush();
 	}
