@@ -14,6 +14,7 @@ public class RocketState extends JLabel implements Observer
 		"Idle",
 		"PreflightCheck",
 		"Ready",
+		"Arming",
 		"Armed",
 		"RocketReady",
 		"LaunchAbort",
