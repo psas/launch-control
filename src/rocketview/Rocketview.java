@@ -32,11 +32,7 @@ public class Rocketview extends JFrame
 		dispatch = new Dispatch();
 		getContentPane().setLayout(new BorderLayout());
 
-		Box b = Box.createHorizontalBox();
-		getContentPane().add(b, BorderLayout.CENTER);
-
-		addObserver(b, new MessageObserver());
-		addObserver(b, new IMUObserver());
+		addObserver(getContentPane(), new IMUObserver());
 
 		JPanel bottom = new JPanel();
 		bottom.setLayout(new BorderLayout());
