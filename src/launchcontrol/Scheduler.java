@@ -11,6 +11,7 @@ public class Scheduler
 	public interface ScheduleListener
 	{
 		public void started();
+		public void disableAbort();
 		public void aborted();
 		public void ended();
 		public void time(long millis);
@@ -196,6 +197,15 @@ public class Scheduler
 				}
 			}, started, millidelta);
 
+		// schedule abort disable at T+0
+		if(listener != null)
+			timer.schedule(new TimerTask() {
+				public void run()
+				{
+					listener.disableAbort();
+				}
+			}, new Date(started.getTime() - startTime));
+
 		// schedule cleanup at endTime
 		timer.schedule(new TimerTask() {
 			public void run()
@@ -242,7 +252,7 @@ public class Scheduler
 	{
 		private final static String startMsg = "Start Countdown";
 		private final static String stopMsg = "Abort Countdown";
-		private final static String stoppedMsg = "Countdown Stopped";
+		private final static String stoppedMsg = "Countdown stopped";
 		private final DecimalFormat fmt = new DecimalFormat("T+0.0;T-0.0");
 
 		private JButton button = new JButton();
@@ -267,7 +277,12 @@ public class Scheduler
 		{
 			try {
 				if(event.getActionCommand().equals("start"))
-					startCountdown();
+				{
+					if(JOptionPane.showConfirmDialog(this,
+						"Are you sure you want to start the countdown?", "Proceed?",
+						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+						startCountdown();
+				}
 				else if(event.getActionCommand().equals("abort"))
 					abortCountdown();
 			} catch(Exception e) {
@@ -284,6 +299,7 @@ public class Scheduler
 					button.setActionCommand("abort");
 				}
 			});
+			LaunchControl.setStatus("Countdown started");
 			try {
 				SoundAction.playSound(startSound);
 			} catch(Exception e) {
@@ -291,7 +307,7 @@ public class Scheduler
 			}
 		}
 	
-		public void aborted()
+		public void disableAbort()
 		{
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run()
@@ -299,6 +315,12 @@ public class Scheduler
 					button.setEnabled(false);
 				}
 			});
+		}
+
+		public void aborted()
+		{
+			disableAbort();
+			LaunchControl.setStatus("Countdown aborted: cleaning up");
 			try {
 				SoundAction.playSound(abortSound);
 			} catch(Exception e) {
@@ -314,9 +336,10 @@ public class Scheduler
 					button.setText(startMsg);
 					button.setActionCommand("start");
 					button.setEnabled(true);
-					clock.setText(stoppedMsg);
+					clock.setText("");
 				}
 			});
+			LaunchControl.setStatus(stoppedMsg);
 		}
 	
 		public void time(final long millis)

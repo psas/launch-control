@@ -7,6 +7,8 @@ import javax.swing.*;
 
 public class LaunchControl extends JFrame
 {
+	private static JLabel statusLabel = new JLabel("nothing to see here");
+
 	private LaunchControl() throws IOException
 	{
 		super("LaunchControl");
@@ -28,14 +30,25 @@ public class LaunchControl extends JFrame
 		content.add(tower.getControls());
 		Scheduler.addSchedulableAction("tower", (SchedulableAction)tower);
 
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e)
-			{
-				System.exit(0);
-			}
-		});
+		Container statusBar = new JPanel();
+		statusBar.setLayout(new BorderLayout());
+		statusLabel.setBorder(BorderFactory.createLoweredBevelBorder());
+		statusBar.add(statusLabel, BorderLayout.CENTER);
+		content.add(statusBar);
+
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		pack();
+	}
+
+	public static void setStatus(final String msg)
+	{
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run()
+			{
+				statusLabel.setText(msg);
+			}
+		});
 	}
 
 	public static void main(String args[]) throws IOException
