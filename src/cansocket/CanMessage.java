@@ -100,8 +100,8 @@ public class CanMessage
     }
 
     /** Returns the 16-bit id that has id,rtr,len packed into it. */
-    public short getId() {
-	return id;
+    public int getId() {
+	return id & 0xffff;
     }
 
     public int getTimestamp() {
