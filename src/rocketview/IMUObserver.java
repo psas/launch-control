@@ -89,7 +89,7 @@ class IMUObserver extends JPanel implements Observer
 		yAxis.setTickLabelsVisible(true);
 
 		plot = new XYPlot(data, xAxis, yAxis);
-		plot.setXYItemRenderer(new StandardXYItemRenderer(StandardXYItemRenderer.LINES));
+		plot.setRenderer(new StandardXYItemRenderer(StandardXYItemRenderer.LINES));
 
 		chart = new JFreeChart(title, TITLE_FONT, plot, false);
 		panel = new ChartPanel(chart);

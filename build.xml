@@ -29,7 +29,7 @@
     </copy>
 
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac srcdir="${src}" destdir="${build}" classpath="${classpath}" debug="${debug}"/>
+    <javac srcdir="${src}" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
 
   <target name="jar" depends="compile" description="build a jar archive">
