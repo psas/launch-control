@@ -31,7 +31,7 @@ public class TCPCanSocket implements CanSocket
 	public CanMessage read() throws IOException
 	{
 		short id = din.readShort();
-		short timestamp = din.readShort();
+		int timestamp = din.readInt();
 		byte[] body = new byte[id & 0xF];
 		id = (short) ((id >> 5) & 0x7FF);
 		din.read(body);
@@ -41,7 +41,7 @@ public class TCPCanSocket implements CanSocket
 	public void write(CanMessage msg) throws IOException
 	{
 		dout.writeShort((msg.getId() & 0x7FF) << 5 | (msg.getBody().length & 0xF));
-		dout.writeShort(msg.getTimestamp());
+		dout.writeInt(msg.getTimestamp());
 		dout.write(msg.getBody());
 	}
 

@@ -3,15 +3,32 @@ package cansocket;
 public class CanMessage
 {
   protected short id;
-  protected short timestamp;
+  protected int timestamp;
   protected byte body[];
 
   public static final int MSG_LEN = 8; 
-  
-  public CanMessage(short id, short timestamp, byte body[])
+
+  protected static final long firstTime = System.currentTimeMillis();
+  protected static long lastTime = 0;
+  protected static byte subMilli = 0;
+
+  public CanMessage(short id, int timestamp, byte body[])
   {
     this.id = id;
     this.timestamp = timestamp;
+    this.body = body;
+  }
+  
+  public CanMessage(short id, byte body[])
+  {
+    long time = System.currentTimeMillis() - firstTime;
+    if(time > lastTime)
+      subMilli = 0;
+		lastTime = time;
+		timestamp = ((int) time << 4) | subMilli;
+		++subMilli;
+
+    this.id = id;
     this.body = body;
   }
 
@@ -20,7 +37,7 @@ public class CanMessage
     return id;
   }
 
-  public short getTimestamp()
+  public int getTimestamp()
   {
     return timestamp;
   }
