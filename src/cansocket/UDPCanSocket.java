@@ -5,7 +5,7 @@ import java.net.*;
 
 public class UDPCanSocket implements CanSocket
 {
-    public static final int PORT_SEND = 4442;
+    public static final int PORT_SEND = 4439;
     public static final int PORT_RECV = 4441;
 
     private DatagramSocket sock;	// udp socket

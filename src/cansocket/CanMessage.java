@@ -45,9 +45,9 @@ public class CanMessage extends NetMessage
     /* Construct a can message from given id, timestamp, body.
      * This is the packed 16-bit id containing (id11,rtr,len)
      */
-    public CanMessage(short id16, int timestamp, byte body[])
+    public CanMessage(int id16, int timestamp, byte body[])
     {
-	this.id = id16;
+	this.id = (short)id16;
 	this.timestamp = timestamp;
 	this.body = body;
     }

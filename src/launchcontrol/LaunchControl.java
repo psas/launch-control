@@ -44,7 +44,7 @@ public class LaunchControl extends JFrame
 		statusBar.add(statusLabel, BorderLayout.CENTER);
 		content.add(statusBar);
 		
-		UDPCanSocket rocketSocket = new UDPCanSocket(Config.getString("rocket.host"), Config.getInt("rocket.port", UDPCanSocket.PORT_RECV));
+		UDPCanSocket rocketSocket = new UDPCanSocket(Config.getString("rocket.host"), Config.getInt("rocket.port", UDPCanSocket.PORT_SEND));
 
 		// also pass the rocket socket to a thread for listening
 		content.add(new RocketPanel(rocketSocket));
