@@ -16,6 +16,8 @@ public class RocketPanel extends JPanel
 	protected static final int StatusID = Config.getInt("rocket.status", 8);
 	protected static final int RocketReadyState = Config.getInt("rocket.stReady", 7);
 	
+	protected static final int StatReqID = Config.getInt("rocket.request", 0);
+	
 	protected static final String[] stateStrings = {
 		"TURNED ON",
 		"POWER UP",
@@ -70,6 +72,14 @@ public class RocketPanel extends JPanel
 						statusLabel.setText(stateStrings[rocketState]);
 					else
 						statusLabel.setText("Unknown state(" + Integer.toString(rocketState) + ")");
+						
+					if (rocketState == 3)  // IDLE
+					{
+						byte[] preflight = new byte[1];
+						preflight[0] = 4;  // PREFLIGHT
+						CanMessage preflightMsg = new CanMessage(0, StatReqID, 0, 1, preflight );
+						sock.write(preflightMsg);
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
