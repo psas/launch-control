@@ -1,3 +1,22 @@
+9/13/2003 jamey: fixed up the ant build file; here's how to use it
+
+To use ant, create a ~/.antrc file setting
+ * JAVA_HOME to the directory containing bin/java and lib/tools.jar
+ * ANT_OPTS and LD_LIBRARY_PATH to point at the java/ext directory
+   from CVS
+
+My .antrc looks like this:
+
+EXT_DIR=~/cvs/psas/java/ext
+export JAVA_HOME=/usr/lib/j2sdk-1.4.2/
+ANT_OPTS=-Djava.ext.dirs=$EXT_DIR
+export LD_LIBRARY_PATH=$EXT_DIR
+
+The default build target is compile; `ant` and `ant compile` are
+equivalent. Also available are 'launchcontrol' and 'rocketview'
+targets which run their respective applications.
+
+
 6/9/2003 dcassard: checked in big changes to cansocket, rocketview and
 	stripchart subtrees
 
