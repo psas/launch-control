@@ -51,9 +51,16 @@ public class StateGrid extends JPanel
 		"GPS_LOCKED",
 		"SANE_HEIGHT",
 		"SANE_GPS",
+		"BOOST_GPS",
+		"BOOST_IMU",
+		"BOOST_UMB",
+		"BOOST_PRESSURE",
+		"PRESSURE_CONSTANT",
+		"APOGEE_Z",
+		"APOGEE_PRESSURE",
 		"TOUCHDOWN_GPS",
 		"TOUCHDOWN_PRESSURE",
-		"ZERO_IMU_GYRO"
+		"ZERO_IMU_GYRO",
 	};
 
 	protected ImageIcon greenled = new ImageIcon(ClassLoader.getSystemResource("widgets/greenled.png"));
