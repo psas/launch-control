@@ -3,13 +3,15 @@ package rocketview;
 import cansocket.*;
 import stripchart.*;
 
+import com.jrefinery.chart.*;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 
 class IMUObserver extends JPanel implements Observer
 {
-	protected final Dimension preferredSize = new Dimension(400, 150);
+	protected static final Font TITLE_FONT = new Font("SansSerif", Font.PLAIN, 10);
+	protected final Dimension preferredSize = new Dimension(400, 80);
 
 	protected final int IMU_ACCEL = 0;
 	protected final int IMU_GYRO = 1;
@@ -33,18 +35,15 @@ class IMUObserver extends JPanel implements Observer
 
 	public IMUObserver()
 	{
-		JStripChart chart;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		data = new StreamXYDataset[title.length][];
 		for(int i = 0; i < data.length; ++i)
 		{
 			data[i] = new StreamXYDataset[title[i].length];
-			for(int j = 0; i < data[i].length; ++i)
+			for(int j = 0; j < data[i].length; ++j)
 			{
 				data[i][j] = new StreamXYDataset(freq[i] * HIST_LEN);
-				chart = new JStripChart(title[i][j], data[i][j], null);
-				chart.setPreferredSize(preferredSize);
-				add(chart);
+				add(createChart(title[i][j], data[i][j]));
 			}
 		}
 	}
@@ -71,5 +70,30 @@ class IMUObserver extends JPanel implements Observer
 			Short y = new Short(msg.getData16(i));
 			data[type][i].addXYValue(x, y);
 		}
+	}
+
+	protected JFreeChartPanel createChart(String title, StreamXYDataset data)
+	{
+		NumberAxis xAxis;
+		NumberAxis yAxis;
+		XYPlot plot;
+		JFreeChart chart;
+		JFreeChartPanel panel;
+
+		xAxis = new HorizontalNumberAxis(null);
+		xAxis.setAutoRangeIncludesZero(false);
+		xAxis.setTickLabelsVisible(true);
+
+		yAxis = new VerticalNumberAxis(title);
+		yAxis.setAutoRangeIncludesZero(false);
+		yAxis.setTickLabelsVisible(true);
+
+		plot = new XYPlot(xAxis, yAxis);
+		plot.setXYItemRenderer(new StandardXYItemRenderer(StandardXYItemRenderer.LINES));
+
+		chart = new JFreeChart(data, plot, null, TITLE_FONT, false);
+		panel = new JFreeChartPanel(chart);
+		panel.setPreferredSize(preferredSize);
+		return panel;
 	}
 }

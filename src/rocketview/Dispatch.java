@@ -4,21 +4,14 @@ import cansocket.*;
 
 import java.util.*;
 
-class Dispatch extends Observable implements Runnable
+class Dispatch extends Observable
 {
-	CanSocket s;
-
-	public Dispatch(CanSocket s)
-	{
-		this.s = s;
-	}
-
-	public void run()
+	public void run(CanSocket sock)
 	{
 		CanMessage m;
 		try
 		{
-			while((m = s.read()) != null)
+			while((m = sock.read()) != null)
 			{
 				setChanged();
 				notifyObservers(m);

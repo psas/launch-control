@@ -10,8 +10,9 @@ import javax.swing.border.*;
 /**
  * Main window for PSAS telemetry viewer.
  */
-public class Rocketview extends JFrame implements Runnable
+public class Rocketview extends JFrame
 {
+	protected static final Dimension preferredSize = new Dimension(750, 550);
 	protected final Dispatch dispatch;
 
 	public static void main(String[] args) throws Exception
@@ -20,15 +21,15 @@ public class Rocketview extends JFrame implements Runnable
 		Rocketview f = new Rocketview(host);
 		f.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		f.setVisible(true);
-		f.run();
-		System.exit(0);
+		// dispatch.run(new TCPCanSocket(host));
+		// System.exit(0);
 	}
 
 	public Rocketview(String host) throws Exception
 	{
 		super("Rocketview: " + host);
 
-		dispatch = new Dispatch(new TCPCanSocket(host));
+		dispatch = new Dispatch();
 		getContentPane().setLayout(new BorderLayout());
 
 		Box b;
@@ -58,9 +59,9 @@ public class Rocketview extends JFrame implements Runnable
 		pack();
 	}
 
-	public void run()
+	public Dimension getPreferredSize()
 	{
-		dispatch.run();
+		return preferredSize;
 	}
 
 	protected void addObserver(Container c, String title, JComponent o)
