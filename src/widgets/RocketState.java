@@ -5,6 +5,7 @@ import cansocket.*;
 import java.text.*;
 import java.util.*;
 import javax.swing.*;
+import java.awt.GridLayout;
 
 public class RocketState extends JPanel implements Observer
 {
@@ -47,7 +48,7 @@ public class RocketState extends JPanel implements Observer
 	protected LinkStateChecker task;
 
 	protected JLabel stateLabel;
-	//protected StateGrid detailDisplay;
+	protected StateGrid detailDisplay;
 
 	protected class LinkStateChecker extends TimerTask
 	{
@@ -59,10 +60,6 @@ public class RocketState extends JPanel implements Observer
 		}
 	}
 
-	/*
-	protected class StateGrid extends JPanel
-	{
-	*/
 
 
 
@@ -73,8 +70,8 @@ public class RocketState extends JPanel implements Observer
 		updateText(); // get label ready for display 
 		add(stateLabel);
 
-		//detailDisplay = new StateGrid();
-		//add(detailDisplay);
+		detailDisplay = new StateGrid();
+		add(detailDisplay);
 	}
 
 	public void update(Observable o, Object arg)
@@ -93,15 +90,7 @@ public class RocketState extends JPanel implements Observer
 				setState((int) msg.getData8(0) & 0xff);
 				break;
 			case CanBusIDs.FC_REPORT_NODE_STATUS:
-				//XXX: now that FC_REPORT_STATE_DETAIL is 
-				// FC_REPORT_NODE_STATUS, we need to display 
-				// it differently.  Specifically, 
-				// we need to create grid of green/red leds,
-				// and ask jamey for how to figure out what 
-				// each of the 64 bits means, and use that
-				// info to turn leds red or green (and maybe
-				// grey for "doesn't matter".
-				setDetail(msg.getBody());
+				detailDisplay.setStates(msg.getBody());
 				break;
 			case CanBusIDs.FC_REPORT_LINK_QUALITY:
 				setQuality(msg.getData16(0), msg.getData16(1));
@@ -116,20 +105,6 @@ public class RocketState extends JPanel implements Observer
 		this.dateStr = df.format(new Date());
 		this.state = state;
 		updateText();
-	}
-
-	protected void setDetail(int detail)
-	{
-		this.detail = detail;
-		updateText();
-		//detailDisplay.update();
-	}
-
-	protected void setDetail(byte[] detail)
-	{
-		// XXX: TODO: spread this 64 bits of information
-		// out onto the grid of green/red/grey(?) leds. 
-		System.err.println("TODO: set detail bits in led grid");
 	}
 
 	protected void setQuality(short signal, short noise)
