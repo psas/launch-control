@@ -1,3 +1,5 @@
+package manualuplink;
+
 /** ManualUplink.java
  * the program to manyally fire the recovery pyros
  * for LV2.
