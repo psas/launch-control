@@ -33,7 +33,16 @@ public abstract class NetMessage
 	static NetMessage newNetMessage(byte packet[]) throws IOException
 	{
 		DataInputStream s = new DataInputStream(new ByteArrayInputStream(packet));
-		return newNetMessage(s);
+		try {
+			return newNetMessage(s);
+		} catch (IOException e) {
+			int i;
+			System.out.print("bad UDP packet: ");
+			for (i=0; i<packet.length; i++)
+				System.out.print(" " + Integer.toHexString(packet[i]));
+			System.out.println(".");
+			throw e;
+		}
 	}
 	static NetMessage newNetMessage(DataInputStream s) throws IOException
 	{
