@@ -37,6 +37,8 @@ class TextObserver extends JTextArea implements Observer
 		case CanBusIDs.FC_GPS_LATLON >> 5:
 		case CanBusIDs.FC_GPS_HEIGHT >> 5:
 		case CanBusIDs.FC_GPS_TIME >> 5:
+		case CanBusIDs.FC_GPS_SATS_USED >> 5:
+		case CanBusIDs.FC_GPS_SATS_VIS >> 5:
 		case CanBusIDs.IMU_ACCEL_DATA >> 5:
 		case CanBusIDs.IMU_GYRO_DATA >> 5:
 		case CanBusIDs.PRESS_REPORT_DATA >> 5:
