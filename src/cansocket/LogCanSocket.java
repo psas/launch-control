@@ -13,38 +13,42 @@ public class LogCanSocket implements CanSocket
 		log = new FileWriter(logfile, /* append */ true);
 	}
 
-	public CanMessage read() throws IOException
+	public NetMessage read() throws IOException
 	{
 		return log(base.read());
 	}
 
-	public void write(CanMessage msg) throws IOException
+	public void write(NetMessage msg) throws IOException
 	{
 		base.write(log(msg));
 	}
 
 	/*** phony: keep interface definition happy ***/
-	public CanMessage recv() 
+	public NetMessage recv() 
 	{
 	    return( new CanMessage( (short)98, 100, new byte[CanMessage.MSG_BODY] ));
 	}
 
-	public void send( CanMessage msg )
+	public void send( NetMessage msg )
 	{}
 	/*** end phony ***/
 
-	protected CanMessage log(CanMessage msg) throws IOException
+	protected NetMessage log(NetMessage msg) throws IOException
 	{
-		StringBuffer buf = new StringBuffer();
-		byte body[] = msg.getBody();
-		buf.append(msg.getId())
-			.append(' ').append(msg.getTimestamp())
-			.append(' ').append(body.length);
-		for(int i = 0; i < body.length; ++i)
-			buf.append(' ').append(body[i]);
-		buf.append('\n');
-		log.write(buf.toString());
-		log.flush();
+		if (msg instanceof CanMessage)
+		{
+			CanMessage cm = (CanMessage) msg;
+			StringBuffer buf = new StringBuffer();
+			byte body[] = cm.getBody();
+			buf.append(cm.getId())
+				.append(' ').append(cm.getTimestamp())
+				.append(' ').append(body.length);
+			for(int i = 0; i < body.length; ++i)
+				buf.append(' ').append(body[i]);
+			buf.append('\n');
+			log.write(buf.toString());
+			log.flush();
+		}
 		return msg;
 	}
 

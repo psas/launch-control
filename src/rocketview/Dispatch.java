@@ -7,7 +7,7 @@ class Dispatch extends Observable
 {
 	public void run(CanSocket sock) throws Exception
 	{
-		CanMessage m;
+		NetMessage m;
 		while ((m = sock.read()) != null)
 		{
 		    setChanged();

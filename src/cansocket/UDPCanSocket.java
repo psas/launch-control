@@ -71,22 +71,23 @@ public class UDPCanSocket implements CanSocket
 	sendPort = remport;
     }
 
-    public CanMessage read() throws IOException
+    public NetMessage read() throws IOException
     {
+	// 
 	// System.out.println( "Usock: recv ");
 
 	/* create a packet to receive Can message */
-	byte buf[] = new byte [CanMessage.MSG_SIZE];
+	byte buf[] = new byte [NetMessage.MAX_MSG_SIZE];
 	DatagramPacket packet = new DatagramPacket( buf, buf.length );
 
 	/* receive a packet */
 	sock.receive( packet );
 
 	/* return a new Can message constructed from receive buffer */
-	return( new CanMessage( buf ));
+	return( NetMessage.newNetMessage( buf ) );
     }
 
-    public void write(CanMessage msg) throws IOException
+    public void write(NetMessage msg) throws IOException
     {
 	if (sendAddress == null)
 	    //throw new PortUnreachableException( "not configured for writing messages" );

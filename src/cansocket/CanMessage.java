@@ -2,18 +2,24 @@ package cansocket;
 
 import java.io.*;
 
-public class CanMessage
+public class CanMessage extends NetMessage
 {
+	/* NEW PROTOCOL */
+	/* byte 0-1:   protocol version = 1
+	   byte 2-3:   size of packet
+	   byte 4-5:   message type
+	   remainder: type specific payload
+	*/
+	public static final short fifo_tag = NET_MSG_TYPE_CAN;
     /* match the C structure */
-    protected int fifo_tag;
     protected int timestamp;	// 25us timestamp counter
     protected short id;		// id,rtr bit,length-of-body packed int 16bits
     protected byte body[];	// 8 bytes of body
 
     /* the really interesting id */
-    protected int id11;		// 11-bit id
-    protected int rtr;		// RTR bit
-    protected int len;		// number of valid bytes in body
+	public int getId11() { return id >> 5; }		// 11-bit id
+	public int getRtr() { return (id >> 4) & 1; }	// RTR bit
+	public int getLen() { return id & 0xf; }   // number of valid bytes in body
 
     // unused id for a stop sentinel
     public static final int STOP_ID = 0x07ff;
@@ -22,12 +28,25 @@ public class CanMessage
     public static final int MSG_TS = 4; 	// length of timestamp
     public static final int MSG_ID = 2; 	// length of id
     public static final int MSG_BODY = 8; 	// length of body
-    // total size includes 4 for fifo heading
-    public static final int MSG_SIZE = 4 + MSG_TS + MSG_ID + MSG_BODY; 
+    // total size
+    public static final int MSG_SIZE = MSG_TS + MSG_ID + MSG_BODY; 
 
     protected static final long firstTime = System.currentTimeMillis();
     protected static long lastTime = 0;
     protected static byte subMilli = 0;
+	
+    /* Construct a can message from a data input stream,
+	 * which is wrapping the payload of a network packet.
+	 * The header (version, size, type) has already been read.
+     */
+	public CanMessage(DataInputStream dis) throws IOException
+	{
+		this.timestamp = dis.readInt();
+		this.id = dis.readShort();
+		this.body = new byte[8];
+		if (getLen() > 0)					// is there data?
+			dis.read(body);
+	}
 
     /* Construct a can message from given id, timestamp, body.
      * This is the packed 16-bit id containing (id11,rtr,len)
@@ -37,10 +56,6 @@ public class CanMessage
 	this.id = id16;
 	this.timestamp = timestamp;
 	this.body = body;
-
-	id11 = (int) (id16 >> 5);          // 11-bit id
-	rtr = (byte) ((id16 & 0x10) >> 4); // RTR bit
-	len = (byte) (id16 & 0xf);         // number of valid bytes in body
     }
 
     /* Construct a can message from given (timestamp,id,rtr,len,body)
@@ -52,21 +67,10 @@ public class CanMessage
 	this.timestamp = timestamp;
 	this.body = body;
 
-	this.id11 = id11;
-	this.rtr = (byte) rtr;
-	this.len = (byte) len;
-
 	// my compiler requires the result to be int
 	int temp = (id11 << 5) | (rtr << 4) | (len & 0xf);
 	this.id = (short) temp;
     }
-
-    /**************************************** debugging */
-    public CanMessage( short id )
-    {
-	this (id, 99, new byte[MSG_BODY]);
-    }
-    /**************************************/
 
     /* construct a can message from given id and body
      * and a ??? timestamp
@@ -86,81 +90,37 @@ public class CanMessage
 	this.body = body;
     }
     *******************/
-
-    /* Construct a can message from an array of bytes, which is
-     * how it arrives on a udp socket.
-     * Actually, its a fifo_msg that arrives so we strip the fifo_msg
-     * header and extract the Can message.
-     */
-    public CanMessage( byte buf[] )
-    {
-	DataInputStream dis = new DataInputStream(new ByteArrayInputStream(buf));
-	int notInt;
-	byte notByt;
-
-	try
-	{
-	    // fifo_tag  = dis.readInt();		//!!! assert fifo_tag == 0
-	    // timestamp = dis.readInt();
-	    // id        = dis.readShort();
-	    // body = new byte[MSG_BODY];
-	    // dis.read( body );
-
-	    notByt  = dis.readByte();
-	    notByt  = dis.readByte();
-	    notByt  = dis.readByte();
-
-	    len = dis.readByte() - 11;
-
-	    timestamp = dis.readInt();
-	    notInt  = dis.readInt();
-
-	    id        = dis.readShort();
-
-	    // body = new byte[MSG_BODY];
-	    body = new byte[len];
-	    dis.read( body );
-
-	} catch(IOException e) {
-	    // never happens.
-	}
-	System.out.println (" fifo_tag: " + fifo_tag);
-	System.out.println ("timestamp: " + timestamp);
-	System.out.println ("       id: " + id);
-
-	// cuisinart the bits
-	len = id & 0xf;          // number of valid bytes in body
-	if (len > 8) len = 8;
-	rtr = (id >>> 4) & 1;
-	id11 = id >>> 5;
-    }
-
+	
     public byte[] toByteArray()
     {
-	ByteArrayOutputStream bos = new ByteArrayOutputStream(MSG_SIZE);
+	ByteArrayOutputStream bos = new ByteArrayOutputStream(2+2+2+MSG_SIZE);
 	DataOutputStream dos = new DataOutputStream(bos);
+	putMessage(dos);
+	return bos.toByteArray();
+	}
+
+	public void putMessage(DataOutputStream dos)
+	{
 
 	try
 	{
-	    dos.writeInt(fifo_tag);
+		// header: (move to NetMessage?)
+		dos.writeShort(FC_PROT_VER);
+		dos.writeShort(2 + 2 + 2 + MSG_SIZE);
+	    dos.writeShort(fifo_tag);
+
 	    dos.writeInt(timestamp);
-	    dos.writeShort((id11 << 5) | (rtr << 4) | len);
+	    dos.writeShort(id);
 	    dos.write(body);
 	} catch(IOException e) {
 	    // never happens.
 	}
 
-	return bos.toByteArray();
     }
 
     // this returns the 16-bit id that has id,rtr,len packed into it
     public short getId() {
 	return id;
-    }
-
-    // this returns the 11-bit Can bus id
-    public int getId11() {
-	return id11;
     }
 
     public int getTimestamp() {
@@ -204,11 +164,12 @@ public class CanMessage
      */
     public String toString()
     {
+	int len = getLen();
 	StringBuffer buf = new StringBuffer( "0x" );
 
 	buf.append( Integer.toHexString (timestamp) + " 0x" );
-	buf.append( Integer.toHexString (id11) + " 0x" );
-	buf.append( Integer.toHexString (rtr) + " 0x" );
+	buf.append( Integer.toHexString (getId11()) + " 0x" );
+	buf.append( Integer.toHexString (getRtr()) + " 0x" );
 	buf.append( Integer.toHexString (len) + " " );
 	for (int i = 0; i < len; i++) {
 	    buf.append( hexByte (body[i]) + " " );

@@ -10,6 +10,7 @@ package cansocket;
 import java.io.*;
 import java.util.*;
 
+// this should be renamed NetListener, but I'm too lazy
 public class CanListener extends Observable implements Runnable
 {
     public void run() {
@@ -22,7 +23,7 @@ public class CanListener extends Observable implements Runnable
     {
 	// TODO: Insert logging?
 
-        CanMessage m;
+        NetMessage m;
         while ((m = sock.read()) != null)
             {
                 setChanged();

@@ -56,16 +56,17 @@ public class TCPCanSocket implements CanSocket
 	System.out.println("Opening client socket: " + host + " "+ Integer.toString(port));
     }
 
-	public CanMessage read() throws IOException
+	public NetMessage read() throws IOException
 	{
-		byte buf[] = new byte[CanMessage.MSG_SIZE];
-		din.read(buf);
-		return new CanMessage(buf);
+//		byte buf[] = new byte[NetMessage.MSG_SIZE];
+//		din.read(buf);
+		return NetMessage.newNetMessage(new DataInputStream(din));
 	}
 	
-	public void write(CanMessage msg) throws IOException
+	public void write(NetMessage msg) throws IOException
 	{
 		dout.write(msg.toByteArray());
+		//dout.putMessage(dout);
 	}
 
 	public void close() throws IOException
