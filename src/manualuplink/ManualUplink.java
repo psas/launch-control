@@ -28,6 +28,7 @@ import java.io.*;
 import java.util.*;
 import java.lang.String.*;
 import gnu.io.*;
+import java.lang.Thread.*;
 
 class ManualUplink{
 
@@ -41,20 +42,42 @@ class ManualUplink{
     public static void main( String[] args )throws Exception{
 
 	char choice;
+	long waitFor = 500;
 	System.out.println("The PSAS uplink tool, C 2002");
 	CommControl C = new CommControl();
-	C.openPort();
+	
 	M = new Menu();
 	while ( (choice = M.readMenu()) != '9' ) {
 	    switch ( choice ){
 	    case '1':
+		//send a 0xFF to the || Port
+		C.openPort();
+		Thread.sleep( waitFor );
 		M.callDTMF( Arm );
+		// send a 0x00 to the || port
+		C.closePort( );
+		Thread.sleep( waitFor );
 		break;
-	    case '2': M.callDTMF( Sep ); 
+	    case '2':
+		C.openPort();
+		Thread.sleep( waitFor );
+		M.callDTMF( Sep );
+		Thread.sleep( waitFor );
+		C.closePort( );
 		break;
-	    case '3': M.callDTMF( Lin ); 
+	    case '3':
+		C.openPort();
+		Thread.sleep( waitFor );
+		M.callDTMF( Lin );
+		Thread.sleep( waitFor );
+		C.closePort( );
 		break;
-	    case '4': M.callDTMF( Off ); 
+	    case '4':
+		C.openPort();
+		Thread.sleep( waitFor );
+		M.callDTMF( Off );
+		Thread.sleep( waitFor );
+		C.closePort( ); 
 		break;
 	    default : System.out.println("Please enter a valid code");
 		System.out.println();
@@ -63,7 +86,7 @@ class ManualUplink{
 	}// The while not nine
 	System.out.println("ending the program");
         //close port
-	C.closePort( );
+
     }//The Main
 }// The class
 
@@ -72,7 +95,7 @@ class CommControl{
     CommPort port;
 
 
-    public void openPort() throws IOException, NoSuchPortException, PortInUseException {
+    public CommControl() throws IOException, NoSuchPortException, PortInUseException {
 	/**
 	 * Oh, Yeah...Make this a Constructor of a CommControl...
 	 */
@@ -87,7 +110,11 @@ class CommControl{
 	name = new BufferedReader(new InputStreamReader(System.in)).readLine();
 	port = CommPortIdentifier.getPortIdentifier( name ).open( Appname, 500 ) ;
 	//OutputStreamWriter osw = new OutputStreamWriter( System.out );
-	OutputStreamWriter osw = new OutputStreamWriter( port.getOutputStream() );
+	//OutputStreamWriter osw = new OutputStreamWriter( port.getOutputStream() );
+    }//constructor
+
+    public void openPort() throws IOException, NoSuchPortException, PortInUseException {
+
 	System.out.println("writing");
 	String cmd[] = { "parport","on" };
 	Runtime.getRuntime().exec(cmd);
