@@ -223,7 +223,7 @@ public interface CanBusIDs {
 	public static final int PRESS_DATA = 0x0020; /* from imu/imu_exports */
 	public static final int TEMP_ERROR = 0x0000; /* from imu/imu_exports */
 	public static final int TEMP_DATA = 0x0020; /* from imu/imu_exports */
-	public static final int IMU_RESET_NODE = 0x1801; /* from imu/imu_exports */
+	public static final int IMU_NODE_COMMAND = 0x1801; /* from imu/imu_exports */
 	public static final int IMU_REPORT_ERROR = 0x1923; /* from imu/imu_exports */
 	public static final int IMU_SET_MODE = 0x1861; /* from imu/imu_exports */
 	public static final int IMU_GET_MODE = 0x1b70; /* from imu/imu_exports */
