@@ -38,6 +38,8 @@ public class UDPCanSocketTest
 	boolean sendStopMessage = false;
 	StringBuffer hostname = new StringBuffer().append( "localhost" );
 	InetAddress hostip;
+	// by default, reverse the port assignments for local testing
+	int localPort = UDPCanSocket.PORT_SEND;
 	int port = UDPCanSocket.PORT_RECV;
 
 	// require at least 2 arguments
@@ -81,7 +83,7 @@ public class UDPCanSocketTest
 	try
 	{
 	    /* create a datagram socket to send to receiver */
-	    sock = new UDPCanSocket( hostip, port );
+	    sock = new UDPCanSocket( localPort, hostip, port );
 
 	    // loop to send the given number of messages
 	    for (i = 0; i < messCnt; i++)
@@ -93,9 +95,11 @@ public class UDPCanSocketTest
 		fillByt( body );
 
 		// send the Can message
-		sock.write( new CanMessage( timestamp, id, 1, 8, body ));
+		CanMessage msg = new CanMessage( timestamp, id, 1, 8, body );
+		sock.write( msg );
 
-		System.out.println (i + ". id: " + id + "  CanMessage sent");
+		System.out.print ("CanMessage " + i + ". sent: ");
+		msg.print();
 	    }
 
 	    /* send the terminator */
