@@ -1,0 +1,112 @@
+/*
+ * LICENSE:
+ *
+ *  Copyright © 2004 Portland State Aerospace Society
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+ *  USA.
+ *
+ * Portland State Aerospace Society (PSAS) is a student branch chapter
+ * of the Institute of Electrical and Electronics Engineers Aerospace
+ * and Electronics Systems Society. You can reach PSAS at
+ * info@psas.pdx.edu.  See also http://psas.pdx.edu/
+ */
+
+/*
+ * Generate LED images for rocketview and launchcontrol
+ */
+ 
+autoimport Cairo; 
+
+void led (cairo_t cr, real red, real green, real blue)
+{
+    translate (cr, .5, .5);
+    
+    /* basic unilluminated LED */
+    
+    if (true)
+    {
+	set_rgb_color (cr, red *.6, green *.6, blue *.6);
+	move_to (cr, 1, 1/2);
+	arc (cr, .5, .5, .5, 0, pi*2);
+	fill (cr);
+    }
+    
+    /* Bright spot of LED illumination */
+    if (true)
+    {
+	pattern_t	led = Pattern::create_radial (1/2, 1/2, 0, 
+						      1/2, 1/2, .4);
+	Pattern::add_color_stop (led, 0, red, green, blue, 1);
+	Pattern::add_color_stop (led, .5, red, green, blue, .8);
+	Pattern::add_color_stop (led, 1, red, green, blue, 0);
+	set_pattern (cr, led);
+	move_to (cr, 1, 1/2);
+	arc (cr, .5, .5, .5, 0, pi*2);
+	fill (cr);
+    }
+	
+    /* Bezel */
+    if (true)
+    {
+	pattern_t	ring = Pattern::create_radial (.5, .5, .4, .5, .5, .5);
+	Pattern::add_color_stop (ring, 0, 0, 0, 0, 1);
+	Pattern::add_color_stop (ring, .5, 0, 0, 0, 1);
+	Pattern::add_color_stop (ring, 1, .5, .5, .5, 1);
+	set_pattern (cr, ring);
+	move_to (cr, 1, 1/2);
+	arc (cr, .5, .5, .5, 0, pi*2);
+	move_to (cr, 1, 1/2);
+	arc_negative (cr, .5, .5, .45, pi*2, 0);
+	fill (cr);
+    }
+
+    /* Specular highlight from room illumination */
+    if (true)
+    {
+	pattern_t	room = Pattern::create_radial (1/3, 1/3, 0, 1/3, 1/3, 1/2);
+	Pattern::add_color_stop (room, 0, 1, 1, 1, .6);
+	Pattern::add_color_stop (room, 1, 1, 1, 1, 0);
+	set_pattern (cr, room);
+	move_to (cr, 1, 1/2);
+	arc (cr, .5, .5, .5, 0, pi*2);
+	fill (cr);
+    }
+
+}
+
+/*
+ * Desired LED image size in pixels
+ */
+int diameter = 12;
+
+void do_one (string name, real red, real green, real blue)
+{
+    cairo_t cr = new_png (name, diameter, diameter);
+    
+    translate (cr, -width(cr)/2, -height(cr)/2);
+    scale (cr, width(cr), height(cr));
+    led (cr, red, green, blue);
+}
+
+void doit ()
+{
+    do_one ("redled.png", 1, 0, 0);
+    do_one ("greenled.png", 0, 1, 0);
+    do_one ("grayled.png", .7, .7, .7);
+}
+
+if (dim(argv) > 0)
+    doit ();
