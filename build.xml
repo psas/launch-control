@@ -24,7 +24,7 @@
 
   <!-- libraries -->
   <target name="stripchart" depends="init" description="compile stripchart">
-    <javac srcdir="${src}" includes="stripchart/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
+    <javac srcdir="${src}" includes="stripchart/*.java" destdir="${build}" classpath="${classpath}:${freechartpath}" debug="${debug}" deprecation="on"/>
   </target>
 
   <target name="cansocket" depends="init" description="compile cansocket">
