@@ -1,19 +1,39 @@
 package rocketview;
 
 import cansocket.*;
-import stripchart.*;
 
 import java.util.*;
 import javax.swing.*;
 
+/*----------------------------------------------------------------
+ * Handles message id GPSID
+ * Updates the GPS box with status display
+ *
+ * expects 3 bytes
+ * if byte1=0 and byte2=0
+ *   locked
+ * else
+ *   not locked
+ *
+ *   display: byte0 sats byte1 in binary byte2 in bunary
+ */
 class GPSObserver extends JLabel implements Observer
 {
+	public GPSObserver() {
+	    this.setText( "GPS: -- no gps status from rocket yet --" );
+	}
+
 	public void update(Observable o, Object arg)
 	{
+		// filter out non-GPS messages
 		CanMessage msg = (CanMessage) arg;
-		if(msg.getId() != CanBusIDs.GPSStatus)
+		if(msg.getId11() != CanBusIDs.GPSID)
 			return;
-		StringBuffer buf = new StringBuffer();
+
+		// System.out.println( "gpsid" );
+
+		// StringBuffer buf = new StringBuffer();
+		StringBuffer buf = new StringBuffer( "GPS: " );
 		if(msg.getData8(1) != 0 || msg.getData8(2) != 0)
 			buf.append("not ");
 		buf.append("locked, ");
