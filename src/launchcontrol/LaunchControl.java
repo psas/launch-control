@@ -13,31 +13,30 @@ import javax.swing.*;
 public class LaunchControl extends JFrame
 	implements ScheduleListener, ActionListener, ItemListener
 {
+	// Class constants
 	protected final static String startMsg = "Start Countdown";
 	protected final static String stopMsg = "ABORT";
 	protected final static String stoppedMsg = "Countdown stopped";
-	protected final DecimalFormat fmt = new DecimalFormat("T+0.0;T-0.0");
 
-	protected final JButton preFlightCheckButton = new JButton("Preflight Check");
-	protected final JButton armButton = new JButton("Arm Rocket");
+	// Member variables, presumably used by multiple methods
+	protected final DecimalFormat fmt = new DecimalFormat("T+0.0;T-0.0");
+	protected final Dimension windowSize = new Dimension((int)(300 * 1.61803399), 300);
 	protected JButton countdownButton = new JButton();
-	protected JButton abortButton = new JButton(stopMsg);
-	protected JButton fcPowerOnButton = new JButton("FC On");
-	protected JButton powerDownButton = new JButton("Powerdown FC");
-	protected JButton fcPowerOffButton = new JButton("FC Off");
 	protected java.util.Timer powerSequence = null; // power on or off fc
 	protected JCheckBox shorePowerState = new JCheckBox("Shore");
 	// possible TODO: shorePowerState checkbutton can have image icon
 	//  displaying a power plug if we're using shore power, 
 	//  or a battery if we're using rocket battery (quite like a laptop
-	//  power display).
+	//  power display). Actually we might just put that in RocketState widget.
 	protected JLabel clock = new JLabel();
 	protected JLabel statusLabel = new JLabel();
 	protected String startSound = Config.getString("startSound");
 	protected String abortSound = Config.getString("abortSound");
+
 	protected CanSocket rocketSocket; // rocket communication socket
 	protected TCPCanSocket towerSocket;
-	protected final Dimension windowSize = new Dimension((int)(300 * 1.61803399), 300);
+
+
 
 	protected class ShorePowerTask extends TimerTask {
 		private boolean power;
@@ -47,13 +46,10 @@ public class LaunchControl extends JFrame
 		public ShorePowerTask (boolean power_state) {
 			power = power_state;
 			short id = CanBusIDs.LTR_SET_SPOWER;
-			int timestamp = 0;
-			byte onBody[] = new byte[8];
-			byte offBody[] = new byte[8];
-			onBody[0] = 1;
-			offBody[0] = 0;
-			powerOn = new CanMessage(id, timestamp, onBody);
-			powerOff = new CanMessage(id, timestamp, offBody);
+			byte onBody[] = { 1 };
+			byte offBody[] = { 0 };
+			powerOn = new CanMessage(id, 0, onBody );
+			powerOff = new CanMessage(id, 0, offBody);
 		}
 
 		public void run() {
@@ -93,6 +89,7 @@ public class LaunchControl extends JFrame
 
 	private LaunchControl() throws IOException
 	{
+
 		super("LaunchControl");
 		//possible TODO: use gridlayout (or gridbaglayout) instead
 		//of using boxes of boxes. The advantage of a gridlayout is
@@ -100,6 +97,13 @@ public class LaunchControl extends JFrame
 		// easily and uniformly.
 		
 		rocketSocket = new UDPCanSocket(Config.getString("rocket.host"), Config.getInt("rocket.port", UDPCanSocket.PORT_SEND));
+		
+		JButton preFlightCheckButton = new JButton("Preflight Check");
+		JButton armButton = new JButton("Arm Rocket");
+		JButton abortButton = new JButton(stopMsg);
+		JButton fcPowerOnButton = new JButton("FC On");
+		JButton powerDownButton = new JButton("Powerdown FC");
+		JButton fcPowerOffButton = new JButton("FC Off");
 
 		Box layout_box;
 		Dimension x_spacer_dim = new Dimension(5,0);
@@ -112,7 +116,6 @@ public class LaunchControl extends JFrame
 		// State monitoring box
 		  // also pass the rocket socket to a thread for listening
 		content.add(new RocketPanel(rocketSocket, this));
-		//layout_box.add(new RocketPanel(rocketSocket, this));
 		
 		layout_box = new Box(BoxLayout.X_AXIS);
 		layout_box.add(Box.createRigidArea(x_spacer_dim));
@@ -130,13 +133,8 @@ public class LaunchControl extends JFrame
 
 
 				
-		// Sequence button box
-		/*
-		JPanel layout_pane = new JPanel();
-		layout_pane.setLayout(new GridLayout(1,0));
-		*/
+		// Sequence buttons
 		layout_box = new Box(BoxLayout.X_AXIS);
-		//Box countdown_box = new Box(BoxLayout.Y_AXIS);
 		Container countdown_pane = new JPanel();
 		countdown_pane.setLayout(new GridLayout(0,1));
 		countdown_pane.add(preFlightCheckButton);
@@ -150,40 +148,10 @@ public class LaunchControl extends JFrame
 		countdown_pane.add(countdownButton);
 		countdownButton.addActionListener(this);
 
-		/*
-		int height = preFlightCheckButton.getPreferredSize().height +
-			armButton.getPreferredSize().height + 
-			countdownButton.getPreferredSize().height;
-			*/
-		/*
-		int pfcb_width = preFlightCheckButton.getPreferredSize().width;
-		int ab_width = armButton.getPreferredSize().width;
-		int cb_width = countdownButton.getPreferredSize().width;
-		int width = pfcb_width >= ab_width ? pfcb_width : ab_width;
-		width = width >= cb_width ? width : cb_width;
-
-		preFlightCheckButton.setPreferredSize( new Dimension(width, 
-				preFlightCheckButton.getPreferredSize().height));
-
-		armButton.setPreferredSize( new Dimension(width, 
-				armButton.getPreferredSize().height));
-
-		countdownButton.setPreferredSize(new Dimension(width, 
-				countdownButton.getPreferredSize().height));
-		*/
 		abortButton.setPreferredSize(countdown_pane.getPreferredSize());
 		abortButton.setBackground(Color.red);
-		//abortButton.setSize(countdown_pane.getPreferredSize());
 		abortButton.setMaximumSize(countdown_pane.getPreferredSize());
 		Dimension countdown_size = countdown_pane.getPreferredSize();
-		/*
-		System.out.println("cntdown box pref size: " + 
-				countdown_pane.getPreferredSize());
-		System.out.println("abort btn pref size: " + 
-				abortButton.getPreferredSize());
-		System.out.println("abort btn max size: " + 
-				abortButton.getMaximumSize());
-				*/
 		
 		layout_box.add(Box.createRigidArea(x_spacer_dim));
 		layout_box.add(countdown_pane);
@@ -198,7 +166,7 @@ public class LaunchControl extends JFrame
 
 	
 
-		// Power button box
+		// Power buttons 
 		layout_box = new Box(BoxLayout.X_AXIS);
 		layout_box.add(Box.createRigidArea(x_spacer_dim));
 		Container fcpower_pane = new JPanel();
@@ -216,13 +184,11 @@ public class LaunchControl extends JFrame
 		fcPowerOffButton.setActionCommand("fc_off");
 		fcPowerOffButton.addActionListener(this);
 		
-		//fcpower_pane.setSize(countdown_pane.getPreferredSize());
 		layout_box.add(fcpower_pane);
 		layout_box.add(Box.createHorizontalGlue());
 		layout_box.add(Box.createRigidArea(new Dimension(30, 0)));
 		layout_box.add(shorePowerState);
 		layout_box.add(Box.createRigidArea(new Dimension(30, 0)));
-		//shorePowerState.setAlignmentX(Component.CENTER_ALIGNMENT);
 		shorePowerState.addItemListener(this);
 
 		content.add(layout_box);
@@ -232,7 +198,8 @@ public class LaunchControl extends JFrame
 
 
 		try {
-			towerSocket = new TCPCanSocket(Config.getString("tower.host"), Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT));
+			towerSocket = new TCPCanSocket(Config.getString("tower.host"), 
+					Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT));
 			Scheduler.addSchedulableAction("tower", new SocketAction(towerSocket));
 		} catch(ConnectException e) {
 			e.printStackTrace();
@@ -274,6 +241,7 @@ public class LaunchControl extends JFrame
 			}
 		}
 	}
+	
 
 	public void actionPerformed(ActionEvent event)
 	{
@@ -296,65 +264,27 @@ public class LaunchControl extends JFrame
 					JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) 
 					return; // user wasn't sure.
 				byte[] data = { CanBusIDs.PowerDownState };
-				//byte[] data = new byte[8];
-				//data[0] = CanBusIDs.PowerDownState;
 				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
 			} 
 			else if(event.getActionCommand().equals("fc_on"))
 			{
-				int delay = 2000; /* delay between msgs, in milliseconds  */
-
-				// cancel any prev. sequence
-				if (powerSequence != null) {
-					powerSequence.cancel();
-				}
-
-				// sched 5 things for new sequence
-				int i = 1;
-				powerSequence = new java.util.Timer(true /* daemon */);
-				for (i = 1; i <= 5; ++i)
-				{
-					boolean power;
-					if (i % 2 != 0) // i is odd
-						power = true; // power ON at 1, 3, 5 secs
-					 else  // i is even
-						power = false;
-					 powerSequence.schedule(
-							 new ShorePowerTask(power), i * delay);
-				}
+				fcPower(true);
 			} else if (event.getActionCommand().equals("fc_off"))
 			{
-				int delay = 2000; // delay btween msgs, in milliseconds 
-				
 				if(JOptionPane.showConfirmDialog(this,
 					"Are you sure you want to cut power to flight computer?", 
 					"Proceed?",
 					JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) 
+
 					return; // user wasn't sure.
 
-				// cancel any prev. sequence
-				if (powerSequence != null) {
-					powerSequence.cancel();
-				}
-
-				// sched 5 things for new sequence
-				powerSequence = new java.util.Timer(true /* daemon */);
-				int i;
-				for (i = 1; i <= 5; ++i)
-				{
-					boolean power;
-					if (i % 2 != 0) // i is odd
-						power = false; // power OFF at 1, 3, 5 secs
-					 else  // i is even
-						power = true;
-					 powerSequence.schedule(
-							 new ShorePowerTask(power), i * delay);
-				}
+				fcPower(false);
 			} else if(event.getActionCommand().equals("start"))
 			{
 				if(JOptionPane.showConfirmDialog(this,
 					"Are you sure you want to start the countdown?", "Proceed?",
 					JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
+
 					sched.startCountdown();
 			}
 			else if(event.getActionCommand().equals("abort"))
@@ -372,6 +302,39 @@ public class LaunchControl extends JFrame
 			e.printStackTrace();
 		}
 	}
+	
+	
+	/** Power on or off the FC by toggling shore power. 
+	 * a new sequence of on/off toggles of the shore power is started. 
+	 * The scheduled sequence should be over in ten seconds.
+	 * @param fcPower the new desired power state of the 
+	 * FC (true=on, false=off) 
+	 */
+	protected void fcPower(boolean fcPower) {
+		/* A two second delay (2000 millisecs) between shore on/off msgs 
+		 * which are sent in sequence while trying to turn on or off the FC. */
+		int delay = 2000;
+
+		// cancel any prev. sequence
+		if (powerSequence != null) {
+			powerSequence.cancel();
+		}
+
+		// sched 5 things for new sequence
+		powerSequence = new java.util.Timer(true /* daemon */);
+		for (int i = 1; i <= 5; ++i)
+		{
+			boolean power;
+			if (i % 2 != 0) // i is odd
+				power= fcPower ; // power == fcPower at 1, 3, 5 secs
+			else  // i is even
+				power= !fcPower; //on even secs, shore is set to !fcPower
+			powerSequence.schedule(
+					new ShorePowerTask(power), i * delay);
+		}
+	}
+
+
 
 	public void started()
 	{
