@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
 
 /** A grid of leds displaying info about different elements, 
  * which are nodes in our case, and each of which is labeled. */
@@ -160,6 +161,9 @@ public class StateGrid extends JPanel
 		removeAll(); 
 		for (int i = 0; i < names.length; ++i) {
 			JLabel gridEntry = new JLabel(names[i]);
+                        gridEntry.setVerticalTextPosition(
+                            SwingConstants.CENTER);
+                        gridEntry.setHorizontalAlignment(SwingConstants.LEFT);
 			gridEntry.setIcon(grayled);
 			add(gridEntry);
 			//setElementIcon(gridEntry, 0);
