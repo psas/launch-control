@@ -42,14 +42,17 @@ public class LaunchControl extends JFrame
 		private boolean power;
 		private CanMessage powerOn;
 		private CanMessage powerOff;
+		private CanMessage requestMessage;
 
 		public ShorePowerTask (boolean power_state) {
 			power = power_state;
 			short id = CanBusIDs.LTR_SET_SPOWER;
 			byte onBody[] = { 1 };
 			byte offBody[] = { 0 };
+			byte[] blank = new byte[8];
 			powerOn = new CanMessage(id, 0, onBody );
 			powerOff = new CanMessage(id, 0, offBody);
+			requestMessage = new CanMessage(CanBusIDs.LTR_GET_SPOWER, 0, blank);
 		}
 
 		public void run() {
@@ -71,6 +74,7 @@ public class LaunchControl extends JFrame
 					}
 
 					towerSocket.write(powerMessage);
+					towerSocket.write(requestMessage);
 					towerSocket.flush();
 				} catch(Exception e) {
 					e.printStackTrace();

@@ -59,6 +59,9 @@ public class ShorePower extends JCheckBox implements ItemListener
 			try {
 				CanMessage myMessage = new CanMessage(id, timestamp, body);
 				sock.write(myMessage);
+				CanMessage requestMessage = new CanMessage(CanBusIDs.LTR_GET_SPOWER,
+						0, new byte[8]);
+				sock.write(requestMessage);
 				sock.flush();
 			} catch(Exception e) {
 				e.printStackTrace();
