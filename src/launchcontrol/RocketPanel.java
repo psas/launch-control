@@ -12,6 +12,7 @@ public class RocketPanel extends JPanel implements ActionListener
 {
 	protected final RocketState statusLabel = new RocketState();
 	protected final JButton preFlightCheckButton = new JButton("Preflight Check");
+	protected final JButton armButton = new JButton("Arm Rocket");
 
 	protected CanSocket sock;
 
@@ -27,6 +28,10 @@ public class RocketPanel extends JPanel implements ActionListener
 		preFlightCheckButton.setActionCommand("preflight");
 		preFlightCheckButton.addActionListener(this);
 
+		add(armButton);
+		armButton.setActionCommand("arm");
+		armButton.addActionListener(this);
+
 		new ReaderThread().start();
 	}
 
@@ -37,6 +42,11 @@ public class RocketPanel extends JPanel implements ActionListener
 			{
 				byte[] preflight = { CanBusIDs.PreflightCheckState };
 				sock.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, preflight));
+			}
+			else if (event.getActionCommand().equals("arm"))
+			{
+				byte[] arm = { CanBusIDs.ArmedState };
+				sock.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, arm));
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
