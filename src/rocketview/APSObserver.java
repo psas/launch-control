@@ -37,6 +37,7 @@ class APSObserver extends JLabel implements Observer
 
     public void update(Observable o, Object arg)
     {
+	int counts;
 	if (!(arg instanceof CanMessage))
 	    return;
 			
@@ -45,12 +46,12 @@ class APSObserver extends JLabel implements Observer
 	switch(msg.getId())
 	{
 	    case CanBusIDs.APS_DATA_VOLTS:
-			// 0.2442 V / count
-		voltage = 0.2442 * msg.getData16(0);
+		counts = msg.getData16(0);
+		counts &= 0xffff;   // unsigned
+		voltage = counts * 5 / 1024 * 0.14815;
 		break;
 	    case CanBusIDs.APS_DATA_AMPS:
-			// 0.004 sec/tick * .3255 A/sec
-		current = 0.004 * 0.3255 * msg.getData32(0);
+		current = 768.05 / msg.getData32(0);
 		break;
 	    case CanBusIDs.APS_DATA_CHARGE:
 			// 853.4 * 10^-6 Ah / count
