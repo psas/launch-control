@@ -1,3 +1,4 @@
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
@@ -12,6 +13,9 @@ public class Scheduler
 	private Timer timer = null;
 	private URL events = null;
 	private Properties conf = null;
+	private ScheduleListener listener = null;
+	private int startTime, endTime; // in milliseconds
+	private Date started = null;
 
 	/**
 	 * Create a new Scheduler from an event list. The event list is not
@@ -25,51 +29,93 @@ public class Scheduler
 		this.events = events;
 	}
 
-	public synchronized void startCountdown() throws java.io.IOException
+	public synchronized void startCountdown(ScheduleListener l, int millidelta)
+		throws Exception
 	{
 		if(timer != null)
 			throw new IllegalStateException("timer already running");
+		listener = l;
+		if(listener != null)
+			listener.started();
 
-		float startTime, endTime; // in seconds
+		started = new Date(new Date().getTime() + 1000);
+
 		conf = new Properties();
-		conf.load(events.openStream());
-		startTime = Float.parseFloat(conf.getProperty("startTime"));
-		endTime = Float.parseFloat(conf.getProperty("endTime"));
-
-		new ScheduledTask("sound", conf.getProperty("startSound")).run();
+		conf.load(events.openStream()); // read once for general settings
+		startTime = (int)(Float.parseFloat(conf.getProperty("startTime", "0")) * 1000);
+		endTime = (int)(Float.parseFloat(conf.getProperty("endTime", "0")) * 1000);
 
 		timer = new Timer();
-		Enumeration keys = conf.keys();
-		while(keys.hasMoreElements())
+		if(listener != null && millidelta > 0)
+			timer.scheduleAtFixedRate(new TimerTask() {
+				public void run()
+				{
+					listener.time(new Date().getTime() - started.getTime() + startTime);
+				}
+			}, started, millidelta);
+
+		BufferedReader cs = new BufferedReader(new InputStreamReader(events.openStream())); // read again for timing
+		String line;
+		while((line = cs.readLine()) != null)
 		{
-			String key = (String)keys.nextElement();
-			float time;
+			int colon = line.indexOf(':');
+			if(colon == -1)
+				continue; // no colon present; try the next line
+
+			int time;
 			try {
-				time = Float.parseFloat(key);
+				time = (int)(Float.parseFloat(line.substring(0, colon).trim()) * 1000);
 			} catch(NumberFormatException e) {
-				continue; // wasn't a number; try the next key
+				continue; // wasn't a number; try the next line
 			}
-			String value = conf.getProperty(key);
+
+			String value = line.substring(colon + 1).trim();
 			int comma = value.indexOf(',');
-			String action = value.substring(0, comma).trim();
-			String cmd = value.substring(comma + 1).trim();
+			String action;
+			String cmd;
+			if(comma != -1)
+			{
+				action = value.substring(0, comma).trim();
+				cmd = value.substring(comma + 1).trim();
+			}
+			else
+			{
+				action = value;
+				cmd = "";
+			}
 			timer.schedule(new ScheduledTask(action, cmd),
-				(int)((time - startTime) * 1000));
+				new Date(started.getTime() + time - startTime));
+
+			// sanity check start and end times
+			if(time < startTime)
+				startTime = time;
 			if(time > endTime)
 				endTime = time;
 		}
 
-		timer.schedule(new EndCountdown(), (int)((endTime - startTime) * 1000));
+		timer.schedule(new TimerTask() {
+			public void run()
+			{
+				timer.cancel();
+				timer = null;
+				conf = null;
+				if(listener != null)
+					listener.ended();
+				listener = null;
+			}
+		}, new Date(started.getTime() + endTime - startTime));
 	}
 
-	public synchronized void abortCountdown()
+	public synchronized void abortCountdown() throws Exception
 	{
 		if(timer == null)
 			throw new IllegalStateException("timer not running");
 		timer.cancel();
 		timer = null;
-		new ScheduledTask("sound", conf.getProperty("abortSound")).run();
 		conf = null;
+		if(listener != null)
+			listener.aborted();
+		listener = null;
 	}
 
 	private class ScheduledTask extends TimerTask
@@ -90,16 +136,6 @@ public class Scheduler
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
-		}
-	}
-
-	private class EndCountdown extends TimerTask
-	{
-		public void run()
-		{
-			timer.cancel();
-			timer = null;
-			System.out.println("Countdown end.");
 		}
 	}
 }
