@@ -1,3 +1,4 @@
+/* This file was automatically generated from canbusid.m4. Do not edit. */
 public interface CanBusIDs
 {
 	public static final int IMUID = (0x04 << 5),
