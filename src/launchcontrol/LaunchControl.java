@@ -30,14 +30,24 @@ public class LaunchControl extends JFrame
                 String towerHost = (String) conf.getProperty("towerHost");
                 int towerPort = Integer.
                     parseInt(conf.getProperty("towerPort"));
-		int localPort = Integer.
-		    parseInt(conf.getProperty("localTowerPort"));
+                int localPort = Integer.
+                    parseInt(conf.getProperty("localTowerPort"));
                                                  
 
+                CanAction tower = new CanAction(
+		    Integer.parseInt(conf.getProperty("localTowerPort")),
+                    conf.getProperty("towerHost"),
+                    Integer.parseInt(conf.getProperty("towerPort")),
+		    "tcp",
+		    // ignore parameter "localTowerPort" for tcp connections
+		    null
+                );
+		/*
                 TowerAction tower = new TowerAction(
                         conf.getProperty("towerHost"),
                         Integer.parseInt(conf.getProperty("towerPort"))
                 );
+		*/
                 //content.add(tower.getControls());
 
                 Scheduler.addSchedulableAction("tower", tower);
@@ -52,12 +62,21 @@ public class LaunchControl extends JFrame
                 int localPort2 = Integer.
                     parseInt(conf.getProperty("localRocketPort"));
 
-
-                RocketAction rocket = new RocketAction(
-                       conf.getProperty("rocketHost"),
-		       Integer.
-                    parseInt(conf.getProperty("rocketPort"))
+                CanAction rocket = new CanAction(
+		    //Integer.parseInt(conf.getProperty("localRocketPort")),
+                    6666,
+                    conf.getProperty("rocketHost"),
+                    Integer.parseInt(conf.getProperty("rocketPort")),
+		    "udp",
+		    null
                 );
+
+		/*                RocketAction rocket = new RocketAction(
+                       conf.getProperty("rocketHost"),
+                       Integer.
+                    parseInt(conf.getProperty("rocketPort"))
+		    );*/
+
                 Scheduler.addSchedulableAction("rocket", rocket);
 
                 CanListener rocketListener = new UDPCanListener(localPort2);
