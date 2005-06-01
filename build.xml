@@ -11,7 +11,6 @@
   <property name="src_tests" location="src"/>
 
   <property name="classpath" location="${build}"/>
-  <property name="freechartpath" location="ext/jcommon.jar:ext/jfreechart.jar"/>
   <property name="rxtxpath" location="ext/RXTXcomm.jar"/>
 
   <target name="init">
@@ -20,17 +19,6 @@
 
     <mkdir dir="${build}"/>
     <mkdir dir="${dist}"/>
-
-    <unjar src="ext/jcommon.jar" dest="${build}">
-      <patternset>
-        <exclude name="META-INF/**"/>
-      </patternset>
-    </unjar>
-    <unjar src="ext/jfreechart.jar" dest="${build}">
-      <patternset>
-        <exclude name="META-INF/**"/>
-      </patternset>
-    </unjar>
 
     <copy todir="${build}">
       <fileset dir="${src}">
@@ -43,10 +31,6 @@
   </target>
 
   <!-- libraries -->
-  <target name="stripchart" depends="init" description="compile stripchart">
-    <javac srcdir="${src}" includes="stripchart/*.java" destdir="${build}" classpath="${classpath}:${freechartpath}" debug="${debug}" deprecation="on"/>
-  </target>
-
   <target name="cansocket" depends="init" description="compile cansocket">
     <javac srcdir="${src}" includes="cansocket/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
@@ -56,7 +40,7 @@
   </target>
 
   <!-- programs -->
-  <target name="rocketview" depends="stripchart,cansocket,widgets" description="compile rocketview">
+  <target name="rocketview" depends="cansocket,widgets" description="compile rocketview">
     <javac srcdir="${src}" includes="rocketview/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
 
@@ -86,7 +70,6 @@
       <fileset dir="${build}">
 	<include name="com/**"/>
 	<include name="org/**"/>
-	<include name="stripchart/*.class"/>
 	<include name="cansocket/*.class"/>
         <include name="widgets/*.png"/>
 	<include name="widgets/*.class"/>

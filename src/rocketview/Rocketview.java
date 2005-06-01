@@ -141,8 +141,11 @@ public class Rocketview extends JFrame
 		splitPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 		splitPane.setBackground(Color.blue);
 		bottom.add(splitPane);
-		bottom.add(Box.createGlue());
 
+		// IMU data
+		JPanel imu = new JPanel();
+		addUntitledObserver( imu, new IMUObserver());
+		bottom.add( imu );
 
 		//look at min, max and preferred size for components.
 		/*
