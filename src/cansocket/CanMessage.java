@@ -114,8 +114,7 @@ public class CanMessage
 
 	/** Get one byte of this CanMessage's body starting at byte i */
     public byte getData8(int i) {
-		if (i<body.length) return body[i];
-		return 0;
+	    return body[i];
     }
 
     public short getData16(int i)
