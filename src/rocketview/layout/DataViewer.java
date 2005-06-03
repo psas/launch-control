@@ -1,21 +1,28 @@
 package rocketview.layout;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.LayoutManager;
+import java.io.File;
+import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
+import javax.swing.JSplitPane;
+
+import cansocket.*;
 
 import rocketview.ui.UiUtil;
 
-public class DataViewer extends JFrame
+public class DataViewer extends JFrame implements Observer
 {
     boolean initialized;
+    CanListener dispatch;
 
     private JLabel altitudeLabel, gpsLabel, apsBusLabel, umbLabel,
             shorePowerLabel, powerToFCLabel, powerToCanLabel,
@@ -28,34 +35,39 @@ public class DataViewer extends JFrame
             powerToAtvLabel, powerToWifiLabel,
     }; 
 
-    DataViewer() {
+    DataViewer(CanListener listener) {
         super();
 
-        this.setContentPane(getContentPanel());
-        initialized = true;
+        setContentPane(getContentPanel());
+        listener.addObserver(this);
+        
+        dispatch = listener;        
+        initialized = true;               
+    }
+    
+    public void update(Observable observer, Object arg) {
+        
     }
 
-    private JPanel getContentPanel() {
+    private JComponent getContentPanel() {
         assert ! initialized;
 
-        JPanel contentPanel = new JPanel(new BorderLayout());
-
-        contentPanel.add(getGeneralDataPanel(), BorderLayout.WEST);
-        contentPanel.add(getCanDataTable(), BorderLayout.CENTER);
+        JSplitPane contentPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                getSubsystemInfoPanel(), getCanDataTable());
 
         return contentPanel;
     }
 
-    private JPanel getGeneralDataPanel() {
+    private JPanel getSubsystemInfoPanel() {
         assert ! initialized;
 
-        JPanel generalDataPanel = new JPanel();
+        JPanel subsystemInfoPanel = new JPanel();
         LayoutManager layoutMgr = new GridBagLayout();
 
-        generalDataPanel.setLayout(layoutMgr);
-        initializeGeneralDataLabels(generalDataPanel);
+        subsystemInfoPanel.setLayout(layoutMgr);
+        initializeGeneralDataLabels(subsystemInfoPanel);
 
-        return generalDataPanel;
+        return subsystemInfoPanel;
     }
 
     private void initializeGeneralDataLabels(JPanel container) {
@@ -97,23 +109,18 @@ public class DataViewer extends JFrame
         return canDataTable;
     }
 
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception ex) {
-            /*EMPTY*/ ; // See "Thinking in Java" 3rd edition page 852.
-        }
-
-        JFrame frame = new DataViewer();
+    public static void main(String[] args) throws IOException {
+        StringBuffer tmpDir = new StringBuffer(System.getProperty("java.io.tmpdir"));
+        String log = tmpDir.append(File.pathSeparator).append("dv.log").toString();
+        CanSocket socket = new LogCanSocket(new UDPCanSocket(), log); 
+        CanListener listener = new CanListener(socket);
+        DataViewer frame = new DataViewer(listener);
         Dimension screenSize = frame.getToolkit().getScreenSize();
 
-        // Initialize the object.
         frame.setTitle("Rocketview DataViewer Driver");
         frame.setBounds(screenSize.width / 4, screenSize.height / 4,
-        screenSize.width / 2, screenSize.height / 2);
+                screenSize.width / 2, screenSize.height / 2);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.pack();
         frame.setVisible(true);
     }
 }

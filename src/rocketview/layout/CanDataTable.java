@@ -16,6 +16,7 @@ public class CanDataTable extends JPanel
     
     CanDataTable() {
         super(new BorderLayout());
+        
         JScrollPane contentScrollPane = new JScrollPane();        
         
         model = new CanDataTable.CanDataModel();
