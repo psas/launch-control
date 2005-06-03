@@ -90,6 +90,6 @@ class IMUObserver extends JPanel implements Observer
 		}
 
 		for(int i = 0; i < data[type].length; ++i)
-			data[type][i].addPoint(msg.getTimestamp() / (float) 100, (float) msg.getData16(i));
+			data[type][i].addPoint(msg.getTimestamp() / 100f, msg.getData16(i));
 	}
 }
