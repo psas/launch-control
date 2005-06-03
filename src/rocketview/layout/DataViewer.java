@@ -1,7 +1,6 @@
 package rocketview.layout;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -21,6 +20,8 @@ public class DataViewer extends JFrame
     private JLabel altitudeLabel, gpsLabel, apsBusLabel, umbLabel,
             shorePowerLabel, powerToFCLabel, powerToCanLabel,
             powerToAtvLabel, powerToWifiLabel, battLabel;
+    // FIXME: Figure out a way to lay this out without the extra array.  
+    // This seems unnecessary.  
     private JLabel[] labels = { 
             gpsLabel, altitudeLabel, apsBusLabel, battLabel, umbLabel,
             shorePowerLabel, powerToFCLabel, powerToCanLabel, 
@@ -53,26 +54,11 @@ public class DataViewer extends JFrame
 
         generalDataPanel.setLayout(layoutMgr);
         initializeGeneralDataLabels(generalDataPanel);
-        
-        for (int i = 0; i < labels.length; i++)
-            generalDataPanel.add(labels[i]);
-        
-        /*
-        generalDataPanel.add(altitudeLabel);
-        generalDataPanel.add(gpsLabel);
-        generalDataPanel.add(apsBusLabel);
-        generalDataPanel.add(battLabel);
-        generalDataPanel.add(umbLabel);
-        generalDataPanel.add(shorePowerLabel);
-        generalDataPanel.add(powerToFCLabel);
-        generalDataPanel.add(powerToCanLabel);
-        generalDataPanel.add(powerToAtvLabel);
-        generalDataPanel.add(powerToWifiLabel);*/
 
         return generalDataPanel;
     }
 
-    private void initializeGeneralDataLabels(Container container) {
+    private void initializeGeneralDataLabels(JPanel container) {
         assert ! initialized;
 
         final String u = "Unknown";
@@ -98,13 +84,15 @@ public class DataViewer extends JFrame
             c.gridy = rowCnt++;
             labels[i] = UiUtil.addSimpleDisplayField(container, 
                     nameValuePairs[i][0], nameValuePairs[i][1], c, true);
-        }                
+        }             
+        
+        UiUtil.addVerticleGridGlue(container, labels.length);
     }
 
     private JPanel getCanDataTable() {
         assert ! initialized;
 
-        JPanel canDataTable = new JPanel();
+        JPanel canDataTable = new CanDataTable();
 
         return canDataTable;
     }

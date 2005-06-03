@@ -388,10 +388,9 @@ public final class UiUtil
        The resulting constraint will have these values:
 
        <ul>
-       <li>gridx, <gridy> -- set to x and y
+       <li>gridx, gridy -- set to x and y
        <li>anchor -- GridBagConstraints.WEST
-       <li><insets</tt> -- <tt>Insets(0, 0, 0,
-           {@link UiConstants.ONE_SPACE})
+       <li>insets -- Insets(0, 0, 0, {@link UiConstants.ONE_SPACE})
        </ul>
 
        <p>All other values are taken from the defaults of
