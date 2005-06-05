@@ -167,13 +167,13 @@ public class Rocketview extends JFrame
 		System.out.println("\tMIN: " + c.getMinimumSize());
 		System.out.println("\tPREF: " + c.getPreferredSize());
 	}
-
-/*	
+	
 	public Dimension getPreferredSize()
 	{
-		return preferredSize;
+        Dimension screenSize = getToolkit().getScreenSize();
+                
+		return screenSize;
 	}
-*/
 
 	// add border to first JComponent
 	// set left-align flow layout on first JComponent
