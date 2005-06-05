@@ -87,7 +87,7 @@ public class Rocketview extends JFrame
 
 		// bottom panel for state info, messages, and later charts
 		JPanel bottom = new JPanel();
-		bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
+		bottom.setLayout(new BorderLayout()); //new BoxLayout(bottom, BoxLayout.X_AXIS));
 		leftCol.add(bottom);
 
 		
@@ -147,7 +147,7 @@ public class Rocketview extends JFrame
 		// IMU data
 		JPanel imu = new JPanel();
 		addUntitledObserver( imu, new IMUObserver());
-		bottom.add( imu );
+		bottom.add( imu, BorderLayout.EAST );
 
 		//look at min, max and preferred size for components.
 		/*
