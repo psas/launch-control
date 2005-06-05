@@ -16,8 +16,10 @@ import javax.swing.border.*;
  */
 public class Rocketview extends JFrame
 {
-	protected static final Dimension preferredSize
-	    = new Dimension( 1024, 750 );
+	
+//	protected static final Dimension preferredSize
+//	    = new Dimension( 1024, 750 );
+
 	protected final CanListener dispatch;
 
 	public static void main(String[] args) throws Exception
@@ -166,10 +168,12 @@ public class Rocketview extends JFrame
 		System.out.println("\tPREF: " + c.getPreferredSize());
 	}
 
+/*	
 	public Dimension getPreferredSize()
 	{
 		return preferredSize;
 	}
+*/
 
 	// add border to first JComponent
 	// set left-align flow layout on first JComponent
