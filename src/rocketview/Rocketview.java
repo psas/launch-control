@@ -170,9 +170,7 @@ public class Rocketview extends JFrame
 	
 	public Dimension getPreferredSize()
 	{
-        Dimension screenSize = getToolkit().getScreenSize();
-                
-		return screenSize;
+		return getToolkit().getScreenSize();
 	}
 
 	// add border to first JComponent
