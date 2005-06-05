@@ -1,4 +1,4 @@
-package rocketmon;
+package widgets;
 
 import cansocket.*;
 

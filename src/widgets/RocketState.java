@@ -107,7 +107,7 @@ public class RocketState extends JPanel implements Observer
 				setZ(msg.getData16(2));
 				break;
 			case CanBusIDs.FC_REPORT_STATE:
-				setState((int) msg.getData8(0) & 0xff);
+				setState(msg.getData8(0) & 0xff);
 				break;
 			case CanBusIDs.FC_REPORT_NODE_STATUS:
 				detailDisplay.setStates(msg.getBody());
