@@ -13,190 +13,87 @@ public class StateGrid extends JPanel
 	// node states stored as bits
 	protected byte[] states;
 	protected byte[] mask;
+
+	// names of node states
+	protected static final String[] names = {
+		"APS mode",
+		"IMU mode",
+		"GPS mode",
+		"ATV mode",
+		"REC mode",
+
+		"APS_SWITCH_2", /* CAN bus */
+		"APS_SWITCH_3", /* ATV power amp (and DC/DC converter) */
+		"APS_SWITCH_4", /* WIFI power amp */
+		"UMB_ROCKETREADY",
+		"UMB_CONNECTOR",
+
+		"GPS_POWER",
+
+		"ATV_POWER_CAMERA",
+		"ATV_POWER_OVERLAY",
+		"ATV_POWER_TX",
+		"ATV_POWER_PA",
+
+		"APS_VOLTS",
+		"APS_AMPS",
+		"APS_CHARGE",
+
+		"IMU_ACCEL",
+		"IMU_GYRO",
+		"IMU_PRESSURE",
+		"IMU_TEMPERATURE",
+
+		"GPS_UART_TRANSMIT",
+
+		/* enum sequencer_test */
+		/* Shared tests */
+		"ZERO_IMU_GYRO",
+		"PRESSURE_VALID",
+		"GPS_LOCKED",
+		"SAFE_DESCENT_GPS",
+		"DROGUE_DEPLOY_SAFE_GPS",
+		"SAFE_DESCENT_PRESSURE",
+		"DROGUE_DEPLOY_SAFE_PRESSURE",
+		"HEIGHT_MATCH_GPS_PRESSURE",
 	
-	protected static String[] modes = {
-			"APS mode",
-			"IMU mode",
-			"GPS mode",
-			"ATV mode",
-			"REC mode"
-	};
-	protected static String[] aps = {
-			"APS_SWITCH_2", /* CAN bus */
-			"APS_SWITCH_3", /* ATV power amp (and DC/DC converter) */
-			"APS_SWITCH_4", /* WIFI power amp */
-			"APS_VOLTS",
-			"APS_AMPS",
-			"APS_CHARGE"
-	};
-	protected static String[] umb = {
-			"UMB_ROCKETREADY",
-			"UMB_CONNECTOR",
-	};
-	protected static String[] gps = {
-			"GPS_POWER",
-			"GPS_UART_TRANSMIT"
-	};
-	protected static String[] atv = {
-			"ATV_POWER_CAMERA",
-			"ATV_POWER_OVERLAY",
-			"ATV_POWER_TX",
-			"ATV_POWER_PA"
-	};
-	protected static String[] imu = {
-			"IMU_ACCEL",
-			"IMU_GYRO",
-			"IMU_PRESSURE",
-			"IMU_TEMPERATURE"
-	};
-	protected static String[] shared = {
-			"ZERO_IMU_GYRO",
-			"PRESSURE_VALID",
-			"GPS_LOCKED",
-			"SAFE_DESCENT_GPS",
-			"DROGUE_DEPLOY_SAFE_GPS",
-			"SAFE_DESCENT_PRESSURE",
-			"DROGUE_DEPLOY_SAFE_PRESSURE",
-			"HEIGHT_MATCH_GPS_PRESSURE"
-	};
-	protected static String[] preflight = {
-			"SANE_ANTENNAS",
-			"SANE_IMU_ACCEL",
-			"QUIET_PRESSURE_BASE",
-			"GOT_GPS",
-			"SANE_GPS"
-	};
-	/* Arming tests. */
-	protected static String[] arming = {
-		"ARMING_IMU_FAST"
-	};
-	protected static String[] boost = {
-	/* Boost tests */
+		/* Preflight check tests. */
+		"SANE_ANTENNAS",
+		"SANE_IMU_ACCEL",
+		"QUIET_PRESSURE_BASE",
+		"GOT_GPS",
+		"SANE_GPS",
+	
+		/* Arming tests. */
+		"ARMING_IMU_FAST",
+	
+		/* Boost tests */
 		"BOOST_GPS",
 		"BOOST_IMU",
 		"BOOST_UMB",
-		"BOOST_PRESSURE"
-	};
-	/* Coast tests */
-	protected static String[] coast = {
-		"APOGEE_PRESSURE"
-	};
-	/* Deploy drogue tests */
-	protected static String[] deploy = {
+		"BOOST_PRESSURE",
+	
+		/* Coast tests */
+		"APOGEE_PRESSURE",
+	
+		/* Deploy drogue tests */
 		"DROGUE_PRESSURE",
 		"DROGUE_GPS",
 		"DROGUE_IMU",
-		"DROGUE_WORKING"
-	};
-	/* Descent drogue tests */
-	protected static String[] descent = {
+		"DROGUE_WORKING",
+	
+		/* Descent drogue tests */
 		"DESCEND_GPS",
 		"DESCEND_PRESSURE",
-		"DESCEND_MAIN_FUTURE"
-	};
-	/* Descend main tests */
-	protected static String[] touchdown = {
+		"DESCEND_MAIN_FUTURE",
+	
+		/* Descend main tests */
 		"TOUCHDOWN_GPS",
-		"TOUCHDOWN_PRESSURE"
+		"TOUCHDOWN_PRESSURE",
+	
+		/* Recovery wait tests */
+		"RECOVERY_VOLTS",
 	};
-	/* Recovery wait tests */
-	protected static String[] recovery = {
-		"RECOVERY_VOLTS"
-	};
-	
-	protected static String [][] groups = {
-		modes, aps, umb, gps, atv, imu, shared, preflight, arming, boost,
-		coast, deploy, descent, touchdown, recovery
-	};		
-	
-	protected static final int numGroups = groups.length;
-	protected static final int numStates =
-		modes.length + aps.length + umb.length + gps.length + atv.length +
-		imu.length + shared.length + preflight.length + arming.length +
-		boost.length + coast.length + deploy.length + descent.length +
-		touchdown.length;
-	
-
-	// names of node states
-//	protected static final String[] names = {
-//		"APS mode",
-//		"IMU mode",
-//		"GPS mode",
-//		"ATV mode",
-//		"REC mode",
-//
-//		"APS_SWITCH_2", /* CAN bus */
-//		"APS_SWITCH_3", /* ATV power amp (and DC/DC converter) */
-//		"APS_SWITCH_4", /* WIFI power amp */
-//		"UMB_ROCKETREADY",
-//		"UMB_CONNECTOR",
-//
-//		"GPS_POWER",
-//
-//		"ATV_POWER_CAMERA",
-//		"ATV_POWER_OVERLAY",
-//		"ATV_POWER_TX",
-//		"ATV_POWER_PA",
-//
-//		"APS_VOLTS",
-//		"APS_AMPS",
-//		"APS_CHARGE",
-//
-//		"IMU_ACCEL",
-//		"IMU_GYRO",
-//		"IMU_PRESSURE",
-//		"IMU_TEMPERATURE",
-//
-//		"GPS_UART_TRANSMIT",
-//
-//		/* enum sequencer_test */
-//		/* Shared tests */
-//		"ZERO_IMU_GYRO",
-//		"PRESSURE_VALID",
-//		"GPS_LOCKED",
-//		"SAFE_DESCENT_GPS",
-//		"DROGUE_DEPLOY_SAFE_GPS",
-//		"SAFE_DESCENT_PRESSURE",
-//		"DROGUE_DEPLOY_SAFE_PRESSURE",
-//		"HEIGHT_MATCH_GPS_PRESSURE",
-//	
-//		/* Preflight check tests. */
-//		"SANE_ANTENNAS",
-//		"SANE_IMU_ACCEL",
-//		"QUIET_PRESSURE_BASE",
-//		"GOT_GPS",
-//		"SANE_GPS",
-//	
-//		/* Arming tests. */
-//		"ARMING_IMU_FAST",
-//	
-//		/* Boost tests */
-//		"BOOST_GPS",
-//		"BOOST_IMU",
-//		"BOOST_UMB",
-//		"BOOST_PRESSURE",
-//	
-//		/* Coast tests */
-//		"APOGEE_PRESSURE",
-//	
-//		/* Deploy drogue tests */
-//		"DROGUE_PRESSURE",
-//		"DROGUE_GPS",
-//		"DROGUE_IMU",
-//		"DROGUE_WORKING",
-//	
-//		/* Descent drogue tests */
-//		"DESCEND_GPS",
-//		"DESCEND_PRESSURE",
-//		"DESCEND_MAIN_FUTURE",
-//	
-//		/* Descend main tests */
-//		"TOUCHDOWN_GPS",
-//		"TOUCHDOWN_PRESSURE",
-//	
-//		/* Recovery wait tests */
-//		"RECOVERY_VOLTS",
-//	};
 
 	protected ImageIcon greenled = new ImageIcon(ClassLoader.getSystemResource("widgets/greenled.png"));
 	protected ImageIcon redled = new ImageIcon(ClassLoader.getSystemResource("widgets/redled.png"));
@@ -290,18 +187,15 @@ public class StateGrid extends JPanel
 	// and recreate all of them.
 	protected void draw() 
 	{
-		removeAll();
-		int i,j = 0;
-		for ( i = 0; i < groups.length; ++i) {
-			for ( j = 0; j < groups[i].length; ++j) {
-				JLabel gridEntry = new JLabel(groups[i][j]);
-	                        gridEntry.setVerticalTextPosition(
-	                            SwingConstants.CENTER);
-	                        gridEntry.setHorizontalAlignment(SwingConstants.LEFT);
-				gridEntry.setIcon(grayled);
-				add(gridEntry);
-				//setElementIcon(gridEntry, 0);
-			}
+		removeAll(); 
+		for (int i = 0; i < names.length; ++i) {
+			JLabel gridEntry = new JLabel(names[i]);
+                        gridEntry.setVerticalTextPosition(
+                            SwingConstants.CENTER);
+                        gridEntry.setHorizontalAlignment(SwingConstants.LEFT);
+			gridEntry.setIcon(grayled);
+			add(gridEntry);
+			//setElementIcon(gridEntry, 0);
 		}
 	}
 	
@@ -315,16 +209,13 @@ public class StateGrid extends JPanel
 	{
 		//compare newStates to oldStates and newMask to oldMask
 		//and only change elements which have changed
-		int i,j = 0;
-		for ( i = 0; i < groups.length; ++i) {
-			for ( j = 0; j < groups[i].length; ++j) {
-				boolean newBit = getBit(newStates, i);
-				boolean newInteresting = getBit(newMask, i);
-				if (getBit(oldStates, i) != newBit
-				    || getBit(oldMask, i) != newInteresting)
-					setElementIcon(i, newBit == true,
-	                                               newInteresting == true);
-			}
+		for (int i = 0; i < names.length; ++i) {
+			boolean newBit = getBit(newStates, i);
+			boolean newInteresting = getBit(newMask, i);
+			if (getBit(oldStates, i) != newBit
+			    || getBit(oldMask, i) != newInteresting)
+				setElementIcon(i, newBit == true,
+                                               newInteresting == true);
 		}
 	}
 }
