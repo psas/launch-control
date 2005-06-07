@@ -96,7 +96,7 @@ public class StateGrid extends JPanel
 
 		for (int i = 0; i < names.length; ++i)
 		{
-			StateLabel gridEntry = new StateLabel(names[i], i);
+			NodeStateLabel gridEntry = new NodeStateLabel(names[i], i);
 			dispatch.add(gridEntry);
 			add(gridEntry);
 		}

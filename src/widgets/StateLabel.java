@@ -1,51 +1,46 @@
 package widgets;
 
-import cansocket.*;
-
 import java.awt.*;
 import javax.swing.*;
 
-public class StateLabel extends JLabel implements CanObserver
+public class StateLabel extends JLabel
 {
-	protected final int index;
-	protected final int mask;
 	protected final Color bg;
 
-	protected boolean state = false;
-	protected boolean known = false;
+	protected Color fg;
+	protected boolean known;
 
-	public StateLabel(String name, int id)
+	public StateLabel(String name)
 	{
 		super(name);
-		index = id / 8;
-		mask = 1 << (id % 8);
 		bg = getBackground();
 		setOpaque(true);
+
+		setState(false);
+		setKnown(false);
 	}
 
-	public void message(CanMessage msg)
+	protected void setState(boolean state)
 	{
-		switch(msg.getId())
-		{
-			case CanBusIDs.FC_REPORT_NODE_STATUS:
-				state = (msg.getData8(index) & mask) != 0;
-				break;
-			case CanBusIDs.FC_REPORT_IMPORTANCE_MASK:
-				known = (msg.getData8(index) & mask) != 0;
-				break;
-			default:
-				return;
-		}
-
-		Color c;
 		if(state)
-			c = Color.GREEN;
+			fg = Color.GREEN;
 		else
-			c = Color.RED;
+			fg = Color.RED;
+		update();
+	}
+
+	protected void setKnown(boolean known)
+	{
+		this.known = known;
+		update();
+	}
+
+	private void update()
+	{
 		if(known)
-			setBackground(c);
+			setBackground(fg);
 		else
 			setBackground(bg);
-		setBorder(BorderFactory.createLineBorder(c));
+		setBorder(BorderFactory.createLineBorder(fg));
 	}
 }
