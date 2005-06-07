@@ -2,8 +2,6 @@ package rocketview;
 
 import cansocket.*;
 
-import java.lang.*;
-import java.util.*;
 import java.text.*;
 import javax.swing.*;
 
