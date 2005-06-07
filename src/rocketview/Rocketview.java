@@ -18,7 +18,7 @@ public class Rocketview extends JFrame
 {
 	
 //	protected static final Dimension preferredSize
-//	    = new Dimension( 1024, 750 );
+//	    = new Dimension( 1024, 1050 );
 
 	protected final CanListener dispatch;
 
@@ -58,13 +58,18 @@ public class Rocketview extends JFrame
 
 		// rvPane is the outermost content pane
 		Container rvPane = getContentPane();
-		rvPane.setLayout(new GridLayout(1, 0)); // just 1 row
+		//rvPane.setLayout(new GridLayout(1, 0)); // just 1 row
+		rvPane.setLayout( new BoxLayout( rvPane, BoxLayout.X_AXIS));
 
 		// left side for state, message, subSys to share
 		JPanel leftCol = new JPanel();
 		leftCol.setLayout( new BoxLayout( leftCol, BoxLayout.Y_AXIS ));
 		rvPane.add( leftCol );
-
+		
+		// IMU data
+		JPanel imu = new JPanel();
+		addUntitledObserver( imu, new IMUObserver());
+		rvPane.add(imu);
 
 		// top panel for status boxes
 		JPanel top = new JPanel();
@@ -143,11 +148,6 @@ public class Rocketview extends JFrame
 		splitPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 		splitPane.setBackground(Color.blue);
 		bottom.add(splitPane);
-
-		// IMU data
-		JPanel imu = new JPanel();
-		addUntitledObserver( imu, new IMUObserver());
-		bottom.add( imu, BorderLayout.EAST );
 
 		//look at min, max and preferred size for components.
 		/*
