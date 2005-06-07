@@ -43,8 +43,11 @@ public class StripChart extends JComponent
 
 	public void addPoint(float t, float y)
 	{
-		ts.add(new Float(t));
-		ys.add(new Float(y));
+		synchronized(ts)
+		{
+			ts.add(new Float(t));
+			ys.add(new Float(y));
+		}
 		repaint();
 	}
 
@@ -55,16 +58,20 @@ public class StripChart extends JComponent
 
 	private float constructPath(GeneralPath path)
 	{
-		ListIterator ti = ts.listIterator(ts.size());
-		ListIterator yi = ys.listIterator(ys.size());
+		float old;
+		synchronized(ts)
+		{
+			ListIterator ti = ts.listIterator(ts.size());
+			ListIterator yi = ys.listIterator(ys.size());
 
-		float t;
-		float now = previousFloat(ti);
-		float old = now - getTimeScale();
+			float t;
+			float now = previousFloat(ti);
+			old = now - getTimeScale();
 
-		path.moveTo(now, previousFloat(yi));
-		while(ti.hasPrevious() && (t = previousFloat(ti)) > old)
-			path.lineTo(t, previousFloat(yi));
+			path.moveTo(now, previousFloat(yi));
+			while(ti.hasPrevious() && (t = previousFloat(ti)) > old)
+				path.lineTo(t, previousFloat(yi));
+		}
 
 		return old;
 	}
