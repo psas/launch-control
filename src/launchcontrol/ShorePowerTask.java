@@ -20,7 +20,7 @@ public class ShorePowerTask extends TimerTask
 	protected CanMessage powerOn;
 	protected CanMessage powerOff;
 	protected CanMessage requestMessage;
-	protected TCPCanSocket towerSocket; // tower communication socket
+	protected CanSocket towerSocket; // tower communication socket
 
 	/** Create a new ShorewPowerTask. 
 	 * When the Task is run, a message will be sent to the tower
@@ -28,7 +28,7 @@ public class ShorePowerTask extends TimerTask
 	 * @param towerSocket the connection to the launch tower.
 	 * @param power_state the power state shore power should be set to. 
 	 */
-	public ShorePowerTask (boolean power_state, TCPCanSocket towerSocket) 
+	public ShorePowerTask (boolean power_state, CanSocket towerSocket) 
 	{
 		this.power = power_state;
 		this.towerSocket = towerSocket;
