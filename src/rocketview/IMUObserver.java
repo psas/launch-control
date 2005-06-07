@@ -3,7 +3,7 @@ package rocketview;
 import cansocket.*;
 import widgets.*;
 
-// import java.awt.*;
+import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -46,7 +46,7 @@ class IMUObserver extends JPanel implements Observer
 
 	public IMUObserver()
 	{
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new GridLayout(0, 1));
 		data = new StripChart[title.length][];
 		for(int i = 0; i < data.length; ++i)
 		{
