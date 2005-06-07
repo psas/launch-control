@@ -5,15 +5,14 @@ import cansocket.*;
 import java.util.*;
 import javax.swing.*;
 
-public class RocketState extends JPanel implements Observer
+public class RocketState extends JPanel implements Observer, CanObserver
 {
-	protected final FCStateLabel stateLabel = new FCStateLabel();
 	protected final CanDispatch dispatch = new CanDispatch();
+	protected final FCStateLabel stateLabel = new FCStateLabel(dispatch);
 
 	public RocketState()
 	{
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		dispatch.add(stateLabel);
 		add(stateLabel);
 		add(new JSeparator());
 		add(new StateGrid(dispatch));
@@ -29,10 +28,10 @@ public class RocketState extends JPanel implements Observer
 		if (!(arg instanceof CanMessage))
 			return;
 
-		update((CanMessage) arg);
+		message((CanMessage) arg);
 	}
 
-	public void update(CanMessage msg)
+	public void message(CanMessage msg)
 	{
 		dispatch.update(msg);
 	}

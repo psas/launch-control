@@ -50,10 +50,11 @@ public class FCStateLabel extends StateLabel implements CanObserver
 		}
 	}
 
-	public FCStateLabel()
+	public FCStateLabel(CanDispatch dispatch)
 	{
 		super("");
 		updateText();
+		dispatch.add(this);
 	}
 
 	public void addLinkStateListener(LinkStateListener listener)
