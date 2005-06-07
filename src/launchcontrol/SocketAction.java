@@ -60,7 +60,7 @@ public class SocketAction implements SchedulableAction
 	*
 	* POST :
 	*/
-	public SocketAction(CanSocket sock) throws IOException
+	public SocketAction(CanSocket sock)
 	{
 		this.sock = sock;
 	}
