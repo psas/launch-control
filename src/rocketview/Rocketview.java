@@ -55,7 +55,7 @@ public class Rocketview extends JFrame
 		fc.add(new StateGrid(dispatch));
 
 		// message box for scrolled text
-		JScrollPane messScroll = new JScrollPane(new TextObserver(dispatch));
+		TextObserver messScroll = new TextObserver(dispatch);
 		messScroll.setBorder( new TitledBorder( "CanId  len  data" ));
 
 

@@ -9,18 +9,18 @@ import javax.swing.*;
 /*----------------------------------------------------------------
  * Prints all message to the message text box
  */
-class TextObserver extends JTextArea implements CanObserver
+class TextObserver extends JScrollPane implements CanObserver
 {
 	String msgSyms[];
+	JTextArea text = new JTextArea(15, 40); // rows, columns
 
     protected int discardLength(int id)
     {
 	return (id >>> 4) & 0xfff;
     }
 
-    public TextObserver(CanDispatch dispatch) throws IllegalAccessException {
-	super( 15, 40 ); // row, column
-
+    public TextObserver(CanDispatch dispatch) throws IllegalAccessException
+    {
 	dispatch.add(this);
 
 	// initialize the map of CAN msg symbols
@@ -34,8 +34,9 @@ class TextObserver extends JTextArea implements CanObserver
 	}
 
 	// construct a JTextArea
-	this.setLineWrap( true );
-	this.setFont( new Font( "Monospaced", Font.PLAIN, 10 ));
+	text.setLineWrap(true);
+	text.setFont(new Font("Monospaced", Font.PLAIN, 10));
+	setViewportView(text);
     }
 
     public void message(CanMessage msg)
@@ -73,13 +74,14 @@ class TextObserver extends JTextArea implements CanObserver
 			return;
 	}
 
+	StringBuffer buf = new StringBuffer();
 	if (msgSyms[discardLength(msg.getId())] != null)
-		append( msgSyms[discardLength(msg.getId())] + ": ");
-	append( msg.toString() );
-	append( "\n" );
+		buf.append(msgSyms[discardLength(msg.getId())]).append(": ");
+	buf.append(msg).append("\n");
+	text.append(buf.toString());
+
 	//Try to keep the scrollpane looking at the tail of the log
-	JScrollPane scrollpane = (JScrollPane) getParent().getParent();
-	final JScrollBar vertBar = scrollpane.getVerticalScrollBar();
+	final JScrollBar vertBar = getVerticalScrollBar();
 	SwingUtilities.invokeLater(new Runnable() {
 	  public void run() {
 	    if (! vertBar.getValueIsAdjusting()) 
