@@ -4,7 +4,6 @@ import cansocket.*;
 import widgets.*;
 
 import java.awt.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -17,7 +16,7 @@ import javax.swing.border.*;
  *
  * chart vertical axis expects values 0-4096 opaque units
  */
-class IMUObserver extends JPanel implements Observer
+class IMUObserver extends JPanel implements CanObserver
 {
 	// first subscript in arrays is one of these
 	protected final int IMU_ACCEL = 0;
@@ -44,8 +43,9 @@ class IMUObserver extends JPanel implements Observer
 */
 
 
-	public IMUObserver()
+	public IMUObserver(CanDispatch dispatch)
 	{
+		dispatch.add(this);
 		setLayout(new GridLayout(0, 1));
 		data = new StripChart[title.length][];
 		for(int i = 0; i < data.length; ++i)
@@ -70,12 +70,8 @@ class IMUObserver extends JPanel implements Observer
 		add(panel);
 	}
 
-	public void update(Observable o, Object arg)
+	public void message(CanMessage msg)
 	{
-		if (!(arg instanceof CanMessage))
-			return;
-
-		CanMessage msg = (CanMessage) arg;
 		int type;
 		switch (msg.getId())
 		{

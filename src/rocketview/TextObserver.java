@@ -3,14 +3,13 @@ package rocketview;
 import cansocket.*;
 
 import java.awt.Font;
-import java.util.*;
-import javax.swing.*;
 import java.lang.reflect.*;
+import javax.swing.*;
 
 /*----------------------------------------------------------------
  * Prints all message to the message text box
  */
-class TextObserver extends JTextArea implements Observer
+class TextObserver extends JTextArea implements CanObserver
 {
 	String msgSyms[];
 
@@ -19,8 +18,10 @@ class TextObserver extends JTextArea implements Observer
 	return (id >>> 4) & 0xfff;
     }
 
-    public TextObserver() throws IllegalAccessException {
+    public TextObserver(CanDispatch dispatch) throws IllegalAccessException {
 	super( 15, 40 ); // row, column
+
+	dispatch.add(this);
 
 	// initialize the map of CAN msg symbols
 	int i, msg;
@@ -37,13 +38,8 @@ class TextObserver extends JTextArea implements Observer
 	this.setFont( new Font( "Monospaced", Font.PLAIN, 10 ));
     }
 
-    public void update(Observable o, Object arg)
+    public void message(CanMessage msg)
     {
-	if (!(arg instanceof CanMessage))
-		return;
-			
-	CanMessage msg = (CanMessage) arg;
-
 	int nid = msg.getId() & (0x1f << 11);
 	switch(nid)
 	{

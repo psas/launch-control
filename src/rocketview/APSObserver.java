@@ -2,8 +2,6 @@ package rocketview;
 
 import cansocket.*;
 
-import java.awt.*;
-import java.util.*;
 import java.text.*;
 import javax.swing.*;
 
@@ -15,18 +13,17 @@ import javax.swing.*;
  *   display: APS bus: xx.xxV  batt: x.xxA xx.xxxAHr
  *          : Umb: [on/off] Power: [on/off] Charge: [on/off] 
  */
-class APSObserver extends JPanel implements Observer
+class APSObserver extends JPanel implements CanObserver
 {
 	protected final DecimalFormat fmt = new DecimalFormat("0.000");
 
-	protected final CanDispatch dispatch = new CanDispatch();
 	protected final JLabel busLabel = new JLabel();
 
 	protected double voltage = -1;
 	protected double current = -1;
 	protected double charge = -1;
 
-	public APSObserver()
+	public APSObserver(CanDispatch dispatch)
 	{
 		setLayout(new GridBoxLayout());
 		BooleanStateLabel label[] = {
@@ -38,6 +35,8 @@ class APSObserver extends JPanel implements Observer
 			new BooleanStateLabel("S3 (ATV amp)", CanBusIDs.APS_REPORT_SWITCH_3),
 			new BooleanStateLabel("S4 (wifi amp) ", CanBusIDs.APS_REPORT_SWITCH_4),
 		};
+
+		dispatch.add(this);
 		add(busLabel);
 		for(int i = 0; i < label.length; ++i)
 		{
@@ -69,16 +68,8 @@ class APSObserver extends JPanel implements Observer
 	busLabel.setText(b.toString());
     }
 
-    public void update(Observable o, Object arg)
+    public void message(CanMessage msg)
     {
-	if (!(arg instanceof CanMessage))
-	    return;
-			
-	// filter on id
-	CanMessage msg = (CanMessage) arg;
-
-	dispatch.update(msg);
-
 	switch(msg.getId())
 	{
 	    case CanBusIDs.APS_DATA_VOLTS:

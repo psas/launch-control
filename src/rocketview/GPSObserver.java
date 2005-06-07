@@ -3,11 +3,9 @@ package rocketview;
 import cansocket.*;
 import widgets.*;
 
-import java.awt.*;
-import java.util.*;
 import javax.swing.*;
 
-class GPSObserver extends JPanel implements Observer
+class GPSObserver extends JPanel implements CanObserver
 {
 	int visible = 0;
 	int used = 0;
@@ -18,8 +16,13 @@ class GPSObserver extends JPanel implements Observer
 	protected final JLabel sats = new JLabel("sats: 0/0");
 	protected final LockStateLabel lock = new LockStateLabel();
 
-	public GPSObserver()
+	public GPSObserver(CanDispatch dispatch)
 	{
+		dispatch.add(this);
+		dispatch.add(pos);
+		dispatch.add(time);
+		dispatch.add(lock);
+
 		setLayout(new GridBoxLayout());
 		add(pos);
 		add(alt);
@@ -28,17 +31,8 @@ class GPSObserver extends JPanel implements Observer
 		add(lock);
 	}
 
-	public void update(Observable o, Object arg)
+	public void message(CanMessage msg)
 	{
-		if (!(arg instanceof CanMessage))
-			return;
-			
-		CanMessage msg = (CanMessage) arg;
-
-		pos.message(msg);
-		time.message(msg);
-		lock.message(msg);
-
 		switch(msg.getId())
 		{
 			case CanBusIDs.FC_GPS_HEIGHT:

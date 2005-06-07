@@ -16,7 +16,7 @@ import javax.swing.border.*;
  */
 public class Rocketview extends JFrame
 {
-	protected final CanListener dispatch;
+	protected final CanDispatch dispatch;
 
 	public static void main(String[] args) throws Exception
 	{
@@ -44,20 +44,19 @@ public class Rocketview extends JFrame
 	{
 		super("Rocketview: " + host + ": " + port);
 
-		dispatch = new CanListener(new LogCanSocket(new UDPCanSocket(port), "RocketView.log"));
+		dispatch = new CanDispatch(new LogCanSocket(new UDPCanSocket(port), "RocketView.log"));
 
 		// status boxes
 		JPanel fc = new JPanel();
 		fc.setLayout(new GridBoxLayout());
 
 		// flight computer state
-		addObserver(fc, new RocketState());
+		RocketState statepanel = new RocketState();
+		dispatch.add(statepanel);
+		addObserver(fc, statepanel);
 
-		// message box for scrolled text, later add to split pane
-		TextObserver messArea = new TextObserver();
-		dispatch.addObserver( messArea );
-
-		JScrollPane messScroll = new JScrollPane( messArea );
+		// message box for scrolled text
+		JScrollPane messScroll = new JScrollPane(new TextObserver(dispatch));
 		messScroll.setBorder( new TitledBorder( "CanId  len  data" ));
 
 
@@ -66,8 +65,8 @@ public class Rocketview extends JFrame
 		JPanel subSys = new JPanel();
 		subSys.setLayout(new GridLayout(1, 0));
 
-		addObserver(subSys, "GPS", new GPSObserver());
-		addObserver(subSys, "APS", new APSObserver());
+		addObserver(subSys, "GPS", new GPSObserver(dispatch));
+		addObserver(subSys, "APS", new APSObserver(dispatch));
 
 		// rvPane is the outermost content pane
 		Container rvPane = getContentPane();
@@ -88,8 +87,7 @@ public class Rocketview extends JFrame
 		gbc.gridwidth = gbc.RELATIVE;
 		rvPane.add(subSys, gbc);
 
-		IMUObserver imu = new IMUObserver();
-		dispatch.addObserver(imu);
+		IMUObserver imu = new IMUObserver(dispatch);
 		gbc.fill = gbc.BOTH;
 		gbc.gridy = 0;
 		gbc.gridwidth = gbc.REMAINDER;
@@ -116,12 +114,8 @@ public class Rocketview extends JFrame
 		addObserver(c, o);
 	}
 
-	// add Component to Container
-	// add Component as an Observer of Dispatch
 	protected void addObserver(Container c, Component o)
 	{
 		c.add(o);
-		dispatch.addObserver((Observer) o);
 	}
-
 } // end class Rocketview
