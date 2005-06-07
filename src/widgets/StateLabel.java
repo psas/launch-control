@@ -20,6 +20,7 @@ public class StateLabel extends JLabel implements CanObserver
 		index = id / 8;
 		mask = 1 << (id % 8);
 		bg = getBackground();
+		setOpaque(true);
 	}
 
 	public void message(CanMessage msg)
