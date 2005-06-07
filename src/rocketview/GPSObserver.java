@@ -36,7 +36,7 @@ class GPSObserver extends JPanel implements Observer
 		CanMessage msg = (CanMessage) arg;
 
 		pos.message(msg);
-		time.update(o, arg);
+		time.message(msg);
 		lock.message(msg);
 
 		switch(msg.getId())

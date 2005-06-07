@@ -2,21 +2,16 @@ package rocketview;
 
 import cansocket.*;
 
-import java.util.*;
 import javax.swing.*;
 
-class TimeObserver extends JLabel implements Observer
+class TimeObserver extends JLabel implements CanObserver
 {
 	public TimeObserver() {
-		setText("rocket time: unknown");
+		setText("time: -");
 	}
 
-	public void update(Observable o, Object arg)
+	public void message(CanMessage msg)
 	{
-		if (!(arg instanceof CanMessage))
-			return;
-
-		CanMessage msg = (CanMessage) arg;
 		if(msg.getId11() != CanBusIDs.FC_GPS_TIME >> 5)
 				return;
 
@@ -27,7 +22,7 @@ class TimeObserver extends JLabel implements Observer
 		byte minute = msg.getData8(5);
 		byte second = msg.getData8(6);
 
-		StringBuffer buf = new StringBuffer("rocket time: " );
+		StringBuffer buf = new StringBuffer("time: " );
 		buf.append( year ).append( "/" );
 		buf.append( month ).append( "/" );
 		buf.append( day ).append( " " );
