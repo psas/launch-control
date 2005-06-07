@@ -11,29 +11,26 @@ import javax.swing.*;
  */
 class TextObserver extends JScrollPane implements CanObserver
 {
-	String msgSyms[];
-	JTextArea text = new JTextArea(15, 40); // rows, columns
+	protected static final String msgSyms[] = new String[0x1000];
 
-    protected int discardLength(int id)
-    {
-	return (id >>> 4) & 0xfff;
-    }
+	static {
+		// initialize the map of CAN msg symbols
+		Field fields[] = CanBusIDs.class.getFields();
+		for(int i = 0; i < fields.length; i++)
+			try {
+				int msg = fields[i].getInt(null) >>> 4;
+				msgSyms[msg] = fields[i].getName();
+			} catch(IllegalAccessException e) {
+				System.err.println("CanBusIDs field " + i + ": " + e);
+			}
+	}
+
+	protected final JTextArea text = new JTextArea(15, 40); // rows, columns
 
     public TextObserver(CanDispatch dispatch) throws IllegalAccessException
     {
 	dispatch.add(this);
 
-	// initialize the map of CAN msg symbols
-	int i, msg;
-	msgSyms = new String[0x1000];
-	Field fields[] = CanBusIDs.class.getFields();
-	for (i=0; i<fields.length; i++)
-	{
-		msg = discardLength(fields[i].getInt(null));
-		msgSyms[msg] = fields[i].getName();
-	}
-
-	// construct a JTextArea
 	text.setLineWrap(true);
 	text.setFont(new Font("Monospaced", Font.PLAIN, 10));
 	setViewportView(text);
@@ -75,8 +72,9 @@ class TextObserver extends JScrollPane implements CanObserver
 	}
 
 	StringBuffer buf = new StringBuffer();
-	if (msgSyms[discardLength(msg.getId())] != null)
-		buf.append(msgSyms[discardLength(msg.getId())]).append(": ");
+	String name = msgSyms[msg.getId() >>> 4];
+	if(name != null)
+		buf.append(name).append(": ");
 	buf.append(msg).append("\n");
 	text.append(buf.toString());
 
