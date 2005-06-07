@@ -7,8 +7,6 @@ import javax.swing.*;
 
 public class StripChart extends JComponent
 {
-	protected final Dimension preferred = new Dimension(300, 80);
-
 	protected ArrayList ts = new ArrayList();
 	protected ArrayList ys = new ArrayList();
 
@@ -16,11 +14,6 @@ public class StripChart extends JComponent
 	protected float maxTimeScale = 60; /* seconds */
 	protected float minY = -20;
 	protected float maxY = 20;
-
-	public Dimension getPreferredSize()
-	{
-		return preferred;
-	}
 
 	public float getTimeScale()
 	{
