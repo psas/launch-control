@@ -19,7 +19,7 @@ class GPSObserver extends JPanel implements Observer
 
 	public GPSObserver()
 	{
-		setLayout(new GridLayout(0, 1));
+		setLayout(new GridBoxLayout());
 		add(pos);
 		add(alt);
 		add(sats);

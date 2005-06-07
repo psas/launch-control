@@ -28,7 +28,7 @@ class APSObserver extends JPanel implements Observer
 
 	public APSObserver()
 	{
-		setLayout(new GridLayout(0, 1));
+		setLayout(new GridBoxLayout());
 		BooleanStateLabel label[] = {
 			new BooleanStateLabel("Charging", CanBusIDs.PWR_REPORT_CHARGER),
 			new BooleanStateLabel("Umbilical", CanBusIDs.UMB_REPORT_CONNECTOR),

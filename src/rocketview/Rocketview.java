@@ -58,7 +58,7 @@ public class Rocketview extends JFrame
 
 		// status boxes
 		JPanel fc = new JPanel();
-		fc.setLayout(new BoxLayout(fc, BoxLayout.Y_AXIS));
+		fc.setLayout(new GridBoxLayout());
 
 
 		// time title is TC date/time at startup
