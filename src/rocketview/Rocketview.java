@@ -82,13 +82,7 @@ public class Rocketview extends JFrame
 		JPanel subSys = new JPanel();
 		subSys.setLayout(new GridLayout(1, 0));
 
-		// height data from pressure and/or gps
-		addObserver(subSys, "Altitude", new HeightObserver());
-
-		addObserver(subSys, "GPS", new GPSPositionObserver());
 		addObserver(subSys, "GPS", new GPSObserver());
-
-		// APS panel
 		addObserver(subSys, "APS", new APSObserver());
 
 		// rvPane is the outermost content pane
