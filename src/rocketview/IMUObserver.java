@@ -19,6 +19,8 @@ import javax.swing.border.*;
  */
 class IMUObserver extends JPanel implements Observer
 {
+	protected static final Dimension MINIMUM_CHART_DIM = new Dimension(300,50); 
+	
 	// first subscript in arrays is one of these
 	protected final int IMU_ACCEL = 0;
 	protected final int IMU_GYRO = 1;
@@ -59,6 +61,7 @@ class IMUObserver extends JPanel implements Observer
 	protected void createChart(int type, int num)
 	{
 		StripChart chart = new StripChart();
+		chart.setPreferredSize(MINIMUM_CHART_DIM);
 		data[type][num] = chart;
 
 		// data.setYRange(vLow[type][num], vHigh[type][num]);
