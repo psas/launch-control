@@ -14,6 +14,7 @@ class GPSObserver extends JPanel implements Observer
 
 	protected final GPSPositionObserver pos = new GPSPositionObserver();
 	protected final JLabel alt = new JLabel("altitude: unknown");
+	protected final TimeObserver time = new TimeObserver();
 	protected final JLabel sats = new JLabel("sats: 0/0");
 	protected final LockStateLabel lock = new LockStateLabel();
 
@@ -22,6 +23,7 @@ class GPSObserver extends JPanel implements Observer
 		setLayout(new GridBoxLayout());
 		add(pos);
 		add(alt);
+		add(time);
 		add(sats);
 		add(lock);
 	}
@@ -34,6 +36,7 @@ class GPSObserver extends JPanel implements Observer
 		CanMessage msg = (CanMessage) arg;
 
 		pos.message(msg);
+		time.update(o, arg);
 		lock.message(msg);
 
 		switch(msg.getId())

@@ -46,21 +46,9 @@ public class Rocketview extends JFrame
 
 		dispatch = new CanListener(new LogCanSocket(new UDPCanSocket(port), "RocketView.log"));
 
-		// format a start-time string
-		DateFormat df
-		    = DateFormat.getDateTimeInstance(
-		    DateFormat.SHORT, DateFormat.SHORT );
-		String startTime = df.format (new Date ());
-
 		// status boxes
 		JPanel fc = new JPanel();
 		fc.setLayout(new GridBoxLayout());
-
-
-		// time title is TC date/time at startup
-		String startTitle = "rv start: " + startTime;
-		addObserver(fc, startTitle, new TimeObserver());
-	
 
 		// flight computer state
 		addObserver(fc, new RocketState());
