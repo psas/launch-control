@@ -21,7 +21,7 @@ class GPSPositionObserver extends JLabel implements Observer
 			return;
 			
 		CanMessage msg = (CanMessage) arg;
-		if(msg.getId11() != CanBusIDs.FC_GPS_LATLON >> 5)
+		if(msg.getId() != CanBusIDs.FC_GPS_LATLON)
 			return;
 
 		StringBuffer b = new StringBuffer();
@@ -38,6 +38,6 @@ class GPSPositionObserver extends JLabel implements Observer
 		double deg = Math.toDegrees(rad);
 		double degOnly = Math.floor(deg);
 		double minutes = (deg - degOnly) * 60.0;
-		b.append(Math.round(degOnly)).append("¡ ").append(minFmt.format(minutes)).append(sgn);
+		b.append(Math.round(degOnly)).append("° ").append(minFmt.format(minutes)).append(sgn);
 	}
 }
