@@ -17,12 +17,12 @@ public class TCPCanSocket implements CanSocket
 	/** constructor with no arguments creates a server socket
 	 * on the default port.
 	 */
-	public TCPCanSocket() throws IOException
+	public TCPCanSocket()
 	{
 		this(DEFAULT_PORT);
 	}
 
-	public TCPCanSocket(int port) throws IOException
+	public TCPCanSocket(int port)
 	{
 		this.host = null;
 		this.port = port;
@@ -31,7 +31,7 @@ public class TCPCanSocket implements CanSocket
 	/** constructor with host argument opens a client socket
 	 * on the default port
 	 */
-	public TCPCanSocket(String host) throws IOException
+	public TCPCanSocket(String host)
 	{
 		this(host, DEFAULT_PORT);
 	}
@@ -40,7 +40,7 @@ public class TCPCanSocket implements CanSocket
 	 * Constructor with host and port arguments opens a client socket on
 	 * the default port.
 	 */
-	public TCPCanSocket(String host, int port) throws IOException
+	public TCPCanSocket(String host, int port)
 	{
 		this.host = host;
 		this.port = port;
