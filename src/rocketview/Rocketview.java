@@ -51,9 +51,8 @@ public class Rocketview extends JFrame
 		fc.setLayout(new GridBoxLayout());
 
 		// flight computer state
-		RocketState statepanel = new RocketState();
-		dispatch.add(statepanel);
-		addObserver(fc, statepanel);
+		fc.add(new FCStateLabel(dispatch));
+		fc.add(new StateGrid(dispatch));
 
 		// message box for scrolled text
 		JScrollPane messScroll = new JScrollPane(new TextObserver(dispatch));
