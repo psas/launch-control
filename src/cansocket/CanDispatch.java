@@ -12,6 +12,11 @@ public class CanDispatch extends ArrayList implements Runnable
 		this.sock = sock;
 	}
 
+	public CanDispatch()
+	{
+		this.sock = null;
+	}
+
 	/** Force a cast to CanObserver to check the common add path. */
 	public boolean add(Object o)
 	{
@@ -24,17 +29,20 @@ public class CanDispatch extends ArrayList implements Runnable
 		return super.add(o);
 	}
 
+	public void update(CanMessage m)
+	{
+		Iterator it = iterator();
+		while(it.hasNext())
+			((CanObserver) it.next()).message(m);
+	}
+
 	public void run() 
 	{
 		CanMessage m;
 		try 
 		{
 			while ((m = sock.read()) != null)
-			{
-				Iterator it = iterator();
-				while(it.hasNext())
-					((CanObserver) it.next()).message(m);
-			}
+				update(m);
 		} 
 		catch (IOException e) 
 		{
