@@ -34,7 +34,7 @@ class GPSObserver extends JPanel implements Observer
 		CanMessage msg = (CanMessage) arg;
 
 		pos.update(o, arg);
-		lock.update(msg);
+		lock.message(msg);
 
 		switch(msg.getId())
 		{
@@ -54,7 +54,7 @@ class GPSObserver extends JPanel implements Observer
 		sats.setText("sats: " + used + '/' + visible);
 	}
 
-	private static class LockStateLabel extends StateLabel
+	private static class LockStateLabel extends StateLabel implements CanObserver
 	{
 		public LockStateLabel()
 		{
@@ -70,7 +70,7 @@ class GPSObserver extends JPanel implements Observer
 			return buf.append(hex).toString();
 		}
 
-		public void update(CanMessage msg)
+		public void message(CanMessage msg)
 		{
 			if(msg.getId() != CanBusIDs.FC_GPS_NAVSOL)
 				return;
