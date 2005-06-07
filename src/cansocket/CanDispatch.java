@@ -5,16 +5,20 @@ import java.util.*;
 
 public class CanDispatch extends ArrayList implements Runnable
 {
-	protected final CanSocket sock;
+	protected CanSocket sock;
 
 	public CanDispatch(CanSocket sock)
 	{
-		this.sock = sock;
+		setSocket(sock);
 	}
 
 	public CanDispatch()
 	{
-		this.sock = null;
+	}
+
+	public void setSocket(CanSocket sock)
+	{
+		this.sock = sock;
 	}
 
 	/** Force a cast to CanObserver to check the common add path. */
