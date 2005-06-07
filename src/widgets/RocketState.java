@@ -50,7 +50,7 @@ public class RocketState extends JPanel implements Observer
 
 	protected JLabel zLabel;	// Z IMU
 	protected JLabel stateLabel;
-	protected StateGrid detailDisplay;
+	protected CanDispatch dispatch = new CanDispatch();
 
 	protected class LinkStateChecker extends TimerTask
 	{
@@ -82,8 +82,7 @@ public class RocketState extends JPanel implements Observer
 
 		add(new JSeparator());
 
-		detailDisplay = new StateGrid();
-		add(detailDisplay);
+		add(new StateGrid(dispatch));
 	}
 
 	public void addLinkStateListener(LinkStateListener listener)
@@ -101,6 +100,8 @@ public class RocketState extends JPanel implements Observer
 
 	public void update(CanMessage msg)
 	{
+		dispatch.update(msg);
+
 		switch(msg.getId())
 		{
 			case CanBusIDs.IMU_ACCEL_DATA:
@@ -108,12 +109,6 @@ public class RocketState extends JPanel implements Observer
 				break;
 			case CanBusIDs.FC_REPORT_STATE:
 				setState(msg.getData8(0) & 0xff);
-				break;
-			case CanBusIDs.FC_REPORT_NODE_STATUS:
-				detailDisplay.setStates(msg.getBody());
-				break;
-			case CanBusIDs.FC_REPORT_IMPORTANCE_MASK:
-				detailDisplay.setMask(msg.getBody());
 				break;
 			case CanBusIDs.FC_REPORT_LINK_QUALITY:
 				setQuality(msg.getData16(0), msg.getData16(1));
