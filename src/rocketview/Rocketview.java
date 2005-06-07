@@ -63,7 +63,7 @@ public class Rocketview extends JFrame
 	
 
 		// flight computer state
-		addUntitledObserver(fc, new RocketState());
+		addObserver(fc, new RocketState());
 
 		// message box for scrolled text, later add to split pane
 		TextObserver messArea = new TextObserver();
@@ -116,14 +116,6 @@ public class Rocketview extends JFrame
 		System.out.println("\tMAX: " + c.getMaximumSize());
 		System.out.println("\tMIN: " + c.getMinimumSize());
 		System.out.println("\tPREF: " + c.getPreferredSize());
-	}
-
-	// add border to first JComponent
-	// set left-align flow layout on first JComponent
-	// add them as a Dispatch observer
-	protected void addUntitledObserver(Container c, JComponent o)
-	{
-		addObserver(c, o);
 	}
 
 	// add title to JComponent (or Container if possible)
