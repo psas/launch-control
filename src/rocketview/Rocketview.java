@@ -56,47 +56,19 @@ public class Rocketview extends JFrame
 		    DateFormat.SHORT, DateFormat.SHORT );
 		String startTime = df.format (new Date ());
 
-		// rvPane is the outermost content pane
-		Container rvPane = getContentPane();
-		//rvPane.setLayout(new GridLayout(1, 0)); // just 1 row
-		rvPane.setLayout( new BoxLayout( rvPane, BoxLayout.X_AXIS));
-
-		// left side for state, message, subSys to share
-		JPanel leftCol = new JPanel();
-		leftCol.setLayout( new BoxLayout( leftCol, BoxLayout.Y_AXIS ));
-		rvPane.add( leftCol );
-		
-		// IMU data
-		JPanel imu = new JPanel();
-		addUntitledObserver( imu, new IMUObserver());
-		rvPane.add(imu);
-
-		// top panel for status boxes
-		JPanel top = new JPanel();
-		top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));
-		leftCol.add( top );
+		// status boxes
+		JPanel fc = new JPanel();
+		fc.setLayout(new BoxLayout(fc, BoxLayout.Y_AXIS));
 
 
 		// time title is TC date/time at startup
-		JPanel time = new JPanel();
 		String startTitle = "rv start: " + startTime;
-		addObserver( time, startTitle, new TimeObserver() );
-		top.add( time );
+		addObserver(fc, startTitle, new TimeObserver());
 	
 
 		// flight computer state
-		JPanel fcState = new JPanel();
-		addObserver( fcState, "FC State", new RocketState() );
-		top.add( fcState );
+		addUntitledObserver(fc, new RocketState());
 
-
-		// bottom panel for state info, messages, and later charts
-		JPanel bottom = new JPanel();
-		bottom.setLayout(new BorderLayout()); //new BoxLayout(bottom, BoxLayout.X_AXIS));
-		leftCol.add(bottom);
-
-		
-		
 		// message box for scrolled text, later add to split pane
 		TextObserver messArea = new TextObserver();
 		dispatch.addObserver( messArea );
@@ -108,55 +80,43 @@ public class Rocketview extends JFrame
 		// subSys panel holds a labelled display for each subsystem
 		//   vertical box layout
 		JPanel subSys = new JPanel();
-		subSys.setLayout(new BoxLayout(subSys, BoxLayout.Y_AXIS ));
-		
+		subSys.setLayout(new GridLayout(1, 0));
 
-		// inertial nav: not implemented
-		/*
-		JPanel ins = new JPanel();
-		ins.setBorder(BorderFactory.createLineBorder( Color.gray ));
-		ins.setLayout(new FlowLayout( FlowLayout.LEFT ));
-		ins.add( new JLabel( "INS: -- no information --" ));
-		subSys.add( ins );
-		*/
-		
-		
 		// height data from pressure and/or gps
-		JPanel height = new JPanel();
-		addUntitledObserver( height, new HeightObserver());
-		subSys.add( height );
+		addObserver(subSys, "Altitude", new HeightObserver());
 
-		// 2 GPS observers go in 1 panel
-		JPanel gps = new JPanel();
-		addUntitledObserver( gps, new GPSPositionObserver() );
-		addObserver( gps, new GPSObserver() );
-		subSys.add( gps );
+		addObserver(subSys, "GPS", new GPSPositionObserver());
+		addObserver(subSys, "GPS", new GPSObserver());
 
 		// APS panel
-		JPanel aps = new JPanel();
-		addUntitledObserver( aps, new APSObserver() );
-		// addObserver( aps, "APS", new APSObserver() );
-		subSys.add( aps );
+		addObserver(subSys, "APS", new APSObserver());
 
-		
-		//Split pane which holds subsystems info, message area, 
-		//and (XXX:later, using nested splitpanes) stripcharts.
-		JSplitPane splitPane = new JSplitPane(
-				JSplitPane.HORIZONTAL_SPLIT,
-				subSys, messScroll);
-		splitPane.setDividerLocation(.25);
-		splitPane.setAlignmentX(Component.LEFT_ALIGNMENT);
-		splitPane.setBackground(Color.blue);
-		bottom.add(splitPane);
+		// rvPane is the outermost content pane
+		Container rvPane = getContentPane();
+		rvPane.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
 
-		//look at min, max and preferred size for components.
-		/*
-		outputSizes(this, "RocketView");
-		outputSizes(top, "top container");
-		outputSizes(bottom, "bottom jsplitpane");
-		outputSizes(subSys, "subsystems jpanel");
-		outputSizes(messScroll, "message area scrollpanel");
-		*/
+		gbc.weighty = 1.0;
+		gbc.fill = gbc.VERTICAL;
+		rvPane.add(fc, gbc);
+
+		gbc.weightx = 2.0;
+		gbc.fill = gbc.BOTH;
+		rvPane.add(messScroll, gbc);
+
+		gbc.weighty = 0.0;
+		gbc.gridy = 1;
+		gbc.fill = gbc.HORIZONTAL;
+		gbc.gridwidth = gbc.RELATIVE;
+		rvPane.add(subSys, gbc);
+
+		IMUObserver imu = new IMUObserver();
+		dispatch.addObserver(imu);
+		gbc.fill = gbc.BOTH;
+		gbc.gridy = 0;
+		gbc.gridwidth = gbc.REMAINDER;
+		gbc.gridheight = gbc.REMAINDER;
+		rvPane.add(imu, gbc);
 
 		pack();
 	}
@@ -176,11 +136,8 @@ public class Rocketview extends JFrame
 	// add border to first JComponent
 	// set left-align flow layout on first JComponent
 	// add them as a Dispatch observer
-	protected void addUntitledObserver(JComponent c, JComponent o)
+	protected void addUntitledObserver(Container c, JComponent o)
 	{
-		c.setBorder(BorderFactory.createLineBorder( Color.gray ));
-		c.setLayout(new FlowLayout( FlowLayout.LEFT ));
-
 		addObserver(c, o);
 	}
 
@@ -190,16 +147,7 @@ public class Rocketview extends JFrame
 	// add them as a Dispatch observer
 	protected void addObserver(Container c, String title, JComponent o)
 	{
-		if (c instanceof JComponent) {
-			JComponent jc = (JComponent) c;
-			// setting the border around the container (e.g. jpanel) if possible  
-			// seems to give the desired layout effect: border is drawn around entire
-			// widget area, not just the space used (as was the case with jlabel)
-			jc.setBorder(new TitledBorder(title));
-		} else {
-			o.setBorder(new TitledBorder(title));
-		}
-		c.setLayout(new FlowLayout( FlowLayout.LEFT, 5, 0 /* no vert spacing */));
+		o.setBorder(new TitledBorder(title));
 		addObserver(c, o);
 	}
 

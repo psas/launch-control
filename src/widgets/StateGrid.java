@@ -92,7 +92,7 @@ public class StateGrid extends JPanel
 
 	public StateGrid(CanDispatch dispatch)
 	{
-		setLayout(new GridLayout(0,4)); // four rows
+		setLayout(new GridLayout(0,2));
 
 		for (int i = 0; i < names.length; ++i)
 		{
