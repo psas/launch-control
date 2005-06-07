@@ -11,7 +11,7 @@ import java.text.*;
 import java.util.*;
 import javax.swing.*;
 
-public class LaunchControl extends JFrame
+public class LaunchControl extends JPanel
 	implements ScheduleListener, LinkStateListener, ActionListener
 {
 	// Class constants
@@ -21,7 +21,6 @@ public class LaunchControl extends JFrame
 
 	// Member variables, presumably used by multiple methods
 	protected final DecimalFormat fmt = new DecimalFormat("T+0.0;T-0.0");
-	protected final Dimension windowSize = new Dimension((int)(450 * 1.61803399), 450);
 	protected JButton countdownButton = new JButton();
 	protected java.util.Timer powerSequence = null; // power on or off fc
 	
@@ -38,15 +37,15 @@ public class LaunchControl extends JFrame
 
 
 	/** Create LaunchControl GUI, open connections, and start scheduler */
-	private LaunchControl() throws IOException
+	private LaunchControl(CanDispatch dispatch) throws IOException
 	{
-		super("LaunchControl");
 		//possible TODO: use gridlayout (or gridbaglayout) instead
 		//of using boxes of boxes. The advantage of a gridlayout is
 		// all components could be same size, and spaces can be inserted
 		// easily and uniformly.
 		
 		rocketSocket = new UDPCanSocket(Config.getString("rocket.host"), Config.getInt("rocket.port", UDPCanSocket.PORT_SEND));
+		dispatch.setSocket(rocketSocket);
 		
 		JButton preFlightCheckButton = new JButton("Preflight Check");
 		JButton armButton = new JButton("Arm Rocket");
@@ -61,13 +60,9 @@ public class LaunchControl extends JFrame
 		Dimension y_spacer_dim = new Dimension(0,10);
 		Component x_spacer = Box.createRigidArea(x_spacer_dim);
 		Component y_spacer = Box.createRigidArea(y_spacer_dim);
-		Container content = getContentPane();
+		Container content = this;
 		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-		// State monitoring box
-		  // also pass the rocket socket to a thread for listening
-		content.add(new RocketPanel(rocketSocket, this));
-		
 		layout_box = new Box(BoxLayout.X_AXIS);
 		layout_box.add(Box.createRigidArea(x_spacer_dim));
 		layout_box.add(clock);
@@ -132,15 +127,11 @@ public class LaunchControl extends JFrame
 		fcpower_pane.add(fcPowerOffButton);
 		fcPowerOffButton.setActionCommand("fc_off");
 		fcPowerOffButton.addActionListener(this);
-		
-		try {
-			towerSocket = new TCPCanSocket(Config.getString("tower.host"), 
-					Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT));
-			Scheduler.addSchedulableAction("tower", new SocketAction(towerSocket));
-		} catch(ConnectException e) {
-			e.printStackTrace();
-		}
-	
+
+		towerSocket = new TCPCanSocket(Config.getString("tower.host"), 
+				Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT));
+		Scheduler.addSchedulableAction("tower", new SocketAction(towerSocket));
+
 		ShorePower shorePowerState = new ShorePower(towerSocket, "Shore");
 		layout_box.add(fcpower_pane);
 		layout_box.add(Box.createHorizontalGlue());
@@ -155,13 +146,6 @@ public class LaunchControl extends JFrame
 		Scheduler.addSchedulableAction("rocket", new SocketAction(rocketSocket));
 		ended(); // reset the button and label
 		sched.addScheduleListener(this, 100);
-
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		pack();
-
-		setSize(windowSize);
-
-		show();
 	}
 
 
@@ -348,6 +332,24 @@ public class LaunchControl extends JFrame
 
 	public static void main(String args[]) throws IOException
 	{
-		new LaunchControl();
+		JFrame frame = new JFrame("LaunchControl");
+		Container content = frame.getContentPane();
+
+		CanDispatch dispatch = new CanDispatch();
+
+		RocketState state = new RocketState();
+		LaunchControl control = new LaunchControl(dispatch);
+
+		state.addLinkStateListener(control);
+		dispatch.add(state);
+
+		content.add(state, BorderLayout.NORTH);
+		content.add(control, BorderLayout.CENTER);
+
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.pack();
+		frame.setVisible(true);
+
+		dispatch.run();
 	}
 }
