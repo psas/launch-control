@@ -86,6 +86,15 @@
     </java>
   </target>
 
+  <target name="profile-launchview" depends="jar-rocketview" description="profile rocketview">
+    <java jar="${dist}/rocketview.jar" fork="yes">
+      <jvmarg value="-classic"/>
+      <!-- jvmarg value="-Xrunhprof:heap=sites,depth=10,monitor=y,thread=y"/ -->
+      <jvmarg value="-Xrunhprof:heap=sites,cpu=samples,depth=10,monitor=y,thread=y"/>
+      <arg value="-launch"/>
+    </java>
+  </target>
+
   <target name="run-rocketview" depends="jar-rocketview" description="run rocketview">
     <java jar="${dist}/rocketview.jar" fork="yes"/>
   </target>
