@@ -9,8 +9,8 @@ public class StripChart extends JComponent
 {
 	protected static final Dimension MIN_CHART_DIM = new Dimension(300,50); 
 	
-	protected ArrayList ts = new ArrayList();
-	protected ArrayList ys = new ArrayList();
+	protected LinkedList ts = new LinkedList();
+	protected LinkedList ys = new LinkedList();
 
 	protected float timeScale = 30; /* seconds */
 	protected float maxTimeScale = 60; /* seconds */
@@ -55,6 +55,18 @@ public class StripChart extends JComponent
 		{
 			ts.add(new Float(t));
 			ys.add(new Float(y));
+
+			float old = t - maxTimeScale;
+			ListIterator it = ts.listIterator();
+			while(it.hasNext())
+			{
+				float cur = ((Float) it.next()).floatValue();
+				if(cur < t && cur > old)
+					break;
+			}
+			int lastold = it.previousIndex();
+			ts.subList(0, lastold).clear();
+			ys.subList(0, lastold).clear();
 		}
 		repaint();
 	}
