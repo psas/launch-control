@@ -56,30 +56,24 @@ public class LaunchControl extends JPanel
 	
 
 		Box layout_box;
-		Dimension x_spacer_dim = new Dimension(5,0);
-		Dimension y_spacer_dim = new Dimension(0,10);
-		Component x_spacer = Box.createRigidArea(x_spacer_dim);
-		Component y_spacer = Box.createRigidArea(y_spacer_dim);
-		Container content = this;
-		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+		Component x_spacer = Box.createRigidArea(new Dimension(5,0));
+		Component y_spacer = Box.createRigidArea(new Dimension(0,10));
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		layout_box = new Box(BoxLayout.X_AXIS);
-		layout_box.add(Box.createRigidArea(x_spacer_dim));
+		layout_box.add(x_spacer);
 		layout_box.add(clock);
-		layout_box.add(Box.createRigidArea(x_spacer_dim));
-		Container statusBar = new JPanel();
-		statusBar.setLayout(new BorderLayout());
+		layout_box.add(x_spacer);
 		statusLabel.setBorder(BorderFactory.createLoweredBevelBorder());
-		statusBar.add(statusLabel, BorderLayout.CENTER);
-		layout_box.add(statusBar);
-		layout_box.add(Box.createRigidArea(x_spacer_dim));
-		content.add(layout_box);
-		content.add(Box.createRigidArea(y_spacer_dim));
+		layout_box.add(statusLabel);
+		layout_box.add(x_spacer);
+		add(layout_box);
+		add(y_spacer);
 
 
 		// Sequence buttons
 		layout_box = new Box(BoxLayout.X_AXIS);
-		Container countdown_pane = new JPanel();
+		JPanel countdown_pane = new JPanel();
 		countdown_pane.setLayout(new GridLayout(0,1));
 		countdown_pane.add(preFlightCheckButton);
 		preFlightCheckButton.setActionCommand("preflight");
@@ -92,28 +86,28 @@ public class LaunchControl extends JPanel
 		countdown_pane.add(countdownButton);
 		countdownButton.addActionListener(this);
 
-		abortButton.setPreferredSize(countdown_pane.getPreferredSize());
-		abortButton.setBackground(Color.red);
-		abortButton.setMaximumSize(countdown_pane.getPreferredSize());
 		Dimension countdown_size = countdown_pane.getPreferredSize();
+		abortButton.setPreferredSize(countdown_size);
+		abortButton.setBackground(Color.red);
+		abortButton.setMaximumSize(countdown_size);
 		
-		layout_box.add(Box.createRigidArea(x_spacer_dim));
+		layout_box.add(x_spacer);
 		layout_box.add(countdown_pane);
-		layout_box.add(Box.createRigidArea(x_spacer_dim));
+		layout_box.add(x_spacer);
 		layout_box.add(abortButton);
-		layout_box.add(Box.createRigidArea(x_spacer_dim));
+		layout_box.add(x_spacer);
 		abortButton.setActionCommand("abort");
 		abortButton.addActionListener(this);
 
-		content.add(layout_box); 
-		content.add(Box.createRigidArea(y_spacer_dim));
+		add(layout_box); 
+		add(y_spacer);
 
 	
 
 		// Power buttons 
 		layout_box = new Box(BoxLayout.X_AXIS);
-		layout_box.add(Box.createRigidArea(x_spacer_dim));
-		Container fcpower_pane = new JPanel();
+		layout_box.add(x_spacer);
+		JPanel fcpower_pane = new JPanel();
 		fcpower_pane.setLayout(new GridLayout(0, 1));
 
 		fcpower_pane.add(fcPowerOnButton);
@@ -139,8 +133,8 @@ public class LaunchControl extends JPanel
 		layout_box.add(shorePowerState);
 		layout_box.add(Box.createRigidArea(new Dimension(30, 0)));
 
-		content.add(layout_box);
-		content.add(Box.createRigidArea(y_spacer_dim));
+		add(layout_box);
+		add(y_spacer);
 
 
 		Scheduler.addSchedulableAction("rocket", new SocketAction(rocketSocket));
