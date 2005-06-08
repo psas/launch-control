@@ -37,7 +37,7 @@ public class LaunchControl extends JPanel
 
 
 	/** Create LaunchControl GUI, open connections, and start scheduler */
-	private LaunchControl(CanDispatch dispatch) throws IOException
+	public LaunchControl(CanDispatch dispatch) throws IOException
 	{
 		//possible TODO: use gridlayout (or gridbaglayout) instead
 		//of using boxes of boxes. The advantage of a gridlayout is
