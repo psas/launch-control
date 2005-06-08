@@ -40,7 +40,7 @@
   </target>
 
   <!-- programs -->
-  <target name="rocketview" depends="cansocket,widgets" description="compile rocketview">
+  <target name="rocketview" depends="cansocket,widgets,launchcontrol" description="compile rocketview">
     <javac srcdir="${src}" includes="rocketview/*.java" destdir="${build}" classpath="${classpath}" debug="${debug}" deprecation="on"/>
   </target>
 
@@ -68,12 +68,12 @@
     </manifest>
     <jar jarfile="${dist}/rocketview.jar" manifest="${build}/rocketview-manifest">
       <fileset dir="${build}">
-	<include name="com/**"/>
-	<include name="org/**"/>
+        <include name="sounds/*"/>
 	<include name="cansocket/*.class"/>
         <include name="widgets/*.png"/>
 	<include name="widgets/*.class"/>
 	<include name="rocketview/*.class"/>
+	<include name="launchcontrol/*.class"/>
       </fileset>
     </jar>
   </target>

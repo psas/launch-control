@@ -1,6 +1,7 @@
 package rocketview;
 
 import cansocket.*;
+import launchcontrol.*;
 import widgets.*;
 
 import java.awt.*;
@@ -16,42 +17,29 @@ import javax.swing.border.*;
  */
 public class Rocketview extends JFrame
 {
-	protected final CanDispatch dispatch;
-
 	public static void main(String[] args) throws Exception
 	{
-		System.out.println( "Rocketview UDP" );
-		System.out.flush();
-
-		//int port = 4446;
-		int port = UDPCanSocket.PORT_RECV;
-		if (args.length > 0)
-			port = Integer.parseInt(args[0]);
-
-		Rocketview f = new Rocketview(InetAddress.getLocalHost().toString(), port);
+		CanDispatch dispatch = new CanDispatch();
+		Rocketview f = new Rocketview(dispatch, args.length > 0);
 		f.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		f.pack();
 		f.setVisible(true);
-
-		f.dispatch.run();
-
-		System.out.println( "Rocketview exits main()" );
-		System.exit(0);
+		dispatch.run();
 	} // end main()
 
 	// construct a Rocketview
 	// set up all panels, layout managers, and titles
-	public Rocketview(String host, int port) throws Exception
+	public Rocketview(CanDispatch dispatch, boolean showLaunchControl) throws Exception
 	{
-		super("Rocketview: " + host + ": " + port);
-
-		dispatch = new CanDispatch(new LogCanSocket(new UDPCanSocket(port), "RocketView.log"));
+		super("Rocketview");
 
 		// status boxes
 		JPanel fc = new JPanel();
 		fc.setLayout(new GridBoxLayout());
 
 		// flight computer state
-		fc.add(new FCStateLabel(dispatch));
+		FCStateLabel stateLabel = new FCStateLabel(dispatch);
+		fc.add(stateLabel);
 		fc.add(new StateGrid(dispatch));
 
 		// message box for scrolled text
@@ -86,14 +74,22 @@ public class Rocketview extends JFrame
 		gbc.gridwidth = gbc.RELATIVE;
 		rvPane.add(subSys, gbc);
 
+		gbc.gridy = 2;
+		if(showLaunchControl)
+		{
+			LaunchControl control = new LaunchControl(dispatch);
+			rvPane.add(control, gbc);
+			stateLabel.addLinkStateListener(control);
+		}
+		else
+			dispatch.setSocket(new LogCanSocket(new UDPCanSocket(), "RocketView.log"));
+
 		IMUObserver imu = new IMUObserver(dispatch);
 		gbc.fill = gbc.BOTH;
 		gbc.gridy = 0;
 		gbc.gridwidth = gbc.REMAINDER;
 		gbc.gridheight = gbc.REMAINDER;
 		rvPane.add(imu, gbc);
-
-		pack();
 	}
 
 	public void outputSizes(Component c, String name) {
