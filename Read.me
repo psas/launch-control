@@ -1,3 +1,28 @@
+06/08/2005
+
+Things have changed quite a bit. Here's my (Andrew's) "build rocketview for
+dummies" instructions 
+
+Launchcontrol has been rolled into rocketview, so now all you neeed you to is
+build and run rocketview:
+
+$ cd java
+$ ant jar
+
+You should get a BUILD SUCCESSFUL message. Now copy over the configuration
+files that rocketview needs when it's running the launchcontrol bits.
+
+$ cd dist
+$ cp ../src/launchcontrol/*.conf .
+
+And now to run rocketview:
+
+$ java -jar rocketview.jar
+
+and to run launchcontrol:
+
+$ java -jar rocketview.jar launchcontrol
+
 9/13/2003 jamey: fixed up the ant build file; here's how to use it
 
 To use ant, create a ~/.antrc file setting
