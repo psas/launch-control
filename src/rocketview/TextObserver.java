@@ -26,9 +26,10 @@ class TextObserver extends JScrollPane implements CanObserver
 	}
 
 	protected final JTextArea text = new JTextArea(15, 40); // rows, columns
-
-    public TextObserver(CanDispatch dispatch) throws IllegalAccessException
+    
+	public TextObserver(CanDispatch dispatch) throws IllegalAccessException
     {
+	this.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 	dispatch.add(this);
 
 	text.setLineWrap(true);
