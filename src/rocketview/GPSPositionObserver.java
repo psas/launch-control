@@ -32,6 +32,7 @@ class GPSPositionObserver extends JLabel implements CanObserver
 		double deg = Math.toDegrees(rad);
 		double degOnly = Math.floor(deg);
 		double minutes = (deg - degOnly) * 60.0;
-		b.append(Math.round(degOnly)).append("° ").append(minFmt.format(minutes)).append(sgn);
+		// unicode degree character
+		b.append(Math.round(degOnly)).append("\u00b0 ").append(minFmt.format(minutes)).append(sgn);
 	}
 }
