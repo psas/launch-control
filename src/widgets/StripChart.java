@@ -13,7 +13,7 @@ public class StripChart extends JComponent
 	protected LinkedList ys = new LinkedList();
 
 	protected float timeScale = 30; /* seconds */
-	protected float maxTimeScale = 60; /* seconds */
+//	protected float maxTimeScale = 60; /* seconds */
 	protected float minY = -20;
 	protected float maxY = 20;
 	
@@ -32,7 +32,7 @@ public class StripChart extends JComponent
 	{
 		this.timeScale = timeScale;
 	}
-
+/*
 	public float getMaxTimeScale()
 	{
 		return maxTimeScale;
@@ -42,7 +42,7 @@ public class StripChart extends JComponent
 	{
 		this.maxTimeScale = maxTimeScale;
 	}
-
+*/
 	public void setYRange(float minY, float maxY)
 	{
 		this.minY = minY;
@@ -55,7 +55,7 @@ public class StripChart extends JComponent
 		{
 			ts.add(new Float(t));
 			ys.add(new Float(y));
-
+/*
 			float old = t - maxTimeScale;
 			ListIterator it = ts.listIterator();
 			while(it.hasNext())
@@ -64,9 +64,7 @@ public class StripChart extends JComponent
 				if(cur < t && cur > old)
 					break;
 			}
-			int lastold = it.previousIndex();
-			ts.subList(0, lastold).clear();
-			ys.subList(0, lastold).clear();
+*/
 		}
 		repaint();
 	}
@@ -83,34 +81,37 @@ public class StripChart extends JComponent
 
 		synchronized(ts)
 		{
+			// start at the most recent point and draw backwards in time
 			ListIterator ti = ts.listIterator(ts.size());
 			ListIterator yi = ys.listIterator(ys.size());
 
-			float t;
-			float now = previousFloat(ti);
-			float old = now - getTimeScale();
-			float x1, y1, x2, y2;
+			float t = previousFloat(ti);
+			float old = t - getTimeScale();
+			int x1, y1, x2, y2;
 
 			Dimension size = getSize();
 
+			// scale to the window
 			float sx =  size.width / getTimeScale();
 			float sy = -size.height / (maxY - minY);
 			float tx = -old * sx;
 			float ty = -maxY * sy;
 
-			x1 = now;
-			y1 = previousFloat(yi);
+			x1 = (int) (t * sx + tx + 0.5);
+			y1 = (int) (previousFloat(yi) * sy + ty + 0.5);
 			while(ti.hasPrevious() && (t = previousFloat(ti)) > old) 
 			{
-				x2 = t;
-				y2 = previousFloat(yi);
-				g.drawLine ((int) (x1 * sx + tx + 0.5),
-					    (int) (y1 * sy + ty + 0.5),
-					    (int) (x2 * sx + tx + 0.5),
-					    (int) (y2 * sy + ty + 0.5));
+				x2 = (int) (t * sx + tx + 0.5);
+				y2 = (int) (previousFloat(yi) * sy + ty + 0.5);
+				g.drawLine (x1,y1, x2,y2);
 				x1 = x2;
 				y1 = y2;
 			}
+
+			// remove old points that will never be drawn again
+			int lastold = ti.nextIndex();
+			ts.subList(0, lastold).clear();
+			ys.subList(0, lastold).clear();
 		}
 	}
 }
