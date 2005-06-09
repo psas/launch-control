@@ -54,6 +54,7 @@ public class Rocketview extends JFrame
 
 		addObserver(subSys, "GPS", new GPSObserver(dispatch));
 		addObserver(subSys, "APS", new APSObserver(dispatch));
+		addObserver(subSys, "Recovery", new RecObserver(dispatch));
 
 		// rvPane is the outermost content pane
 		Container rvPane = getContentPane();
