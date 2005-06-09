@@ -7,7 +7,7 @@ import javax.swing.*;
 class TimeObserver extends JLabel implements CanObserver
 {
 	public TimeObserver() {
-		setText("time: -");
+		setText("Time: -");
 	}
 
 	public void message(CanMessage msg)
@@ -22,7 +22,7 @@ class TimeObserver extends JLabel implements CanObserver
 		byte minute = msg.getData8(5);
 		byte second = msg.getData8(6);
 
-		StringBuffer buf = new StringBuffer("time: " );
+		StringBuffer buf = new StringBuffer("Time: " );
 		buf.append( year ).append( "/" );
 		buf.append( month ).append( "/" );
 		buf.append( day ).append( " " );
