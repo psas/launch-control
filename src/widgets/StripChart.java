@@ -13,7 +13,7 @@ public class StripChart extends JComponent
 	protected LinkedList ys = new LinkedList();
 
 	protected float timeScale = 30; /* seconds */
-//	protected float maxTimeScale = 60; /* seconds */
+	protected float maxTimeScale = 60; /* seconds */
 	protected float minY = -20;
 	protected float maxY = 20;
 	
@@ -32,7 +32,7 @@ public class StripChart extends JComponent
 	{
 		this.timeScale = timeScale;
 	}
-/*
+
 	public float getMaxTimeScale()
 	{
 		return maxTimeScale;
@@ -42,7 +42,7 @@ public class StripChart extends JComponent
 	{
 		this.maxTimeScale = maxTimeScale;
 	}
-*/
+
 	public void setYRange(float minY, float maxY)
 	{
 		this.minY = minY;
@@ -55,16 +55,6 @@ public class StripChart extends JComponent
 		{
 			ts.add(new Float(t));
 			ys.add(new Float(y));
-/*
-			float old = t - maxTimeScale;
-			ListIterator it = ts.listIterator();
-			while(it.hasNext())
-			{
-				float cur = ((Float) it.next()).floatValue();
-				if(cur < t && cur > old)
-					break;
-			}
-*/
 		}
 		repaint();
 	}
@@ -85,8 +75,8 @@ public class StripChart extends JComponent
 			ListIterator ti = ts.listIterator(ts.size());
 			ListIterator yi = ys.listIterator(ys.size());
 
-			float t = previousFloat(ti);
-			float old = t - getTimeScale();
+			final float now = previousFloat(ti);
+			float old = now - getTimeScale();
 			int x1, y1, x2, y2;
 
 			Dimension size = getSize();
@@ -97,6 +87,7 @@ public class StripChart extends JComponent
 			float tx = -old * sx;
 			float ty = -maxY * sy;
 
+			float t = now;
 			x1 = (int) (t * sx + tx + 0.5);
 			y1 = (int) (previousFloat(yi) * sy + ty + 0.5);
 			while(ti.hasPrevious() && (t = previousFloat(ti)) > old) 
@@ -107,9 +98,19 @@ public class StripChart extends JComponent
 				x1 = x2;
 				y1 = y2;
 			}
+			yi = null;
+
+			old = now - getMaxTimeScale();
+			ti = ts.listIterator();
+			while(ti.hasNext())
+			{
+				float cur = ((Float) ti.next()).floatValue();
+				if(cur < now && cur > old)
+					break;
+			}
 
 			// remove old points that will never be drawn again
-			int lastold = ti.nextIndex();
+			int lastold = ti.previousIndex();
 			ts.subList(0, lastold).clear();
 			ys.subList(0, lastold).clear();
 		}
