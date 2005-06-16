@@ -79,13 +79,15 @@ public class StripChart extends JComponent
 			float old = now - getTimeScale();
 			int x1, y1, x2, y2;
 
-			Dimension size = getSize();
+			Insets insets = getInsets();
+			int width = getWidth() - insets.left - insets.right;
+			int height = getHeight() - insets.top - insets.bottom;
 
 			// scale to the window
-			float sx =  size.width / getTimeScale();
-			float sy = -size.height / (maxY - minY);
-			float tx = -old * sx;
-			float ty = -maxY * sy;
+			float sx =  width / getTimeScale();
+			float sy = -height / (maxY - minY);
+			float tx = -old * sx + insets.left;
+			float ty = -maxY * sy + insets.top;
 
 			float t = now;
 			x1 = (int) (t * sx + tx + 0.5);
