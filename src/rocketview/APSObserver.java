@@ -17,32 +17,35 @@ class APSObserver extends JPanel implements CanObserver
 {
 	protected final DecimalFormat fmt = new DecimalFormat("0.000");
 
+	protected final JLabel umbLabel = new JLabel("Umbilical: -");
 	protected final JLabel busLabel = new JLabel();
 
 	protected double voltage = -1;
 	protected double current = -1;
 	protected double charge = -1;
+	
+	protected void add(CanDispatch dispatch, BooleanStateLabel label)
+	{
+		dispatch.add(label);
+		add(label);
+	}
 
 	public APSObserver(CanDispatch dispatch)
 	{
 		setLayout(new GridBoxLayout());
-		BooleanStateLabel label[] = {
-			new BooleanStateLabel("Charging", CanBusIDs.PWR_REPORT_CHARGER),
-			new BooleanStateLabel("Umbilical", CanBusIDs.UMB_REPORT_CONNECTOR),
-			new BooleanStateLabel("Shore power", CanBusIDs.UMB_REPORT_SHORE_POWER),
-			new BooleanStateLabel("S1 (FC)", CanBusIDs.APS_REPORT_SWITCH_1),
-			new BooleanStateLabel("S2 (CAN)", CanBusIDs.APS_REPORT_SWITCH_2),
-			new BooleanStateLabel("S3 (ATV amp)", CanBusIDs.APS_REPORT_SWITCH_3),
-			new BooleanStateLabel("S4 (wifi amp) ", CanBusIDs.APS_REPORT_SWITCH_4),
-		};
 
 		dispatch.add(this);
+
+		add(umbLabel);
+		add(dispatch, new BooleanStateLabel("Shore power",  CanBusIDs.UMB_REPORT_SHORE_POWER));
+		add(dispatch, new BooleanStateLabel("Rocket Ready", CanBusIDs.UMB_REPORT_ROCKETREADY));
 		add(busLabel);
-		for(int i = 0; i < label.length; ++i)
-		{
-			dispatch.add(label[i]);
-			add(label[i]);
-		}
+		add(dispatch, new BooleanStateLabel("Charging",     CanBusIDs.PWR_REPORT_CHARGER));
+		add(dispatch, new BooleanStateLabel("S1 (FC)",      CanBusIDs.APS_REPORT_SWITCH_1));
+		add(dispatch, new BooleanStateLabel("S2 (CAN)",     CanBusIDs.APS_REPORT_SWITCH_2));
+		add(dispatch, new BooleanStateLabel("S3 (ATV)",     CanBusIDs.APS_REPORT_SWITCH_3));
+		add(dispatch, new BooleanStateLabel("S4 (WIFI) ",   CanBusIDs.APS_REPORT_SWITCH_4));
+
 		setText();
 	}
 
@@ -84,6 +87,12 @@ class APSObserver extends JPanel implements CanObserver
 			// 853.4 * 10^-6 Ah / count
 		charge = 853.4e-6 * msg.getData16(0);
 		break;
+		case CanBusIDs.UMB_REPORT_CONNECTOR:
+			if (msg.getData8(0) == 0)
+				umbLabel.setText("Umbilical: Removed");
+			else
+				umbLabel.setText("Umbilical: Connected");
+			return;
 	    default:
 		return;
 	}
