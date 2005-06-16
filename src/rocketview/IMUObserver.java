@@ -64,10 +64,8 @@ class IMUObserver extends JPanel implements CanObserver
 		// data.setYRange(vLow[type][num], vHigh[type][num]);
 		chart.setYRange(0, 4095);
 
-		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(title[type][num]));
-		panel.add(chart);
-		add(panel);
+		chart.setBorder(new TitledBorder(title[type][num]));
+		add(chart);
 	}
 
 	public void message(CanMessage msg)
