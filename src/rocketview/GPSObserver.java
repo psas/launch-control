@@ -1,11 +1,23 @@
 package rocketview;
 
 import java.text.DecimalFormat;
-
 import cansocket.*;
 import widgets.*;
-
 import javax.swing.*;
+
+/* layout
+GPS Node ([-|Safe|Armed])
+
+Lat:  [-|xx deg xx.xxx']N
+Lon:  [-|xxx deg xx.xxx']W
+Alt:  [-|[xx,xxx]m (xx,xxxft)]
+
+Sats: [-/-|0/0]
+
+Locked:   [-|Yes|No]
+Solution: [-|OK|Propated|Alt. used|PM]
+Validity: [-|OK|Alt. used|Num sats|EHPE|EVPE]
+*/
 
 class GPSObserver extends JPanel implements CanObserver
 {
@@ -13,49 +25,57 @@ class GPSObserver extends JPanel implements CanObserver
 	protected static DecimalFormat minFmt = new DecimalFormat("00.000");
 	
 	// fields
-	int visible = 0;
-	int used = 0;
-	StringBuffer latString;
-	StringBuffer lonString;
+	protected int visible = 0;
+	protected int used = 0;
+	protected StringBuffer latString;
+	protected StringBuffer lonString;
 
-	protected final JLabel lat = new JLabel("Lat: - N");
-	protected final JLabel lon = new JLabel("Lon: - W");
-	protected final JLabel alt = new JLabel("Alt: -");
+	protected final JLabel stateLabel = new JLabel("GPS Node: (-)");
+	protected final JLabel latLabel = new JLabel("Lat: -");
+	protected final JLabel lonLabel = new JLabel("Lon: -");
+	protected final JLabel altLabel = new JLabel("Alt: -");
 	protected final TimeObserver time = new TimeObserver();
-	protected final JLabel sats = new JLabel("Sats: -/-");
-	protected final LockStateLabel lock = new LockStateLabel();
+	protected final JLabel satsLabel = new JLabel("Sats: -/-");
+	protected final LockStateLabel lockLabel = new LockStateLabel();
+	protected final JLabel solutionLabel = new JLabel("Solution: -");
+	protected final JLabel validityLabel = new JLabel("Validity: -");
 
 	public GPSObserver(CanDispatch dispatch)
 	{
 		dispatch.add(this);
 		dispatch.add(time);
-		dispatch.add(lock);
-
+		dispatch.add(lockLabel);
 		setLayout(new GridBoxLayout());
-		add(lat);
-		add(lon);
-		add(alt);
+		add(stateLabel);
+		add(latLabel);
+		add(lonLabel);
+		add(altLabel);
 		add(time);
-		add(sats);
-		add(lock);
+		add(satsLabel);
+		add(lockLabel);
+		add(solutionLabel);
+		add(validityLabel);
 	}
 
 	public void message(CanMessage msg)
 	{
 		switch(msg.getId())
 		{
+			case CanBusIDs.GPS_REPORT_MODE:
+				stateLabel.setText("GPS node: " + stateText(msg.getData8(0)));
+				return;
 			case CanBusIDs.FC_GPS_HEIGHT:
-				alt.setText("Alt: " + (msg.getData32(0) / (float)100.0) + 'm');
+				altLabel.setText("Alt: " + (msg.getData32(0) / (float)100.0) + 'm');
 				return;
 			case CanBusIDs.FC_GPS_LATLON:
 				latString = new StringBuffer();
 				dir(latString, msg.getData32(0), 'N', 'S');
-				lat.setText("Lat:  " + latString.toString());
+				latLabel.setText("Lat:  " + latString.toString());
 				
 				lonString = new StringBuffer();
 				dir(lonString, msg.getData32(1), 'E', 'W');
-				lon.setText("Lon: " + lonString.toString());
-				break;
+				lonLabel.setText("Lon: " + lonString.toString());
+				return;
 			case CanBusIDs.FC_GPS_SATS_VIS:
 				visible = msg.getData8(0);
 				break;
@@ -66,7 +86,20 @@ class GPSObserver extends JPanel implements CanObserver
 				return;
 		}
 
-		sats.setText("Sats: " + used + '/' + visible);
+		satsLabel.setText("Sats: " + used + '/' + visible);
+	}
+	
+	/* 
+	 * Determines GPS mode and returns string representation 
+	 */
+	private String stateText(int code)
+	{
+		switch(code)
+		{
+			case 0x34: return "(Safe)";
+			case 0x88: return "(Armed)";
+		}
+		return "Unknown: " + code;
 	}
 	
 	/**
