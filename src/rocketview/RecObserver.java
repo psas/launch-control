@@ -24,7 +24,6 @@ public class RecObserver extends JPanel implements CanObserver
 {
 	protected final DecimalFormat fmt = new DecimalFormat("0.0");
 
-	protected final JLabel stateLabel = new JLabel("Recovery Node -");
 	protected final JLabel powerLabel = new JLabel("Power: -");
 	protected final JLabel chargeLabel = new JLabel("Charge: -");
 	protected final JLabel batteryLabel = new JLabel("Battery: -");
@@ -45,7 +44,6 @@ public class RecObserver extends JPanel implements CanObserver
 		setLayout(new GridBoxLayout());
 		dispatch.add(this);
 
-		add(stateLabel);
 		add(powerLabel);
 		add(chargeLabel);
 		add(batteryLabel);
@@ -62,9 +60,6 @@ public class RecObserver extends JPanel implements CanObserver
 		int i;
 		switch(msg.getId())
 		{
-			case CanBusIDs.REC_REPORT_MODE:
-				stateLabel.setText("Recovery node " + stateText(msg.getData8(0)));
-				break;
 			case CanBusIDs.REC_REPORT_BATTERY:
 				powerLabel.setText("Power: " + powerText(msg.getData8(5)));
 				chargeLabel.setText("Charge: " + chargeText(msg.getData8(0)));
@@ -122,21 +117,21 @@ public class RecObserver extends JPanel implements CanObserver
 	}
 	private String batteryText(CanMessage msg)
 	{
-		// note: bad data alignment defeats our msg accessor
+		// note: bad data alignment defeats our getData16 accessor
 		double V = ((msg.getData8(1)<<8) + msg.getData8(2))*5/1024.0;
-		int I = ((msg.getData8(3)<<8) + msg.getData8(4));
+		int    I = ((msg.getData8(3)<<8) + msg.getData8(4));
 		return fmt.format(V) + "V  " + I + "#A";
 	}
 	private String dtmfText(CanMessage msg)
 	{
-		int tone    = msg.getData8(0) - 1;
+		int tone    = msg.getData8(0);
 		int toneNum = msg.getData8(1);
 		int toneSeq = msg.getData8(2);
 
-		if (tone == 11)		// commands always start with '#'
-			dtmfTones  = dtmfChars.substring(tone, tone+1);
+		if (tone == 12)		// commands always start with '#'
+			dtmfTones = "#";
 		else
-			dtmfTones += dtmfChars.charAt(tone);
+			dtmfTones += dtmfChars.charAt(tone-1);
 		return dtmfTones + " (" + toneNum + "," + toneSeq + ")";
 	}
 	private void setPyro(int i)

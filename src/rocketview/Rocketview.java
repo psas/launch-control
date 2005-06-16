@@ -52,9 +52,19 @@ public class Rocketview extends JFrame
 		JPanel subSys = new JPanel();
 		subSys.setLayout(new GridLayout(1, 0));
 
-		addObserver(subSys, "GPS", new GPSObserver(dispatch));
-		addObserver(subSys, "APS", new APSObserver(dispatch));
-		addObserver(subSys, "Recovery", new RecObserver(dispatch));
+		addObserver(subSys,
+					new NodeBorder(dispatch, "GPS", CanBusIDs.GPS_REPORT_MODE)
+						.addState(0x34,"Safe").addState(0x88,"Armed"),
+					new GPSObserver(dispatch));
+		addObserver(subSys,
+					new NodeBorder(dispatch, "APS", CanBusIDs.APS_REPORT_MODE)
+					    .addState(0x12,"Sleep").addState(0x23,"Awake")
+					    .addState(0x34,"Safe").addState(0x88,"Armed"),
+					new APSObserver(dispatch));
+		addObserver(subSys,
+					new NodeBorder(dispatch, "Recovery", CanBusIDs.REC_REPORT_MODE)
+					    .addState(0x30,"Safe").addState(0x33,"2m Armed").addState(0x3F,"Armed"),
+					new RecObserver(dispatch));
 
 		// rvPane is the outermost content pane
 		Container rvPane = getContentPane();
@@ -104,14 +114,9 @@ public class Rocketview extends JFrame
 	// set left-align flow layout on Container with no vertical spacing
 	// set preferred size as small as possible
 	// add them as a Dispatch observer
-	protected void addObserver(Container c, String title, JComponent o)
+	protected void addObserver(Container c, TitledBorder b, JComponent o)
 	{
-		o.setBorder(new TitledBorder(title));
-		addObserver(c, o);
-	}
-
-	protected void addObserver(Container c, Component o)
-	{
+		o.setBorder(b);
 		c.add(o);
 	}
 } // end class Rocketview
