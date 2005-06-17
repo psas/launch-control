@@ -59,49 +59,21 @@ public class StripChart extends JComponent
 		repaint();
 	}
 
-	private float previousFloat(ListIterator it)
-	{
-		return ((Float) it.previous()).floatValue();
-	}
-
 	protected void paintComponent(Graphics g)
 	{
 		if (ts.size() == 0)
 			return;
 
+		int i;
+		int[] lx, ly;
+
 		synchronized(ts)
 		{
-			// start at the most recent point and draw backwards in time
-			ListIterator ti = ts.listIterator(ts.size());
-			ListIterator yi = ys.listIterator(ys.size());
+			final float now = ((Float) ts.get(ts.size() - 1)).floatValue();
+			float old;
+			ListIterator ti, yi;
 
-			final float now = previousFloat(ti);
-			float old = now - getTimeScale();
-			int x1, y1, x2, y2;
-
-			Insets insets = getInsets();
-			int width = getWidth() - insets.left - insets.right;
-			int height = getHeight() - insets.top - insets.bottom;
-
-			// scale to the window
-			float sx =  width / getTimeScale();
-			float sy = -height / (maxY - minY);
-			float tx = -old * sx + insets.left;
-			float ty = -maxY * sy + insets.top;
-
-			float t = now;
-			x1 = (int) (t * sx + tx + 0.5);
-			y1 = (int) (previousFloat(yi) * sy + ty + 0.5);
-			while(ti.hasPrevious() && (t = previousFloat(ti)) > old) 
-			{
-				x2 = (int) (t * sx + tx + 0.5);
-				y2 = (int) (previousFloat(yi) * sy + ty + 0.5);
-				g.drawLine (x1,y1, x2,y2);
-				x1 = x2;
-				y1 = y2;
-			}
-			yi = null;
-
+			// remove old points that will never be drawn again
 			old = now - getMaxTimeScale();
 			ti = ts.listIterator();
 			while(ti.hasNext())
@@ -111,10 +83,38 @@ public class StripChart extends JComponent
 					break;
 			}
 
-			// remove old points that will never be drawn again
 			int lastold = ti.previousIndex();
 			ts.subList(0, lastold).clear();
 			ys.subList(0, lastold).clear();
+
+			// start at the most recent point and draw backwards in time
+			old = now - getTimeScale();
+			lx = new int[ts.size()];
+			ly = new int[ys.size()];
+
+			Insets insets = getInsets();
+			int width = getWidth() - insets.left - insets.right;
+			int height = getHeight() - insets.top - insets.bottom;
+
+			// scale to the window
+			float sx =  width / getTimeScale();
+			float sy = -height / (maxY - minY);
+			float tx = -old * sx + insets.left + 0.5f;
+			float ty = -maxY * sy + insets.top + 0.5f;
+
+			ti = ts.listIterator(ts.size());
+			yi = ys.listIterator(ys.size());
+
+			for(i = 0; ti.hasPrevious(); ++i)
+			{
+				float t = ((Float) ti.previous()).floatValue();
+				float y = ((Float) yi.previous()).floatValue();
+				if(t <= old)
+					break;
+				lx[i] = (int) (t * sx + tx);
+				ly[i] = (int) (y * sy + ty);
+			}
 		}
+		g.drawPolyline(lx, ly, i);
 	}
 }
