@@ -17,6 +17,8 @@ import javax.swing.border.*;
  */
 public class Rocketview extends JFrame
 {
+	protected static final boolean showStripCharts = true;
+
 	public static void main(String[] args) throws Exception
 	{
 		CanDispatch dispatch = new CanDispatch();
@@ -72,17 +74,22 @@ public class Rocketview extends JFrame
 		GridBagConstraints gbc = new GridBagConstraints();
 
 		gbc.weighty = 1.0;
+		gbc.gridx = 0;
+		gbc.gridy = 0;
 		gbc.fill = gbc.VERTICAL;
 		rvPane.add(fc, gbc);
 
 		gbc.weightx = 2.0;
+		gbc.gridx = 1;
+		gbc.gridy = 0;
 		gbc.fill = gbc.BOTH;
 		rvPane.add(messScroll, gbc);
 
 		gbc.weighty = 0.0;
+		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.fill = gbc.HORIZONTAL;
-		gbc.gridwidth = gbc.RELATIVE;
+		gbc.gridwidth = 2;
 		rvPane.add(subSys, gbc);
 
 		gbc.gridy = 2;
@@ -95,12 +102,16 @@ public class Rocketview extends JFrame
 		else
 			dispatch.setSocket(new LogCanSocket(new UDPCanSocket(), "RocketView.log"));
 
-		IMUObserver imu = new IMUObserver(dispatch);
-		gbc.fill = gbc.BOTH;
-		gbc.gridy = 0;
-		gbc.gridwidth = gbc.REMAINDER;
-		gbc.gridheight = gbc.REMAINDER;
-		rvPane.add(imu, gbc);
+		if(showStripCharts)
+		{
+			IMUObserver imu = new IMUObserver(dispatch);
+			gbc.fill = gbc.BOTH;
+			gbc.gridx = 2;
+			gbc.gridy = 0;
+			gbc.gridwidth = gbc.REMAINDER;
+			gbc.gridheight = gbc.REMAINDER;
+			rvPane.add(imu, gbc);
+		}
 	}
 
 	public void outputSizes(Component c, String name) {
