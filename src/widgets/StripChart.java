@@ -15,12 +15,17 @@ public class StripChart extends JComponent
 	protected float[] ys;
 	protected int[] lx;
 	protected int[] ly;
+	protected float lastRepaint = 0;
 
 	protected int maxSampleRate = 2500;
 	protected float timeScale = 30; /* seconds */
 	protected float maxTimeScale = 60; /* seconds */
 	protected float minY = -20;
 	protected float maxY = 20;
+
+	{
+		setOpaque(true);
+	}
 	
 	protected int roundup(int x)
 	{
@@ -84,7 +89,11 @@ public class StripChart extends JComponent
 		ts[newest & (ts.length - 1)] = t;
 		ys[newest & (ys.length - 1)] = y;
 		++newest;
-		repaint();
+		if(t - lastRepaint > 0.1)
+		{
+			repaint();
+			lastRepaint = t;
+		}
 	}
 
 	protected void paintComponent(Graphics g)
@@ -100,6 +109,10 @@ public class StripChart extends JComponent
 		final Insets insets = getInsets();
 		final int width = getWidth() - insets.left - insets.right;
 		final int height = getHeight() - insets.top - insets.bottom;
+
+		g.setColor(getBackground());
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setColor(getForeground());
 
 		// scale to the window
 		final float old = ts[(current - 1) & (ts.length - 1)] - timeScale;
