@@ -35,9 +35,8 @@ public class CanDispatch extends ArrayList implements Runnable
 
 	public void update(CanMessage m)
 	{
-		Iterator it = iterator();
-		while(it.hasNext())
-			((CanObserver) it.next()).message(m);
+		for(int i = size() - 1; i >= 0; --i)
+			((CanObserver) get(i)).message(m);
 	}
 
 	public void run() 
