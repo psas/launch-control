@@ -35,12 +35,14 @@ import javax.swing.*;
  * checkbox or an icon depending on if you want to control or just
  * view the state, respectively.
  */
-public class ShorePower extends JCheckBox implements ItemListener
+public class ShorePower extends JCheckBox implements ItemListener, CanObserver
 {
 	
 	protected CanSocket sock;
 	protected boolean powerState; // true = pwr on, false = pwr off.
 	protected boolean ignoreEvents; // true = disable ShorePower's event handler
+
+	protected final Thread reader;
 
 	/** Create a ShorePower widget.  
 	 * @param socket the socket to read from to get information
@@ -66,22 +68,27 @@ public class ShorePower extends JCheckBox implements ItemListener
 		addItemListener(this);
 		if (title != null)
 			setText(title);
-		new ReaderThread().start();
+
+		CanDispatch dispatch = new CanDispatch(socket);
+		dispatch.add(this);
+		reader = new Thread(dispatch);
+
 		/* Request the power at startup. */
-		//TODO: ensure the following works
-		System.err.println("powerState: " + powerState + 
-				" before LTR_GET_SPOWER");
-		System.err.print("asking for power state...");
+		requestState();
+	}
+
+	protected void requestState()
+	{
 		try {
 			CanMessage requestMessage = new CanMessage(CanBusIDs.LTR_GET_SPOWER,
 					0, new byte[8]);
 			sock.write(requestMessage);
 			sock.flush();
-		} catch(Exception e) {
-			e.printStackTrace();
+			if(!reader.isAlive())
+				reader.start();
+		} catch(IOException e) {
+			System.err.println("write failed, will retry later: " + e);
 		}
-		System.err.println(" powerState: " + powerState + 
-				" after LTR_GET_SPOWER");
 	}
 
 
@@ -113,8 +120,6 @@ public class ShorePower extends JCheckBox implements ItemListener
 	public void itemStateChanged(ItemEvent event) {
 		if (!ignoreEvents) {
 			System.out.println("ShorePower widget acting on item event");
-			short id = CanBusIDs.LTR_SET_SPOWER;
-			int timestamp = 0;
 			byte body[] = new byte[8];
 			if (event.getStateChange() == ItemEvent.DESELECTED) {
 				body[0] = 0;
@@ -124,20 +129,17 @@ public class ShorePower extends JCheckBox implements ItemListener
 				System.out.println("\tshore power SELECTED, telling tower");
 			}
 			try {
-				CanMessage myMessage = new CanMessage(id, timestamp, body);
+				CanMessage myMessage = new CanMessage(CanBusIDs.LTR_SET_SPOWER, 0, body);
 				sock.write(myMessage);
-				CanMessage requestMessage = new CanMessage(CanBusIDs.LTR_GET_SPOWER,
-						0, new byte[8]);
-				sock.write(requestMessage);
-				sock.flush();
-			} catch(Exception e) {
-				e.printStackTrace();
+				requestState();
+			} catch(IOException e) {
+				System.err.println("write failed, will retry later: " + e);
 			}
 		}
 	}
 
 	/** possibly update the widget based on the message read from tower. */
-	public void update(CanMessage msg) {
+	public void message(CanMessage msg) {
 		// if msg is a LTR_REPORT_SPOWER (XXX: ensure its not actually LTR_SPOWER)
 		// then set power to first byte.
 		if (msg.getId() == CanBusIDs.LTR_REPORT_SPOWER) {
@@ -154,25 +156,6 @@ public class ShorePower extends JCheckBox implements ItemListener
 			ignoreEvents = true; 
 			setSelected(powerState);
 			ignoreEvents = false;
-		}
-	}
-			
-		
-
-	/** Thread to read from tower socket. */
-	private class ReaderThread extends Thread
-	{
-		public void run()
-		{
-			try {
-				CanMessage m;
-				while ((m = sock.read()) != null)
-				{
-					update(m);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 }
