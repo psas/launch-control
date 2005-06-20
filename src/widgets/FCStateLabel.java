@@ -2,32 +2,28 @@ package widgets;
 
 import cansocket.*;
 
+import java.lang.reflect.*;
 import java.text.*;
 import java.util.*;
 
 public class FCStateLabel extends StateLabel implements CanObserver
 {
-	protected static final String[] stateStrings = {
-		"EvaluatePowerup",
-		"Initialize",
-		"Idle",
-		"PreflightCheck",
-		"Ready",
-		"Arming",
-		"Armed",
-		"RocketReady",
-		"LaunchAbort",
-		"Boost",
-		"Coast",
-		"DeployDrogue",
-		"DescendDrogue",
-		"DeployMain",
-		"DescendMain",
-		"RecoveryWait",
-		"RecoverySleep",
-		"PowerDown",
-		"LawnDart",
-	};
+	protected static final String[] stateStrings;
+
+	static {
+		TreeMap map = new TreeMap();
+		Field fields[] = CanBusIDs.class.getFields();
+		for(int i = 0; i < fields.length; i++)
+			try {
+				String name = fields[i].getName();
+				if(!name.endsWith("State"))
+					continue;
+				map.put(new Integer(fields[i].getInt(null)), name);
+			} catch(IllegalAccessException e) {
+				System.err.println("CanBusIDs field " + i + ": " + e);
+			}
+		stateStrings = (String[]) map.values().toArray(new String[map.size()]);
+	}
 
 	protected static final DateFormat df = new SimpleDateFormat("HH:mm:ss.SSS: ");
 	protected static final long delay = 1200; /* link timeout delay (millisecs) */
