@@ -169,6 +169,7 @@ public interface CanBusIDs {
 	public static final int RecoverySleepState = 0x0010; /* from fc_exports */
 	public static final int PowerDownState = 0x0011; /* from fc_exports */
 	public static final int LawnDartState = 0x0012; /* from fc_exports */
+	public static final int LaunchAbortedState = 0x0013; /* from fc_exports */
 	public static final int GPS_POWER_OFF = 0x0000; /* from gps/gps_exports */
 	public static final int GPS_POWER_ON = 0x0001; /* from gps/gps_exports */
 	public static final int GPS_MODE_SAFE = 0x0034; /* from gps/gps_exports */
