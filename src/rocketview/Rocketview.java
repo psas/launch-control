@@ -104,7 +104,12 @@ public class Rocketview extends JFrame
 
 		if(showStripCharts)
 		{
-			IMUObserver imu = new IMUObserver(dispatch);
+			IMUObserver imu = new IMUObserver(dispatch);	
+			//add IMU mode data to IMU panel border
+			addObserver(subSys,
+					new NodeBorder(dispatch, "IMU", CanBusIDs.IMU_REPORT_MODE)
+					    .addState(0x20,"Safe").addState(0x2F,"Armed"),
+					imu);
 			gbc.fill = gbc.BOTH;
 			gbc.gridx = 2;
 			gbc.gridy = 0;
