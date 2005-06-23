@@ -101,7 +101,7 @@ class IMUObserver extends JPanel implements CanObserver
 				type = IMU_GYRO;
 				break;
 			case CanBusIDs.TEMP_REPORT_DATA:
-				double v = 3487.972309658033 / Math.log(3.116381893600779E8 / msg.getData16(0) - 252811.23882451496) + 273.15;
+				double v = 3487.972309658033 / Math.log(3.116381893600779E8 / msg.getData16(0) - 252811.23882451496) - 273.15;
 				tempLabel.setText("Temp: " + fmt.format(v) + " C");
 				return;
 			default:
