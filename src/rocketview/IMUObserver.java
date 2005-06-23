@@ -3,9 +3,9 @@ package rocketview;
 import cansocket.*;
 import widgets.*;
 
+import java.text.*;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.border.*;
 
 /*----------------------------------------------------------------
  * Handles message ids IMUAccel & IMUGyro
@@ -18,6 +18,7 @@ import javax.swing.border.*;
  */
 class IMUObserver extends JPanel implements CanObserver
 {
+	protected final DecimalFormat fmt = new DecimalFormat("0.0");
 	protected final JLabel tempLabel = new JLabel("Temp: -");
 
 	// first subscript in arrays is one of these
@@ -28,6 +29,11 @@ class IMUObserver extends JPanel implements CanObserver
 	protected final String title[][] = {
 		{ "X", "Y", "Z", },
 		{ "Pitch", "Yaw", "Roll", }
+	};
+	protected final String unit[] = { "g", "deg/s" };
+	protected final int id[] = {
+		CanBusIDs.IMU_ACCEL_DATA,
+		CanBusIDs.IMU_GYRO_DATA
 	};
 
 /*
@@ -61,7 +67,7 @@ class IMUObserver extends JPanel implements CanObserver
 		{
 			data[i] = new StripChart[title[i].length];
 			for(int j = 0; j < data[i].length; ++j)
-				subSys.add(createChart(i, j));
+				subSys.add(createChart(dispatch, i, j));
 		}
 
 		GridBagConstraints gbc = (GridBagConstraints)mainLayout.getConstraints(tempLabel).clone();
@@ -71,7 +77,7 @@ class IMUObserver extends JPanel implements CanObserver
 		add(subSys, gbc);
 	}
 
-	protected JComponent createChart(int type, int num)
+	protected JComponent createChart(CanDispatch dispatch, int type, int num)
 	{
 		StripChart chart = new StripChart();
 		data[type][num] = chart;
@@ -79,7 +85,7 @@ class IMUObserver extends JPanel implements CanObserver
 		// data.setYRange(vLow[type][num], vHigh[type][num]);
 		chart.setYRange(0, 4095);
 
-		chart.setBorder(new TitledBorder(title[type][num]));
+		chart.setBorder(new IMUBorder(dispatch, title[type][num], unit[type], id[type], num));
 		return chart;
 	}
 
@@ -95,7 +101,8 @@ class IMUObserver extends JPanel implements CanObserver
 				type = IMU_GYRO;
 				break;
 			case CanBusIDs.TEMP_REPORT_DATA:
-				tempLabel.setText("Temp: " + msg.getData16(0));
+				double v = 3487.972309658033 / Math.log(3.116381893600779E8 / msg.getData16(0) - 252811.23882451496) + 273.15;
+				tempLabel.setText("Temp: " + fmt.format(v) + " C");
 				return;
 			default:
 				return;
