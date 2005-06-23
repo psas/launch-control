@@ -18,6 +18,8 @@ import javax.swing.border.*;
  */
 class IMUObserver extends JPanel implements CanObserver
 {
+	protected final JLabel tempLabel = new JLabel("Temp: -");
+
 	// first subscript in arrays is one of these
 	protected final int IMU_ACCEL = 0;
 	protected final int IMU_GYRO = 1;
@@ -46,17 +48,30 @@ class IMUObserver extends JPanel implements CanObserver
 	public IMUObserver(CanDispatch dispatch)
 	{
 		dispatch.add(this);
-		setLayout(new GridLayout(0, 1));
+		
+		GridBoxLayout mainLayout = new GridBoxLayout();
+		setLayout(mainLayout);
+
+		add(tempLabel);
+		
+		JPanel subSys = new JPanel();
+		subSys.setLayout(new GridLayout(0, 1));
 		data = new StripChart[title.length][];
 		for(int i = 0; i < data.length; ++i)
 		{
 			data[i] = new StripChart[title[i].length];
 			for(int j = 0; j < data[i].length; ++j)
-				createChart(i, j);
+				subSys.add(createChart(i, j));
 		}
+
+		GridBagConstraints gbc = (GridBagConstraints)mainLayout.getConstraints(tempLabel).clone();
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weighty = 1.0;
+		gbc.gridheight = GridBagConstraints.REMAINDER;
+		add(subSys, gbc);
 	}
 
-	protected void createChart(int type, int num)
+	protected JComponent createChart(int type, int num)
 	{
 		StripChart chart = new StripChart();
 		data[type][num] = chart;
@@ -65,7 +80,7 @@ class IMUObserver extends JPanel implements CanObserver
 		chart.setYRange(0, 4095);
 
 		chart.setBorder(new TitledBorder(title[type][num]));
-		add(chart);
+		return chart;
 	}
 
 	public void message(CanMessage msg)
@@ -79,6 +94,9 @@ class IMUObserver extends JPanel implements CanObserver
 			case CanBusIDs.IMU_GYRO_DATA:
 				type = IMU_GYRO;
 				break;
+			case CanBusIDs.TEMP_REPORT_DATA:
+				tempLabel.setText("Temp: " + msg.getData16(0));
+				return;
 			default:
 				return;
 		}
