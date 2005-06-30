@@ -136,6 +136,6 @@ public class RecObserver extends JPanel implements CanObserver
 	}
 	private void setPyro(int i)
 	{
-		timerLabel[i].setText("Timer " + i + ": " + timer[i] + "s  Pyro " + i + " fired(" + pyro[i] + ")");
+		timerLabel[i].setText("Timer " + i + ": " + (timer[i] / 10f) + "s  Pyro " + i + " fired(" + pyro[i] + ")");
 	}
 }
