@@ -43,7 +43,6 @@ public class StateGrid extends JPanel
 
 		/* enum sequencer_test */
 		/* Shared tests */
-		"ZERO_IMU_GYRO",
 		"PRESSURE_VALID",
 		"GPS_LOCKED",
 		"SAFE_DESCENT_GPS",
