@@ -22,7 +22,7 @@ class NodeBorder extends TitledBorder implements CanObserver
 	
 	public NodeBorder addState(int code, String label)
 	{
-		states.put(new Integer(code), label);
+		states.put(new Byte((byte)code), label);
 		return this;
 	}
 	
@@ -30,11 +30,11 @@ class NodeBorder extends TitledBorder implements CanObserver
 	{
 		if (msg.getId() == id)
 		{
-			Integer state = new Integer(msg.getData8(0));
+			Byte state = new Byte(msg.getData8(0));
 			if (states.containsKey(state))
 				setTitle(name + ": " + states.get(state));
 			else
-				setTitle(name + ": 0x" + Integer.toHexString(state.intValue()));
+				setTitle(name + ": 0x" + Integer.toHexString(state.byteValue()));
 		}
 	}
 }
