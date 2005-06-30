@@ -41,6 +41,9 @@ public class RecObserver extends JPanel implements CanObserver
 
 	public RecObserver(CanDispatch dispatch)
 	{
+		setBorder(new NodeBorder(dispatch, "Recovery", CanBusIDs.REC_REPORT_MODE)
+				.addState(0x30,"Safe").addState(0x33,"2m Armed").addState(0x3F,"Armed"));
+
 		setLayout(new GridBoxLayout());
 		dispatch.add(this);
 

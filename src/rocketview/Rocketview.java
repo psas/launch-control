@@ -54,19 +54,9 @@ public class Rocketview extends JFrame
 		JPanel subSys = new JPanel();
 		subSys.setLayout(new GridLayout(1, 0));
 
-		addObserver(subSys,
-					new NodeBorder(dispatch, "GPS", CanBusIDs.GPS_REPORT_MODE)
-						.addState(0x34,"Safe").addState(0x88,"Armed"),
-					new GPSObserver(dispatch));
-		addObserver(subSys,
-					new NodeBorder(dispatch, "APS", CanBusIDs.APS_REPORT_MODE)
-					    .addState(0x12,"Sleep").addState(0x23,"Awake")
-					    .addState(0x34,"Safe").addState(0x88,"Armed"),
-					new APSObserver(dispatch));
-		addObserver(subSys,
-					new NodeBorder(dispatch, "Recovery", CanBusIDs.REC_REPORT_MODE)
-					    .addState(0x30,"Safe").addState(0x33,"2m Armed").addState(0x3F,"Armed"),
-					new RecObserver(dispatch));
+		subSys.add(new GPSObserver(dispatch));
+		subSys.add(new APSObserver(dispatch));
+		subSys.add(new RecObserver(dispatch));
 
 		// rvPane is the outermost content pane
 		Container rvPane = getContentPane();
@@ -104,18 +94,12 @@ public class Rocketview extends JFrame
 
 		if(showStripCharts)
 		{
-			IMUObserver imu = new IMUObserver(dispatch);	
-			//add IMU mode data to IMU panel border
-			addObserver(subSys,
-					new NodeBorder(dispatch, "IMU", CanBusIDs.IMU_REPORT_MODE)
-					    .addState(0x20,"Safe").addState(0x2F,"Armed"),
-					imu);
 			gbc.fill = gbc.BOTH;
 			gbc.gridx = 2;
 			gbc.gridy = 0;
 			gbc.gridwidth = gbc.REMAINDER;
 			gbc.gridheight = gbc.REMAINDER;
-			rvPane.add(imu, gbc);
+			rvPane.add(new IMUObserver(dispatch), gbc);
 		}
 	}
 
@@ -124,15 +108,5 @@ public class Rocketview extends JFrame
 		System.out.println("\tMAX: " + c.getMaximumSize());
 		System.out.println("\tMIN: " + c.getMinimumSize());
 		System.out.println("\tPREF: " + c.getPreferredSize());
-	}
-
-	// add title to JComponent (or Container if possible)
-	// set left-align flow layout on Container with no vertical spacing
-	// set preferred size as small as possible
-	// add them as a Dispatch observer
-	protected void addObserver(Container c, TitledBorder b, JComponent o)
-	{
-		o.setBorder(b);
-		c.add(o);
 	}
 } // end class Rocketview

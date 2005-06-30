@@ -62,6 +62,9 @@ class IMUObserver extends JPanel implements CanObserver
 
 	public IMUObserver(CanDispatch dispatch)
 	{
+		setBorder(new NodeBorder(dispatch, "IMU", CanBusIDs.IMU_REPORT_MODE)
+				.addState(0x20,"Safe").addState(0x2F,"Armed"));
+
 		dispatch.add(this);
 		
 		GridBoxLayout mainLayout = new GridBoxLayout();
