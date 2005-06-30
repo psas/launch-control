@@ -5,6 +5,7 @@ import widgets.*;
 
 import java.text.*;
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 /*----------------------------------------------------------------
@@ -20,6 +21,8 @@ class IMUObserver extends JPanel implements CanObserver
 {
 	protected final DecimalFormat fmt = new DecimalFormat("0.0");
 	protected final JLabel tempLabel = new JLabel("Temp: -");
+	protected JButton calibrateButton = new JButton("Calibrate Bias");
+
 
 	// first subscript in arrays is one of these
 	protected final int IMU_ACCEL = 0;
@@ -29,6 +32,12 @@ class IMUObserver extends JPanel implements CanObserver
 	protected final String title[][] = {
 		{ "X", "Y", "Z", },
 		{ "Pitch", "Yaw", "Roll", }
+	};
+	protected static final double G = 9.80665;
+	protected final int bias[][] = { { 0, 0, 0 }, { 0, 0, 0 } };
+	protected final double gain[][] = {
+		{ 392.80/G, 386.90/G, 77.00/G },		// cf. fcfifo/imu.c
+		{ 22.75, 22.75, 22.75 }
 	};
 	protected final String unit[] = { "g", "deg/s" };
 	protected final int id[] = {
@@ -59,6 +68,7 @@ class IMUObserver extends JPanel implements CanObserver
 		setLayout(mainLayout);
 
 		add(tempLabel);
+		add(calibrateButton);
 		
 		JPanel subSys = new JPanel();
 		subSys.setLayout(new GridLayout(0, 1));
@@ -85,7 +95,10 @@ class IMUObserver extends JPanel implements CanObserver
 		// data.setYRange(vLow[type][num], vHigh[type][num]);
 		chart.setYRange(0, 4095);
 
-		chart.setBorder(new IMUBorder(dispatch, title[type][num], unit[type], id[type], num));
+		IMUBorder border = new IMUBorder(dispatch, title[type][num], unit[type], id[type], num);
+		border.setGain(gain[type][num]);
+		chart.setBorder(border);
+		calibrateButton.addActionListener(border);
 		return chart;
 	}
 
