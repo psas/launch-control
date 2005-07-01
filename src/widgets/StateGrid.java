@@ -102,7 +102,7 @@ public class StateGrid extends JPanel
 			for(int i = 0; i < nodes.length; ++i, ++bit)
 				add(dispatch, new NodeModeLabel(nodes[i], bit));
 			for(int i = 0; i < flags.length; ++i, ++bit)
-				add(dispatch, new NodeStateLabel(flags[i], bit));
+				add(dispatch, new NodeFlagLabel(flags[i], bit));
 			for(int i = 0; i < enables.length; ++i, ++bit)
 				add(dispatch, new NodeStateLabel(enables[i], bit));
 			for(int i = 0; i < tests.length; ++i, ++bit)
