@@ -11,11 +11,11 @@ public class StateGrid extends JPanel
 {
 	// names of node states
 	protected static final String[] names = {
-		"APS mode",
-		"IMU mode",
-		"GPS mode",
-		"ATV mode",
-		"REC mode",
+		"APS",
+		"IMU",
+		"GPS",
+		"ATV",
+		"REC",
 
 		"APS_SWITCH_2", /* CAN bus */
 		"APS_SWITCH_3", /* ATV power amp (and DC/DC converter) */
@@ -93,11 +93,25 @@ public class StateGrid extends JPanel
 	{
 		setLayout(new GridLayout(0,2));
 
-		for (int i = 0; i < names.length; ++i)
-		{
-			NodeStateLabel gridEntry = new NodeStateLabel(names[i], i);
-			dispatch.add(gridEntry);
-			add(gridEntry);
+		try {
+			int bit = 0;
+			for(; bit < 5; ++bit)
+			{
+				NodeStateLabel gridEntry = new NodeModeLabel(names[bit], bit);
+				dispatch.add(gridEntry);
+				add(gridEntry);
+			}
+
+			for(; bit < names.length; ++bit)
+			{
+				NodeStateLabel gridEntry = new NodeStateLabel(names[bit], bit);
+				dispatch.add(gridEntry);
+				add(gridEntry);
+			}
+		} catch(IllegalAccessException e) {
+			throw new RuntimeException(e);
+		} catch(NoSuchFieldException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
