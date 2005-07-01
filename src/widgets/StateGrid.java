@@ -9,14 +9,15 @@ import javax.swing.*;
  * which are nodes in our case, and each of which is labeled. */
 public class StateGrid extends JPanel
 {
-	// names of node states
-	protected static final String[] names = {
+	protected static final String[] nodes = {
 		"APS",
 		"IMU",
 		"GPS",
 		"ATV",
 		"REC",
+	};
 
+	protected static final String[] flags = {
 		"APS_SWITCH_2", /* CAN bus */
 		"APS_SWITCH_3", /* ATV power amp (and DC/DC converter) */
 		"APS_SWITCH_4", /* WIFI power amp */
@@ -29,7 +30,9 @@ public class StateGrid extends JPanel
 		"ATV_POWER_OVERLAY",
 		"ATV_POWER_TX",
 		"ATV_POWER_PA",
+	};
 
+	protected static final String[] enables = {
 		"APS_VOLTS",
 		"APS_AMPS",
 		"APS_CHARGE",
@@ -40,8 +43,9 @@ public class StateGrid extends JPanel
 		"IMU_TEMPERATURE",
 
 		"GPS_UART_TRANSMIT",
+	};
 
-		/* enum sequencer_test */
+	protected static final String[] tests = {
 		/* Shared tests */
 		"PRESSURE_VALID",
 		"GPS_LOCKED",
@@ -95,23 +99,24 @@ public class StateGrid extends JPanel
 
 		try {
 			int bit = 0;
-			for(; bit < 5; ++bit)
-			{
-				NodeStateLabel gridEntry = new NodeModeLabel(names[bit], bit);
-				dispatch.add(gridEntry);
-				add(gridEntry);
-			}
-
-			for(; bit < names.length; ++bit)
-			{
-				NodeStateLabel gridEntry = new NodeStateLabel(names[bit], bit);
-				dispatch.add(gridEntry);
-				add(gridEntry);
-			}
+			for(int i = 0; i < nodes.length; ++i, ++bit)
+				add(dispatch, new NodeModeLabel(nodes[i], bit));
+			for(int i = 0; i < flags.length; ++i, ++bit)
+				add(dispatch, new NodeStateLabel(flags[i], bit));
+			for(int i = 0; i < enables.length; ++i, ++bit)
+				add(dispatch, new NodeStateLabel(enables[i], bit));
+			for(int i = 0; i < tests.length; ++i, ++bit)
+				add(dispatch, new NodeStateLabel(tests[i], bit));
 		} catch(IllegalAccessException e) {
 			throw new RuntimeException(e);
 		} catch(NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	protected void add(CanDispatch dispatch, NodeStateLabel c)
+	{
+		dispatch.add(c);
+		add(c);
 	}
 }
