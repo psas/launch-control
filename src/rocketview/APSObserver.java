@@ -32,7 +32,7 @@ class APSObserver extends JPanel implements CanObserver
 
 	public APSObserver(CanDispatch dispatch)
 	{
-		setBorder(new NodeBorder(dispatch, "APS", CanBusIDs.APS_REPORT_MODE)
+		setBorder(new NodeBorder(this, dispatch, "APS", CanBusIDs.APS_REPORT_MODE)
 				.addState(0x12,"Sleep").addState(0x23,"Awake")
 				.addState(0x34,"Safe").addState(0x88,"Armed"));
 
