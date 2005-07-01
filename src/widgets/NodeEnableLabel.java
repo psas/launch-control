@@ -26,10 +26,20 @@ public class NodeEnableLabel extends NodeStateLabel
 		super.message(msg);
 
 		int now = msg.getTimestamp();
+		// Ignore FC or ground-generated messages.
+		if(now == 0)
+			return;
+
+		// If time has gone backwards, flush and start over.
+		if(now < last_time)
+			next_out = next_in;
+
+		// If this is *our* message, note another instance.
 		if(msg.getId() == id)
 			times[next_in++ & (length - 1)] = now;
 
-		if(now - last_time >= 25)
+		// Repaint every quarter second.
+		if(now - last_time >= 25 || now < last_time)
 		{
 			update(now);
 			last_time = now;
@@ -42,7 +52,7 @@ public class NodeEnableLabel extends NodeStateLabel
 		while(next_out != next_in && times[next_out & (length - 1)] <= now - 300)
 			++next_out;
 
-		if(next_in == next_out)
+		if(next_in - next_out <= 1)
 			tenths = 0;
 		else
 			tenths = (int) (1000f * (next_in - next_out) / (now - times[next_out & (length - 1)]));

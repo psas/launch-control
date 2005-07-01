@@ -86,10 +86,15 @@ public class StripChart extends JComponent
 			lx = new int[ts.length];
 			ly = new int[ys.length];
 		}
+
+		// If time has gone backward, flush and start over.
+		if(t < lastRepaint)
+			oldest = newest;
+
 		ts[newest & (ts.length - 1)] = t;
 		ys[newest & (ys.length - 1)] = y;
 		++newest;
-		if(t - lastRepaint > 0.1)
+		if(t - lastRepaint >= 0.1 || t < lastRepaint)
 		{
 			repaint();
 			lastRepaint = t;
