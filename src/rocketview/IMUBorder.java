@@ -49,7 +49,7 @@ class IMUBorder extends TitledBorder implements CanObserver, ActionListener
 			if (msg.getTimestamp() > time)
 			{
 				double avg = sum/n;
-				setTitle(name + fmt.format(avg) + unit + " (" + fmt.format(low) + ".." + fmt.format(high) + "/" + n + ")");
+				setTitle(name + fmt.format(avg) + unit + " (" + fmt.format(low) + ".." + fmt.format(high) + ")");
 
 				sum = 0.0;
 				n = 0;

@@ -34,14 +34,14 @@ public class StateGrid extends JPanel
 	};
 
 	protected static final String[] enables = {
-		"APS_VOLTS",
-		"APS_AMPS",
-		"APS_CHARGE",
+		"APS_DATA_VOLTS",
+		"APS_DATA_AMPS",
+		"APS_DATA_CHARGE",
 
-		"IMU_ACCEL",
-		"IMU_GYRO",
-		"IMU_PRESSURE",
-		"IMU_TEMPERATURE",
+		"IMU_ACCEL_DATA",
+		"IMU_GYRO_DATA",
+		"PRESS_REPORT_DATA",
+		"TEMP_REPORT_DATA",
 
 		"GPS_UART_TRANSMIT",
 	};
@@ -105,7 +105,7 @@ public class StateGrid extends JPanel
 			for(int i = 0; i < flags.length; ++i, ++bit)
 				add(dispatch, flags[i], new NodeFlagLabel(flags[i], bit));
 			for(int i = 0; i < enables.length; ++i, ++bit)
-				add(dispatch, enables[i], new NodeStateLabel(enables[i], bit));
+				add(dispatch, enables[i], new NodeEnableLabel(enables[i], bit));
 			for(int i = 0; i < tests.length; ++i, ++bit)
 				add(dispatch, tests[i], new NodeStateLabel(tests[i], bit));
 		} catch(IllegalAccessException e) {
