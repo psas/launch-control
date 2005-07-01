@@ -161,20 +161,7 @@ class GPSObserver extends JPanel implements CanObserver
 
 		satsLabel.setText("Sats: " + used + '/' + visible);
 	}
-	
-	/* 
-	 * Determines GPS mode and returns string representation 
-	 */
-	private String stateText(int code)
-	{
-		switch(code)
-		{
-			case 0x34: return "(Safe)";
-			case 0x88: return "(Armed)";
-		}
-		return "Unknown: " + code;
-	}
-	
+
 	/**
 	 * dir constructs formatted lat/lon string
 	 * @param b - StringBuffer to put formatted position data
