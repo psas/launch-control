@@ -1,9 +1,11 @@
 package rocketview;
 
 import cansocket.*;
+import widgets.*;
 
 import java.text.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 /*  layout
  Recovery Node ([-|Safe|2m Armed|Armed])
@@ -41,12 +43,11 @@ public class RecObserver extends JPanel implements CanObserver
 
 	public RecObserver(CanDispatch dispatch)
 	{
-		setBorder(new NodeBorder(this, dispatch, "Recovery", CanBusIDs.REC_REPORT_MODE)
-				.addState(0x30,"Safe").addState(0x33,"2m Armed").addState(0x3F,"Armed"));
-
+		setBorder(new TitledBorder("Recovery"));
 		setLayout(new GridBoxLayout());
 		dispatch.add(this);
 
+		add(StateGrid.getLabel("REC"));
 		add(powerLabel);
 		add(chargeLabel);
 		add(batteryLabel);
