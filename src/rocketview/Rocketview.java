@@ -42,7 +42,9 @@ public class Rocketview extends JFrame
 		// flight computer state
 		FCStateLabel stateLabel = new FCStateLabel(dispatch);
 		fc.add(stateLabel);
-		fc.add(new StateGrid(dispatch));
+		StateGrid grid = new StateGrid(dispatch);
+		grid.setColumns(2);
+		fc.add(grid);
 
 		// message box for scrolled text
 		TextObserver messScroll = new TextObserver(dispatch);

@@ -3,6 +3,7 @@ package widgets;
 import cansocket.*;
 
 import java.awt.*;
+import java.util.*;
 import javax.swing.*;
 
 /** A grid of leds displaying info about different elements, 
@@ -93,30 +94,54 @@ public class StateGrid extends JPanel
 		"RECOVERY_VOLTS",
 	};
 
+	protected final Map labels = new HashMap();
+
 	public StateGrid(CanDispatch dispatch)
 	{
-		setLayout(new GridLayout(0,2));
-
 		try {
 			int bit = 0;
 			for(int i = 0; i < nodes.length; ++i, ++bit)
-				add(dispatch, new NodeModeLabel(nodes[i], bit));
+				add(dispatch, nodes[i], new NodeModeLabel(nodes[i], bit));
 			for(int i = 0; i < flags.length; ++i, ++bit)
-				add(dispatch, new NodeFlagLabel(flags[i], bit));
+				add(dispatch, flags[i], new NodeFlagLabel(flags[i], bit));
 			for(int i = 0; i < enables.length; ++i, ++bit)
-				add(dispatch, new NodeStateLabel(enables[i], bit));
+				add(dispatch, enables[i], new NodeStateLabel(enables[i], bit));
 			for(int i = 0; i < tests.length; ++i, ++bit)
-				add(dispatch, new NodeStateLabel(tests[i], bit));
+				add(dispatch, tests[i], new NodeStateLabel(tests[i], bit));
 		} catch(IllegalAccessException e) {
 			throw new RuntimeException(e);
 		} catch(NoSuchFieldException e) {
 			throw new RuntimeException(e);
 		}
+		setColumns(4);
 	}
 
-	protected void add(CanDispatch dispatch, NodeStateLabel c)
+	protected void add(CanDispatch dispatch, String name, NodeStateLabel c)
 	{
+		labels.put(name, c);
 		dispatch.add(c);
 		add(c);
+	}
+
+	public void setColumns(int columns)
+	{
+		setLayout(new GridLayout(0, columns));
+	}
+
+	protected static StateGrid grid;
+
+	public static void setDispatcher(CanDispatch dispatch)
+	{
+		grid = new StateGrid(dispatch);
+	}
+
+	public static StateGrid getStateGrid()
+	{
+		return grid;
+	}
+
+	public static JLabel getLabel(String name)
+	{
+		return (JLabel) getStateGrid().labels.get(name);
 	}
 }
