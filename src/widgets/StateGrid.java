@@ -140,8 +140,8 @@ public class StateGrid extends JPanel
 		return grid;
 	}
 
-	public static JLabel getLabel(String name)
+	public static NameDetailLabel getLabel(String name)
 	{
-		return (JLabel) getStateGrid().labels.get(name);
+		return (NameDetailLabel) getStateGrid().labels.get(name);
 	}
 }
