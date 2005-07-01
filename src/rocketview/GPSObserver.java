@@ -36,7 +36,6 @@ class GPSObserver extends JPanel implements CanObserver
 	protected final JLabel altLabel = new JLabel("Alt: -");
 	protected final TimeObserver time = new TimeObserver();
 	protected final JLabel satsLabel = new JLabel("Sats: -/-");
-	//protected final LockStateLabel lockLabel = new LockStateLabel();
 	protected final JLabel lockLabel = new JLabel("Locked: -");
 	protected final JLabel solLabel = new JLabel("Solution: -");
 	protected final JLabel valLabel = new JLabel("Validity: -");
@@ -48,7 +47,6 @@ class GPSObserver extends JPanel implements CanObserver
 
 		dispatch.add(this);
 		dispatch.add(time);
-		//dispatch.add(lockLabel);
 		setLayout(new GridBoxLayout());
 		add(latLabel);
 		add(lonLabel);
@@ -193,35 +191,5 @@ class GPSObserver extends JPanel implements CanObserver
 		double minutes = (deg - degOnly) * 60.0;
 		// unicode degree character
 		b.append(Math.round(degOnly)).append("\u00b0 ").append(minFmt.format(minutes)).append(sgn);
-	}
-
-	private static class LockStateLabel extends StateLabel implements CanObserver
-	{
-		public LockStateLabel()
-		{
-			super(makeName(0));
-		}
-
-		private static String makeName(int lockbits)
-		{
-			StringBuffer buf = new StringBuffer("Lock: 0x");
-			String hex = Integer.toHexString(lockbits);
-			for(int i = 8 - hex.length(); i > 0; --i)
-				buf.append('0');
-			return buf.append(hex).toString();
-		}
-
-		public void message(CanMessage msg)
-		{
-			if(msg.getId() != CanBusIDs.FC_GPS_NAVSOL)
-				return;
-			setKnown(true);
-			int lockbits = msg.getData32(0);
-			// testing bits 0 2 3 4 16 17 19
-			// indicating: Altitude used, Not enough sattillites, Exceeded max EHorPE
-			// Exceeded EVelPE, Propogated SOL, Altitude Used, PM
-			setState((lockbits & 0xb001d) != 0);
-			setText(makeName(lockbits));
-		}
 	}
 }
