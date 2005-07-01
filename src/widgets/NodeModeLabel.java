@@ -7,19 +7,17 @@ import java.util.*;
 
 public class NodeModeLabel extends NodeStateLabel
 {
-	protected final String name;
 	protected final int id;
 
 	/** Map from mode numbers to names. */
 	protected final Map modes = new HashMap();
 
-	protected Byte mode;
-
 	public NodeModeLabel(String name, int bit)
 		throws NoSuchFieldException, IllegalAccessException
 	{
 		super(name, bit);
-		this.name = name;
+		setDetail("-");
+
 		id = CanBusIDs.class.getField(name + "_REPORT_MODE").getInt(null);
 
 		/* Find all the legal modes for the current node. */
@@ -33,8 +31,6 @@ public class NodeModeLabel extends NodeStateLabel
 			byte code = (byte) fields[i].getInt(null);
 			modes.put(new Byte(code), fname.substring(prefix.length()));
 		}
-
-		setText();
 	}
 
 	public void message(CanMessage msg)
@@ -42,19 +38,10 @@ public class NodeModeLabel extends NodeStateLabel
 		super.message(msg);
 		if(msg.getId() != id)
 			return;
-		mode = new Byte(msg.getData8(0));
-		setText();
-	}
-
-	protected void setText()
-	{
-		StringBuffer b = new StringBuffer(name).append(": ");
+		byte value = msg.getData8(0);
+		String mode = (String) modes.get(new Byte(value));
 		if(mode == null)
-			b.append("-");
-		else if(modes.containsKey(mode))
-			b.append(modes.get(mode));
-		else
-			b.append("0x").append(Integer.toHexString(mode.intValue() & 0xff));
-		setText(b.toString());
+			mode = "0x" + Integer.toHexString((int) value & 0xff);
+		setDetail(mode);
 	}
 }

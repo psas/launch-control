@@ -3,7 +3,7 @@ package widgets;
 import java.awt.*;
 import javax.swing.*;
 
-public class StateLabel extends JLabel
+public class StateLabel extends NameDetailLabel
 {
 	protected final Color bg;
 

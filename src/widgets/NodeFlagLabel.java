@@ -6,20 +6,17 @@ import java.lang.reflect.*;
 
 public class NodeFlagLabel extends NodeStateLabel
 {
-	protected String name;
 	protected final int id;
-	protected String value = "-";
 
 	public NodeFlagLabel(String name, int bit)
 		throws NoSuchFieldException, IllegalAccessException
 	{
 		super(name, bit);
-		this.name = name;
 		int idx = name.indexOf('_');
 		String prefix = name.substring(0, idx);
 		String suffix = name.substring(idx);
 		id = CanBusIDs.class.getField(prefix + "_REPORT" + suffix).getInt(null);
-		setText();
+		setDetail("-");
 	}
 
 	public void message(CanMessage msg)
@@ -28,20 +25,8 @@ public class NodeFlagLabel extends NodeStateLabel
 		if(msg.getId() != id)
 			return;
 		if(msg.getData8(0) == 0)
-			value = "Off";
+			setDetail("Off");
 		else
-			value = "On";
-		setText();
-	}
-
-	public void setText(String name)
-	{
-		this.name = name;
-		setText();
-	}
-
-	protected void setText()
-	{
-		super.setText(name + ": " + value);
+			setDetail("On");
 	}
 }

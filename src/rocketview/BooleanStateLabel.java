@@ -1,17 +1,16 @@
 package rocketview;
 
 import cansocket.*;
-import javax.swing.*;
+import widgets.*;
 
-public class BooleanStateLabel extends JLabel implements CanObserver
+public class BooleanStateLabel extends NameDetailLabel implements CanObserver
 {
-	protected final String name;
 	protected final int id;
 
 	public BooleanStateLabel(String name, int id)
 	{		
-		super(name + ": -");
-		this.name = name;
+		super(name);
+		setDetail("-");
 		this.id = id;
 	}
 
@@ -21,8 +20,8 @@ public class BooleanStateLabel extends JLabel implements CanObserver
 			return;
 
 		if (msg.getData8(0) == 0)
-			setText(name + ": Off");
+			setDetail("Off");
 		else
-			setText(name + ": On");
+			setDetail("On");
 	}
 }
