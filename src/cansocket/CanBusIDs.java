@@ -143,6 +143,7 @@ public interface CanBusIDs {
 	public static final int FC_REPORT_LINK_QUALITY = 0x0184; /* from fc_exports */
 	public static final int FC_REPORT_IMPORTANCE_MASK = 0x01a8; /* from fc_exports */
 	public static final int FC_PING_MESSAGE = 0x01c8; /* from fc_exports */
+	public static final int FC_REPORT_LOG_AVAIL = 0x01e4; /* from fc_exports */
 	public static final int FC_IMU_HEIGHT = 0xf004; /* from fc_exports */
 	public static final int FC_GPS_NAVSOL = 0xf804; /* from fc_exports */
 	public static final int FC_GPS_TIME = 0xf827; /* from fc_exports */
