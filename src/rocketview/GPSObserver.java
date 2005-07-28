@@ -59,6 +59,18 @@ class GPSObserver extends JPanel implements CanObserver
 		add(lockLabel);
 		add(solLabel);
 		add(valLabel);
+		add(StateGrid.getLabel("GPS_POWER"));
+		add(StateGrid.getLabel("GPS_UART_TRANSMIT"));
+		add(StateGrid.getLabel("SAFE_DESCENT_GPS"));
+		add(StateGrid.getLabel("DROGUE_DEPLOY_SAFE_GPS"));
+		add(StateGrid.getLabel("GOT_GPS"));
+		add(StateGrid.getLabel("SANE_GPS"));
+		add(StateGrid.getLabel("BOOST_GPS"));
+		add(StateGrid.getLabel("DROGUE_GPS"));
+		add(StateGrid.getLabel("DESCEND_GPS"));
+		add(StateGrid.getLabel("TOUCHDOWN_GPS"));
+		add(StateGrid.getLabel("HEIGHT_MATCH_GPS_PRESSURE"));
+		
 	}
 
 	private void add(NameDetailLabel label)
@@ -168,7 +180,7 @@ class GPSObserver extends JPanel implements CanObserver
 		satsLabel.setText("Sats: " + used + '/' + visible);
 	}
 
-	/**
+	/*
 	 * dir constructs formatted lat/lon string
 	 * @param b - StringBuffer to put formatted position data
 	 * @param mag - 32 bit fixed point lat or lon data
