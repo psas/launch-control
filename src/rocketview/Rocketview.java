@@ -36,56 +36,54 @@ public class Rocketview extends JFrame
 		super("Rocketview");
 
 		// status boxes
-		JPanel fc = new JPanel();
-		fc.setLayout(new GridBoxLayout());
+//		JPanel fc = new JPanel();
+//		fc.setLayout(new GridBoxLayout());
 
 		// flight computer state
 		FCStateLabel stateLabel = new FCStateLabel(dispatch);
-		fc.add(stateLabel);
 		StateGrid.setDispatcher(dispatch);
-		StateGrid grid = StateGrid.getStateGrid();
-		grid.setColumns(2);
-		fc.add(grid);
-
+//		StateGrid grid = StateGrid.getStateGrid();
+//		grid.setColumns(2);
+//		fc.add(grid);
+		
 		// message box for scrolled text
 		TextObserver messScroll = new TextObserver(dispatch);
 		messScroll.setBorder( new TitledBorder( "CanId  len  data" ));
 
-
-		// subSys panel holds a labelled display for each subsystem
+		// subSys panels hold a labeled display for each subsystem
 		//   vertical box layout
-		JPanel subSys = new JPanel();
-		subSys.setLayout(new GridLayout(1, 0));
-
-		subSys.add(new GPSObserver(dispatch));
-		subSys.add(new APSObserver(dispatch));
-		subSys.add(new RecObserver(dispatch));
-
+		JPanel subSys1 = new JPanel();
+		subSys1.setLayout(new GridBoxLayout());
+		subSys1.add(new GPSObserver(dispatch));
+		subSys1.add(new ATVObserver(dispatch));
+		
+		JPanel subSys2 = new JPanel();				
+		subSys2.setLayout(new GridBoxLayout());
+		subSys2.add(new APSObserver(dispatch));
+		subSys2.add(new IMUStateObserver(dispatch));	
+		
+		JPanel subSys3 = new JPanel();
+		subSys3.setLayout(new GridBoxLayout());
+		subSys3.add(new RecObserver(dispatch));
+		subSys3.add(new OtherObserver(dispatch, stateLabel));
+		
 		// rvPane is the outermost content pane
 		Container rvPane = getContentPane();
 		rvPane.setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 
-		gbc.weighty = 1.0;
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.fill = gbc.VERTICAL;
-		rvPane.add(fc, gbc);
-
-		gbc.weightx = 2.0;
-		gbc.gridx = 1;
-		gbc.gridy = 0;
 		gbc.fill = gbc.BOTH;
+		gbc.weighty = 1.0;
+		gbc.weightx = 1.0;
 		rvPane.add(messScroll, gbc);
-
-		gbc.weighty = 0.0;
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.fill = gbc.HORIZONTAL;
-		gbc.gridwidth = 2;
-		rvPane.add(subSys, gbc);
-
+		gbc.weightx = 0.0;
+		rvPane.add(subSys1, gbc);
+		rvPane.add(subSys2, gbc);
+		rvPane.add(subSys3, gbc);
+		
 		gbc.gridy = 2;
+		gbc.weighty = 0.0;
+		gbc.gridwidth = 4;
 		if(showLaunchControl)
 		{
 			LaunchControl control = new LaunchControl(dispatch);
@@ -97,9 +95,10 @@ public class Rocketview extends JFrame
 
 		if(showStripCharts)
 		{
-			gbc.fill = gbc.BOTH;
-			gbc.gridx = 2;
+			gbc.gridx = 4;
 			gbc.gridy = 0;
+			gbc.weightx = 1.0;
+			gbc.weighty = 1.0;
 			gbc.gridwidth = gbc.REMAINDER;
 			gbc.gridheight = gbc.REMAINDER;
 			rvPane.add(new IMUObserver(dispatch), gbc);
