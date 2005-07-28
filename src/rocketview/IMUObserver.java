@@ -23,7 +23,6 @@ class IMUObserver extends JPanel implements CanObserver
 	protected final JLabel tempLabel = new JLabel("Temp: -");
 	protected JButton calibrateButton = new JButton("Calibrate Bias");
 
-
 	// first subscript in arrays is one of these
 	protected final int IMU_ACCEL = 0;
 	protected final int IMU_GYRO = 1;
