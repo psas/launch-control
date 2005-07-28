@@ -40,10 +40,13 @@ public class LaunchControl extends JPanel
 			protected JButton preFlightCheckButton;
 			protected JButton armButton;
 			protected JButton countdownButton;
+		protected JPanel overridePanel;
+			protected JButton boostButton;
+			protected JButton deployDrogueButton;
+			protected JButton deployMainButton;
 			protected JButton abortButton;
 		protected JPanel fcPowerPanel;
 			protected JButton fcPowerOnButton;
-			protected JButton powerDownButton;
 			protected JButton fcPowerOffButton;
 
 	/** Create LaunchControl GUI, open connections, and start scheduler */
@@ -87,6 +90,10 @@ public class LaunchControl extends JPanel
 		countdownPanel = new JPanel();
 		countdownPanel.setLayout(new GridLayout(0, 1));
 		
+		// setup override panel
+		overridePanel = new JPanel();
+		overridePanel.setLayout(new GridLayout(0, 1));
+
 		// setup countdown components
 		preFlightCheckButton = new JButton("Preflight Check");
 		preFlightCheckButton.setActionCommand("preflight");
@@ -96,12 +103,29 @@ public class LaunchControl extends JPanel
         armButton.addActionListener(this);
         countdownButton = new JButton();
         countdownButton.addActionListener(this);
+
+		// setup override components
+		boostButton = new JButton("Boost!");
+		boostButton.setActionCommand("boost");
+		boostButton.addActionListener(this);
+        deployDrogueButton = new JButton("Deploy Drogue!");
+        deployDrogueButton.setActionCommand("drogue");
+        deployDrogueButton.addActionListener(this);
+        deployMainButton = new JButton("Deploy Main!");
+        deployMainButton.setActionCommand("main");
+        deployMainButton.addActionListener(this);
 		
 		// add countdown components
 		countdownPanel.add(preFlightCheckButton);
 		countdownPanel.add(armButton);
 		countdownPanel.add(countdownButton);
 		bottomLCPanel.add(countdownPanel);
+
+		// add override components
+		overridePanel.add(boostButton);
+		overridePanel.add(deployDrogueButton);
+		overridePanel.add(deployMainButton);
+		bottomLCPanel.add(overridePanel);
 		
 		// setup/add abort button
 		abortButton = new JButton("ABORT");
@@ -120,16 +144,12 @@ public class LaunchControl extends JPanel
 		fcPowerOnButton = new JButton("FC On");
 		fcPowerOnButton.setActionCommand("fc_on");
 		fcPowerOnButton.addActionListener(this);
-		powerDownButton = new JButton("Powerdown FC");
-		powerDownButton.setActionCommand("powerdown");
-		powerDownButton.addActionListener(this);
 		fcPowerOffButton = new JButton("FC Off");
 		fcPowerOffButton.setActionCommand("fc_off");
 		fcPowerOffButton.addActionListener(this);
 		
 		// add power components
 		fcPowerPanel.add(fcPowerOnButton);
-		fcPowerPanel.add(powerDownButton);
 		fcPowerPanel.add(fcPowerOffButton);
 		bottomLCPanel.add(fcPowerPanel);
 		
@@ -155,16 +175,21 @@ public class LaunchControl extends JPanel
 				byte[] data = { CanBusIDs.ArmingState };
 				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
 			}
-			else if (event.getActionCommand().equals("powerdown"))
+			else if (event.getActionCommand().equals("boost"))
 			{
-				if(JOptionPane.showConfirmDialog(this,
-					"Are you sure you want to shutdown the flight computer?", 
-					"Proceed?",
-					JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) 
-					return; // user wasn't sure.
-				byte[] data = { CanBusIDs.PowerDownState };
+				byte[] data = { CanBusIDs.BoostState };
 				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
-			} 
+			}
+			else if (event.getActionCommand().equals("drogue"))
+			{
+				byte[] data = { CanBusIDs.DeployDrogueState };
+				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
+			}
+			else if (event.getActionCommand().equals("main"))
+			{
+				byte[] data = { CanBusIDs.DeployMainState };
+				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
+			}
 			else if(event.getActionCommand().equals("fc_on"))
 			{
 				fcPower(true);
