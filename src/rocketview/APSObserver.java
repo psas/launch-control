@@ -40,7 +40,12 @@ class APSObserver extends JPanel implements CanObserver
 		add("APS_SWITCH_2", "S2 (CAN)");
 		add("APS_SWITCH_3", "S3 (ATV)");
 		add("APS_SWITCH_4", "S4 (WIFI)");
-
+		
+		add(StateGrid.getLabel("APS_DATA_VOLTS"));
+		add(StateGrid.getLabel("APS_DATA_AMPS"));
+		add(StateGrid.getLabel("APS_DATA_CHARGE"));
+		//add(StateGrid.getLabel("APS"));
+		
 		setText();
 	}
 
