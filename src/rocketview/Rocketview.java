@@ -35,8 +35,6 @@ public class Rocketview extends JFrame
 	{
 		super("Rocketview");
 
-		// flight computer state
-		FCStateLabel stateLabel = new FCStateLabel(dispatch);
 		StateGrid.setDispatcher(dispatch);
 		
 		// message box for scrolled text
@@ -46,7 +44,7 @@ public class Rocketview extends JFrame
 		Component[][] columns = {
 			{ new GPSObserver(dispatch), new ATVObserver(dispatch) },
 			{ new APSObserver(dispatch), new IMUStateObserver(dispatch) },
-			{ new RecObserver(dispatch), new OtherObserver(dispatch, stateLabel) },
+			{ new RecObserver(dispatch), new OtherObserver(dispatch) },
 		};
 
 		// rvPane is the outermost content pane

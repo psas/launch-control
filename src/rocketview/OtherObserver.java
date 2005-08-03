@@ -8,12 +8,12 @@ import cansocket.*;
 
 public class OtherObserver extends JPanel
 {
-	public OtherObserver(CanDispatch dispatch, FCStateLabel stateLabel)
+	public OtherObserver(CanDispatch dispatch)
 	{
 		setBorder(new TitledBorder("Other"));
 		setLayout(new GridBoxLayout());
 
-		add(stateLabel);
+		add(new FCStateLabel(dispatch));
 
 		StateGrid grid = StateGrid.getStateGrid();
 		grid.setColumns(1);
