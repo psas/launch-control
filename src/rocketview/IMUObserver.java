@@ -3,7 +3,6 @@ package rocketview;
 import cansocket.*;
 import widgets.*;
 
-import java.text.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -19,8 +18,6 @@ import javax.swing.*;
  */
 class IMUObserver extends JPanel implements CanObserver
 {
-	protected final DecimalFormat fmt = new DecimalFormat("0.0");
-	protected final JLabel tempLabel = new JLabel("Temp: -");
 	protected JButton calibrateButton = new JButton("Calibrate Bias");
 
 	
@@ -67,7 +64,6 @@ class IMUObserver extends JPanel implements CanObserver
 		GridBoxLayout mainLayout = new GridBoxLayout();
 		setLayout(mainLayout);
 
-		add(tempLabel);
 		add(calibrateButton);
 		
 		JPanel subSys = new JPanel();
@@ -80,7 +76,7 @@ class IMUObserver extends JPanel implements CanObserver
 				subSys.add(createChart(dispatch, i, j));
 		}
 
-		GridBagConstraints gbc = (GridBagConstraints)mainLayout.getConstraints(tempLabel).clone();
+		GridBagConstraints gbc = (GridBagConstraints)mainLayout.getConstraints(calibrateButton).clone();
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weighty = 1.0;
 		gbc.gridheight = GridBagConstraints.REMAINDER;
@@ -113,10 +109,6 @@ class IMUObserver extends JPanel implements CanObserver
 			case CanBusIDs.IMU_GYRO_DATA:
 				type = IMU_GYRO;
 				break;
-			case CanBusIDs.TEMP_REPORT_DATA:
-				double v = 3487.972309658033 / Math.log(3.116381893600779E8 / msg.getData16(0) - 252811.23882451496) - 273.15;
-				tempLabel.setText("Temp: " + fmt.format(v) + " C");
-				return;
 			default:
 				return;
 		}
