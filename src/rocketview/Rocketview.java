@@ -43,23 +43,12 @@ public class Rocketview extends JFrame
 		TextObserver messScroll = new TextObserver(dispatch);
 		messScroll.setBorder( new TitledBorder( "CanId  len  data" ));
 
-		// subSys panels hold a labeled display for each subsystem
-		//   vertical box layout
-		JPanel subSys1 = new JPanel();
-		subSys1.setLayout(new GridBoxLayout());
-		subSys1.add(new GPSObserver(dispatch));
-		subSys1.add(new ATVObserver(dispatch));
-		
-		JPanel subSys2 = new JPanel();				
-		subSys2.setLayout(new GridBoxLayout());
-		subSys2.add(new APSObserver(dispatch));
-		subSys2.add(new IMUStateObserver(dispatch));	
-		
-		JPanel subSys3 = new JPanel();
-		subSys3.setLayout(new GridBoxLayout());
-		subSys3.add(new RecObserver(dispatch));
-		subSys3.add(new OtherObserver(dispatch, stateLabel));
-		
+		Component[][] columns = {
+			{ new GPSObserver(dispatch), new ATVObserver(dispatch) },
+			{ new APSObserver(dispatch), new IMUStateObserver(dispatch) },
+			{ new RecObserver(dispatch), new OtherObserver(dispatch, stateLabel) },
+		};
+
 		// rvPane is the outermost content pane
 		Container rvPane = getContentPane();
 		rvPane.setLayout(new GridBagLayout());
@@ -69,14 +58,20 @@ public class Rocketview extends JFrame
 		gbc.weighty = 1.0;
 		gbc.weightx = 1.0;
 		rvPane.add(messScroll, gbc);
+
 		gbc.weightx = 0.0;
-		rvPane.add(subSys1, gbc);
-		rvPane.add(subSys2, gbc);
-		rvPane.add(subSys3, gbc);
+		for(int col = 0; col < columns.length; ++col)
+		{
+			JPanel subsys = new JPanel();
+			subsys.setLayout(new GridBoxLayout());
+			for(int row = 0; row < columns[col].length; ++row)
+				subsys.add(columns[col][row]);
+			rvPane.add(subsys, gbc);
+		}
 		
-		gbc.gridy = 2;
+		gbc.gridy = 1;
 		gbc.weighty = 0.0;
-		gbc.gridwidth = 4;
+		gbc.gridwidth = columns.length + 1;
 		if(showLaunchControl)
 		{
 			LaunchControl control = new LaunchControl(dispatch);
@@ -88,7 +83,7 @@ public class Rocketview extends JFrame
 
 		if(showStripCharts)
 		{
-			gbc.gridx = 4;
+			gbc.gridx = columns.length + 1;
 			gbc.gridy = 0;
 			gbc.weightx = 1.0;
 			gbc.weighty = 1.0;
