@@ -10,6 +10,7 @@ public class NameDetailLabel extends JLabel
 	public NameDetailLabel(String name)
 	{
 		super(name);
+		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 		this.name = name;
 	}
 
