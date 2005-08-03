@@ -368,26 +368,4 @@ public class LaunchControl extends JPanel
 			}
 		});
 	}
-
-	public static void main(String args[]) throws IOException
-	{
-		JFrame frame = new JFrame("LaunchControl");
-		Container content = frame.getContentPane();
-
-		CanDispatch dispatch = new CanDispatch();
-
-		RocketState state = new RocketState();
-		LaunchControl control = new LaunchControl(dispatch);
-
-		dispatch.add(state);
-
-		content.add(state, BorderLayout.NORTH);
-		content.add(control, BorderLayout.CENTER);
-
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-
-		dispatch.run();
-	}
 }
