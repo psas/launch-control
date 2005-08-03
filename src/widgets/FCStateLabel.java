@@ -36,7 +36,6 @@ public class FCStateLabel extends StateLabel implements CanObserver
 	protected String free_kbytes = "?MB";
 
 	protected LinkStateChecker task;
-	protected LinkStateListener listener;
 
 	protected class LinkStateChecker extends TimerTask
 	{
@@ -55,11 +54,6 @@ public class FCStateLabel extends StateLabel implements CanObserver
 		dispatch.add(this);
 	}
 
-	public void addLinkStateListener(LinkStateListener listener)
-	{
-		this.listener = listener;
-	}
-
 	public void message(CanMessage msg)
 	{
 		switch(msg.getId())
@@ -74,13 +68,6 @@ public class FCStateLabel extends StateLabel implements CanObserver
 				setLogAvail(msg.getData32(0));
 				break;
 		}
-	}
-
-	protected void setKnown(boolean known)
-	{
-		super.setKnown(known);
-		if(listener != null)
-			listener.linkStateChanged(known);
 	}
 
 	protected void setState(int state)

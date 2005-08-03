@@ -18,11 +18,6 @@ public class RocketState extends JPanel implements Observer, CanObserver
 		add(new StateGrid(dispatch));
 	}
 
-	public void addLinkStateListener(LinkStateListener listener)
-	{
-		stateLabel.addLinkStateListener(listener);
-	}
-
 	public void update(Observable o, Object arg)
 	{
 		if (!(arg instanceof CanMessage))
