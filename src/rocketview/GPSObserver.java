@@ -42,7 +42,6 @@ class GPSObserver extends JPanel implements CanObserver
 
 	public GPSObserver(CanDispatch dispatch)
 	{
-		setBorder(new TitledBorder("GPS"));
 		setLayout(new GridBoxLayout());
 
 		dispatch.add(this);

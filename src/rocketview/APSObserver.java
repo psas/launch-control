@@ -25,7 +25,6 @@ class APSObserver extends JPanel implements CanObserver
 
 	public APSObserver(CanDispatch dispatch)
 	{
-		setBorder(new TitledBorder("APS"));
 		setLayout(new GridBoxLayout());
 
 		dispatch.add(this);

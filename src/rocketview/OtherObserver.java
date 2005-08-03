@@ -14,7 +14,6 @@ public class OtherObserver extends JPanel implements CanObserver
 
 	public OtherObserver(CanDispatch dispatch)
 	{
-		setBorder(new TitledBorder("Other"));
 		setLayout(new GridBoxLayout());
 
 		dispatch.add(this);

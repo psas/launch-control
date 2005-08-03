@@ -43,7 +43,6 @@ public class RecObserver extends JPanel implements CanObserver
 
 	public RecObserver(CanDispatch dispatch)
 	{
-		setBorder(new TitledBorder("Recovery"));
 		setLayout(new GridBoxLayout());
 		dispatch.add(this);
 

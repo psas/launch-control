@@ -41,10 +41,10 @@ public class Rocketview extends JFrame
 		TextObserver messScroll = new TextObserver(dispatch);
 		messScroll.setBorder( new TitledBorder( "CanId  len  data" ));
 
-		Component[][] columns = {
+		JComponent[][] columns = {
+			{ new OtherObserver(dispatch), new RecObserver(dispatch) },
 			{ new GPSObserver(dispatch), new ATVObserver(dispatch) },
 			{ new APSObserver(dispatch), new IMUStateObserver(dispatch) },
-			{ new RecObserver(dispatch), new OtherObserver(dispatch) },
 		};
 
 		// rvPane is the outermost content pane
@@ -63,7 +63,12 @@ public class Rocketview extends JFrame
 			JPanel subsys = new JPanel();
 			subsys.setLayout(new GridBoxLayout());
 			for(int row = 0; row < columns[col].length; ++row)
+			{
+				if(row != 0)
+					subsys.add(new JSeparator());
+				columns[col][row].setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 				subsys.add(columns[col][row]);
+			}
 			rvPane.add(subsys, gbc);
 		}
 		

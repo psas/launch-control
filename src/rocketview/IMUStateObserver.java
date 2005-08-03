@@ -14,7 +14,6 @@ public class IMUStateObserver extends JPanel implements CanObserver
 
 	public IMUStateObserver(CanDispatch dispatch)
 	{
-		setBorder(new TitledBorder("IMU"));
 		setLayout(new GridBoxLayout());
 
 		dispatch.add(this);

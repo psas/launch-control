@@ -10,7 +10,6 @@ public class ATVObserver extends JPanel
 {
 	public ATVObserver(CanDispatch dispatch)
 	{
-		setBorder(new TitledBorder("ATV"));
 		setLayout(new GridBoxLayout());
 
 		add(StateGrid.getLabel("ATV"));
