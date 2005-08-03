@@ -31,14 +31,14 @@ class GPSObserver extends JPanel implements CanObserver
 	protected int visible = 0;
 	
 
-	protected final NameDetailLabel latLabel = new NameDetailLabel("Lat");
-	protected final NameDetailLabel lonLabel = new NameDetailLabel("Lon");
-	protected final NameDetailLabel altLabel = new NameDetailLabel("Alt");
+	protected final NameDetailLabel latLabel = new NameDetailLabel("Lat", "-");
+	protected final NameDetailLabel lonLabel = new NameDetailLabel("Lon", "-");
+	protected final NameDetailLabel altLabel = new NameDetailLabel("Alt", "-");
 	protected final TimeObserver time = new TimeObserver();
-	protected final JLabel satsLabel = new JLabel("Sats: -/-");
+	protected final NameDetailLabel satsLabel = new NameDetailLabel("Sats", "-/-");
 	protected final NameDetailLabel lockLabel;
-	protected final NameDetailLabel solLabel = new NameDetailLabel("Solution");
-	protected final NameDetailLabel valLabel = new NameDetailLabel("Validity");
+	protected final NameDetailLabel solLabel = new NameDetailLabel("Solution", "-");
+	protected final NameDetailLabel valLabel = new NameDetailLabel("Validity", "-");
 
 	public GPSObserver(CanDispatch dispatch)
 	{
@@ -56,6 +56,7 @@ class GPSObserver extends JPanel implements CanObserver
 		add(satsLabel);
 		lockLabel = StateGrid.getLabel("GPS_LOCKED");
 		lockLabel.setText("Locked");
+		lockLabel.setDetail("-");
 		add(lockLabel);
 		add(solLabel);
 		add(valLabel);
@@ -71,12 +72,6 @@ class GPSObserver extends JPanel implements CanObserver
 		add(StateGrid.getLabel("TOUCHDOWN_GPS"));
 		add(StateGrid.getLabel("HEIGHT_MATCH_GPS_PRESSURE"));
 		
-	}
-
-	private void add(NameDetailLabel label)
-	{
-		label.setDetail("-");
-		super.add(label);
 	}
 
 	public void message(CanMessage msg)
@@ -122,17 +117,17 @@ class GPSObserver extends JPanel implements CanObserver
 				{
 					if ((solution & 1) != 0)
 					{
-						labelString.append("Propogated, ");
+						solString.append("Propogated, ");
 					} 
 					
 					if ((solution & 2) != 0)
 					{
-						labelString.append("Alt. Used, ");
+						solString.append("Alt. Used, ");
 					} 
 					
 					if ((solution & 8) != 0)
 					{
-						labelString.append("PM");
+						solString.append("PM");
 					}
 				}
 				solLabel.setDetail(solString.toString());
@@ -177,7 +172,7 @@ class GPSObserver extends JPanel implements CanObserver
 				return;
 		}
 
-		satsLabel.setText("Sats: " + used + '/' + visible);
+		satsLabel.setDetail("" + used + '/' + visible);
 	}
 
 	/*

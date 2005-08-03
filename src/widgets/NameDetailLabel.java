@@ -13,6 +13,12 @@ public class NameDetailLabel extends JLabel
 		this.name = name;
 	}
 
+	public NameDetailLabel(String name, String detail)
+	{
+		this(name);
+		setDetail(detail);
+	}
+
 	public void setText(String name)
 	{
 		this.name = name;
