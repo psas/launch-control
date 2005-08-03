@@ -26,14 +26,12 @@ public class FCStateLabel extends StateLabel implements CanObserver
 	}
 
 	protected static final DateFormat df = new SimpleDateFormat("HH:mm:ss.SSS: ");
-	protected static final DecimalFormat nf = new DecimalFormat("###0.000");
 	protected static final long delay = 3600; /* link timeout delay (millisecs) */
 
 	protected final Timer timer = new Timer(true /*daemon*/);
 
 	protected String signal = "-/-";
 	protected String state = "-";
-	protected String free_kbytes = "?MB";
 
 	protected LinkStateChecker task;
 
@@ -64,9 +62,6 @@ public class FCStateLabel extends StateLabel implements CanObserver
 			case CanBusIDs.FC_REPORT_LINK_QUALITY:
 				setQuality(msg.getData16(0), msg.getData16(1));
 				break;
-			case CanBusIDs.FC_REPORT_LOG_AVAIL:
-				setLogAvail(msg.getData32(0));
-				break;
 		}
 	}
 
@@ -96,14 +91,8 @@ public class FCStateLabel extends StateLabel implements CanObserver
 		updateText();
 	}
 
-	protected void setLogAvail(int free_kbytes)
-	{
-		this.free_kbytes = "" + nf.format(free_kbytes / 1024.0) + "MB";
-		updateText();
-	}
-
 	protected void updateText()
 	{
-		setText("s/n: " + signal + ", " + state + ", " + free_kbytes);
+		setText("s/n: " + signal + ", " + state);
 	}
 }
