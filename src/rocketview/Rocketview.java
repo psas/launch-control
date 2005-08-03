@@ -73,11 +73,7 @@ public class Rocketview extends JFrame
 		gbc.weighty = 0.0;
 		gbc.gridwidth = columns.length + 1;
 		if(showLaunchControl)
-		{
-			LaunchControl control = new LaunchControl(dispatch);
-			rvPane.add(control, gbc);
-			stateLabel.addLinkStateListener(control);
-		}
+			rvPane.add(new LaunchControl(dispatch), gbc);
 		else
 			dispatch.setSocket(new LogCanSocket(new UDPCanSocket(), "RocketView.log"));
 

@@ -12,7 +12,7 @@ import java.util.*;
 import javax.swing.*;
 
 public class LaunchControl extends JPanel
-	implements ScheduleListener, LinkStateListener, ActionListener
+	implements ScheduleListener, CanObserver, ActionListener
 {
 	// Class constants
 	protected final static String stopMsg = "ABORT";
@@ -29,6 +29,22 @@ public class LaunchControl extends JPanel
 	protected TCPCanSocket towerSocket;
 
 	protected final Scheduler sched = new Scheduler();
+
+	protected static final long delay = 1000; /* link timeout delay (millisecs) */
+	protected final java.util.Timer linkTimer = new java.util.Timer(true /* daemon */);
+	protected LinkTimeout task;
+
+	protected class LinkTimeout extends TimerTask
+	{
+		public void run()
+		{
+			try {
+				sched.abortCountdown();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	// Launch control panels and components, tabbed to show hierarchy
 	protected JPanel topLCPanel;
@@ -58,7 +74,8 @@ public class LaunchControl extends JPanel
 		// easily and uniformly.
 		
 		rocketSocket = new UDPCanSocket(Config.getString("rocket.host"), Config.getInt("rocket.port", UDPCanSocket.PORT_SEND));
-			dispatch.setSocket(rocketSocket);
+		dispatch.setSocket(rocketSocket);
+		dispatch.add(this);
 		
 		towerSocket = new TCPCanSocket(Config.getString("tower.host"), 
 			Config.getInt("tower.port", TCPCanSocket.DEFAULT_PORT));
@@ -269,15 +286,20 @@ public class LaunchControl extends JPanel
 		}
 	}
 
-
-	public void linkStateChanged(boolean state)
+	public void message(CanMessage msg)
 	{
-		if(!state)
-			try {
-				sched.abortCountdown();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+		// Some messages should be ignored for the purpose of
+		// deciding whether we can hear the rocket.
+		switch(msg.getId())
+		{
+			case CanBusIDs.FC_REPORT_LINK_QUALITY:
+				return;
+		}
+
+		if(task != null)
+			task.cancel();
+		task = new LinkTimeout();
+		linkTimer.schedule(task, delay, 1000);
 	}
 
 
@@ -357,7 +379,6 @@ public class LaunchControl extends JPanel
 		RocketState state = new RocketState();
 		LaunchControl control = new LaunchControl(dispatch);
 
-		state.addLinkStateListener(control);
 		dispatch.add(state);
 
 		content.add(state, BorderLayout.NORTH);
