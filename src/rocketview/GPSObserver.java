@@ -63,8 +63,6 @@ class GPSObserver extends JPanel implements CanObserver
 		add(StateGrid.getLabel("GPS_UART_TRANSMIT"));
 		add(StateGrid.getLabel("GOT_GPS"));
 		add(StateGrid.getLabel("SANE_GPS"));
-		add(StateGrid.getLabel("HEIGHT_MATCH_GPS_PRESSURE"));
-		
 	}
 
 	public void message(CanMessage msg)
