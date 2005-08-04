@@ -26,7 +26,7 @@ public class LaunchControl extends JPanel
 	protected JLabel statusLabel;
 	protected JLabel clock;
 	protected JButton countdownButton;
-	protected JButton abortButton;
+	protected AbortButton abortButton;
 
 	protected static final long delay = 1000; /* link timeout delay (millisecs) */
 	protected final java.util.Timer linkTimer = new java.util.Timer(true /* daemon */);
@@ -103,7 +103,7 @@ public class LaunchControl extends JPanel
 					rocketSocket, CanBusIDs.FC_REQUEST_STATE,
 					new byte[] { CanBusIDs.ArmingState }));
 		countdownButton = new JButton();
-		countdownButton.addActionListener(this);
+		countdownButton.setActionCommand("start");
 		countdownPanel.add(countdownButton);
 
 		// add countdown components
@@ -124,10 +124,7 @@ public class LaunchControl extends JPanel
 		bottomLCPanel.add(overridePanel, gbc);
 		
 		// setup/add abort button
-		abortButton = new JButton("ABORT");
-		abortButton.setActionCommand("abort");
-		abortButton.addActionListener(this);
-		abortButton.setBackground(Color.red);
+		abortButton = new AbortButton();
 		bottomLCPanel.add(abortButton, gbc);
 		
 		// setup power panel
@@ -181,22 +178,25 @@ public class LaunchControl extends JPanel
 
 					sched.startCountdown();
 			}
-			else if(event.getActionCommand().equals("abort"))
-			{
-				System.out.println("got abort request");
-				// XXX: if countdown is near T-0, which s/b done first?
-				sched.abortCountdown(); // tell countdown sequencer to abort 
-				// tell rocket's sequencer to abort
-				byte[] data = new byte[8];
-				rocketSocket.write(
-						new CanMessage(CanBusIDs.FC_ABORT_LAUNCH, 0, data));
-			}
-
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	protected class AbortButton extends CanMessageButton
+	{
+		public AbortButton()
+		{
+			super("ABORT", rocketSocket, CanBusIDs.FC_ABORT_LAUNCH, new byte[0]);
+			setBackground(Color.red);
+		}
+
+		public void actionPerformed(ActionEvent evt)
+		{
+			sched.abortCountdown();
+			super.actionPerformed(evt);
+		}
+	}
 
 	/** Power on or off the FC by toggling shore power. 
 	 * a new sequence of on/off toggles of the shore power is started. 
@@ -259,8 +259,9 @@ public class LaunchControl extends JPanel
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run()
 			{
-				countdownButton.setText("ABORT");
-				countdownButton.setActionCommand("abort");
+				countdownButton.setText(abortButton.getText());
+				countdownButton.removeActionListener(LaunchControl.this);
+				countdownButton.addActionListener(abortButton);
 			}
 		});
 		setStatus("Countdown started");
@@ -293,7 +294,8 @@ public class LaunchControl extends JPanel
 			public void run()
 			{
 				countdownButton.setText("Start Countdown");
-				countdownButton.setActionCommand("start");
+				countdownButton.removeActionListener(abortButton);
+				countdownButton.addActionListener(LaunchControl.this);
 				clock.setText("");
 			}
 		});
