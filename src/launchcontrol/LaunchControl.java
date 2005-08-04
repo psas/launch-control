@@ -91,14 +91,12 @@ public class LaunchControl extends JPanel
 		overridePanel.setLayout(new GridLayout(0, 1));
 
 		// setup countdown components
-		JButton preFlightCheckButton = new JButton("Preflight Check");
-		preFlightCheckButton.setActionCommand("preflight");
-		preFlightCheckButton.addActionListener(this);
-		countdownPanel.add(preFlightCheckButton);
-		JButton armButton = new JButton("Arm Rocket");
-		armButton.setActionCommand("arm");
-		armButton.addActionListener(this);
-		countdownPanel.add(armButton);
+		countdownPanel.add(new CanMessageButton("Preflight Check",
+					rocketSocket, CanBusIDs.FC_REQUEST_STATE,
+					new byte[] { CanBusIDs.PreflightCheckState }));
+		countdownPanel.add(new CanMessageButton("Arm Rocket",
+					rocketSocket, CanBusIDs.FC_REQUEST_STATE,
+					new byte[] { CanBusIDs.ArmingState }));
 		countdownButton = new JButton();
 		countdownButton.addActionListener(this);
 		countdownPanel.add(countdownButton);
@@ -107,18 +105,15 @@ public class LaunchControl extends JPanel
 		bottomLCPanel.add(countdownPanel);
 
 		// setup override components
-		JButton boostButton = new JButton("Boost!");
-		boostButton.setActionCommand("boost");
-		boostButton.addActionListener(this);
-		overridePanel.add(boostButton);
-		JButton deployDrogueButton = new JButton("Deploy Drogue!");
-		deployDrogueButton.setActionCommand("drogue");
-		deployDrogueButton.addActionListener(this);
-		overridePanel.add(deployDrogueButton);
-		JButton deployMainButton = new JButton("Deploy Main!");
-		deployMainButton.setActionCommand("main");
-		deployMainButton.addActionListener(this);
-		overridePanel.add(deployMainButton);
+		overridePanel.add(new CanMessageButton("Boost!",
+					rocketSocket, CanBusIDs.FC_REQUEST_STATE,
+					new byte[] { CanBusIDs.BoostState }));
+		overridePanel.add(new CanMessageButton("Deploy Drogue!",
+					rocketSocket, CanBusIDs.FC_REQUEST_STATE,
+					new byte[] { CanBusIDs.DeployDrogueState }));
+		overridePanel.add(new CanMessageButton("Deploy Main!",
+					rocketSocket, CanBusIDs.FC_REQUEST_STATE,
+					new byte[] { CanBusIDs.DeployMainState }));
 
 		// add override components
 		bottomLCPanel.add(overridePanel);
@@ -160,32 +155,7 @@ public class LaunchControl extends JPanel
 	public void actionPerformed(ActionEvent event)
 	{
 		try {
-			if (event.getActionCommand().equals("preflight"))
-			{
-				byte[] data = { CanBusIDs.PreflightCheckState };
-				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
-			}
-			else if (event.getActionCommand().equals("arm"))
-			{
-				byte[] data = { CanBusIDs.ArmingState };
-				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
-			}
-			else if (event.getActionCommand().equals("boost"))
-			{
-				byte[] data = { CanBusIDs.BoostState };
-				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
-			}
-			else if (event.getActionCommand().equals("drogue"))
-			{
-				byte[] data = { CanBusIDs.DeployDrogueState };
-				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
-			}
-			else if (event.getActionCommand().equals("main"))
-			{
-				byte[] data = { CanBusIDs.DeployMainState };
-				rocketSocket.write(new CanMessage(CanBusIDs.FC_REQUEST_STATE, 0, data));
-			}
-			else if(event.getActionCommand().equals("fc_on"))
+			if(event.getActionCommand().equals("fc_on"))
 			{
 				fcPower(true);
 			} 
