@@ -44,9 +44,9 @@ public class Rocketview extends JFrame
 		messScroll.setBorder( new TitledBorder( "CanId  len  data" ));
 
 		JComponent[][] columns = {
-			{ new OtherObserver(dispatch), grid, new RecObserver(dispatch) },
-			{ new GPSObserver(dispatch), new ATVObserver(dispatch) },
-			{ new APSObserver(dispatch), new IMUStateObserver(dispatch) },
+			{ new OtherObserver(dispatch), grid, },
+			{ new GPSObserver(dispatch), new IMUStateObserver(dispatch), },
+			{ new APSObserver(dispatch), new RecObserver(dispatch), new ATVObserver(dispatch), },
 		};
 
 		// rvPane is the outermost content pane
