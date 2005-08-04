@@ -67,7 +67,13 @@ public class Rocketview extends JFrame
 			for(int row = 0; row < columns[col].length; ++row)
 			{
 				if(row != 0)
-					subsys.add(new JSeparator());
+				{
+					JPanel c = new JPanel();
+					c.setLayout(new GridLayout(1, 1));
+					c.setBorder(BorderFactory.createEmptyBorder(8, 2, 8, 2));
+					c.add(new JSeparator());
+					subsys.add(c);
+				}
 				columns[col][row].setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 				subsys.add(columns[col][row]);
 			}
