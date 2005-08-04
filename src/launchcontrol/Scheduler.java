@@ -94,10 +94,10 @@ public class Scheduler
 
 	/**
 	 * Moves the countdown to time 0 if that time hasn't yet been reached.
-	 * No exeception is thrown nor any action taken if the countdown has
-	 * passed time 0, nor if the countdown is currently stopped.
+	 * No action is taken if either the countdown has
+	 * passed time 0, or the countdown is currently stopped.
 	 */
-	public void abortCountdown() throws IOException
+	public void abortCountdown()
 	{
 		if(timer == null)
 			return; // can't cancel a countdown that isn't running.
@@ -118,15 +118,7 @@ public class Scheduler
 	 */
 	private void parseEvents(boolean aborting) throws IOException
 	{
-		BufferedReader cs;
-		try
-		{
-			cs = new BufferedReader(new FileReader(events));
-		}
-		catch(Exception e)
-		{
-			return;
-		}
+		BufferedReader cs = new BufferedReader(new FileReader(events));
 
 		String line;
 		while((line = cs.readLine()) != null)
@@ -182,7 +174,7 @@ public class Scheduler
 	 * set to false and true, respectively. When aborting, events set to
 	 * execute before time 0 are ignored, and startTime is forced to 0.
 	 */
-	private void setTimer(boolean aborting) throws IOException
+	private void setTimer(boolean aborting)
 	{
 		// don't start until everything has probably been set up
 		// tweak the number in the following line for an appropriate delay
@@ -192,7 +184,11 @@ public class Scheduler
 			startTime = 0;
 
 		timer = new java.util.Timer();
-		parseEvents(aborting);
+		try {
+			parseEvents(aborting);
+		} catch(IOException ioe) {
+			/* ignore */
+		}
 
 		// schedule the repeated clock updates as requested for the listener
 		if(listener != null && millidelta > 0)
