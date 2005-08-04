@@ -18,7 +18,8 @@ public class FCStateLabel extends StateLabel implements CanObserver
 				String name = fields[i].getName();
 				if(!name.endsWith("State"))
 					continue;
-				map.put(new Integer(fields[i].getInt(null)), name);
+				map.put(new Integer(fields[i].getInt(null)),
+						name.substring(0, name.length() - "State".length()));
 			} catch(IllegalAccessException e) {
 				System.err.println("CanBusIDs field " + i + ": " + e);
 			}
