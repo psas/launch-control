@@ -79,8 +79,13 @@ public class LaunchControl extends JPanel
 		
 		// setup bottom panel
 		JPanel bottomLCPanel = new JPanel();
-		bottomLCPanel.setLayout(new BoxLayout(bottomLCPanel, BoxLayout.X_AXIS));
+		bottomLCPanel.setLayout(new GridBagLayout());
 		this.add(bottomLCPanel);
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = gbc.BOTH;
+		gbc.weightx = 1.0;
+		gbc.weighty = 1.0;
 		
 		// setup countdown panel
 		JPanel countdownPanel = new JPanel();
@@ -102,7 +107,7 @@ public class LaunchControl extends JPanel
 		countdownPanel.add(countdownButton);
 
 		// add countdown components
-		bottomLCPanel.add(countdownPanel);
+		bottomLCPanel.add(countdownPanel, gbc);
 
 		// setup override components
 		overridePanel.add(new CanMessageButton("Boost!",
@@ -116,16 +121,14 @@ public class LaunchControl extends JPanel
 					new byte[] { CanBusIDs.DeployMainState }));
 
 		// add override components
-		bottomLCPanel.add(overridePanel);
+		bottomLCPanel.add(overridePanel, gbc);
 		
 		// setup/add abort button
 		abortButton = new JButton("ABORT");
 		abortButton.setActionCommand("abort");
 		abortButton.addActionListener(this);
-		abortButton.setPreferredSize(countdownPanel.getPreferredSize());
 		abortButton.setBackground(Color.red);
-		abortButton.setMaximumSize(countdownPanel.getPreferredSize());
-		bottomLCPanel.add(abortButton);
+		bottomLCPanel.add(abortButton, gbc);
 		
 		// setup power panel
 		JPanel fcPowerPanel = new JPanel();
@@ -142,7 +145,7 @@ public class LaunchControl extends JPanel
 		fcPowerPanel.add(fcPowerOffButton);
 		
 		// add power components
-		bottomLCPanel.add(fcPowerPanel);
+		bottomLCPanel.add(fcPowerPanel, gbc);
 		
 		// add rocketSocket to scheduler
 		Scheduler.addSchedulableAction("rocket", new SocketAction(rocketSocket));
