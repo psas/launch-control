@@ -30,9 +30,6 @@ public class FCStateLabel extends StateLabel implements CanObserver
 
 	protected final Timer timer = new Timer(true /*daemon*/);
 
-	protected String signal = "-/-";
-	protected String state = "-";
-
 	protected LinkStateChecker task;
 
 	protected class LinkStateChecker extends TimerTask
@@ -47,32 +44,21 @@ public class FCStateLabel extends StateLabel implements CanObserver
 
 	public FCStateLabel(CanDispatch dispatch)
 	{
-		super("");
-		updateText();
+		super("-");
 		dispatch.add(this);
 	}
 
 	public void message(CanMessage msg)
 	{
-		switch(msg.getId())
-		{
-			case CanBusIDs.FC_REPORT_STATE:
-				setState(msg.getData8(0) & 0xff);
-				break;
-			case CanBusIDs.FC_REPORT_LINK_QUALITY:
-				setQuality(msg.getData16(0), msg.getData16(1));
-				break;
-		}
-	}
+		if(msg.getId() != CanBusIDs.FC_REPORT_STATE)
+			return;
 
-	protected void setState(int state)
-	{
+		int state = (int) msg.getData8(0) & 0xff;
 		String date = df.format(new Date());
 		if(state >= stateStrings.length)
-			this.state = date + "unknown (" + state + ")";
+			setText(date + "unknown (" + state + ")");
 		else
-			this.state = date + stateStrings[state];
-		updateText();
+			setText(date + stateStrings[state]);
 		setState(true);
 		setKnown(true);
 
@@ -83,16 +69,5 @@ public class FCStateLabel extends StateLabel implements CanObserver
 			task.cancel();
 		task = new LinkStateChecker();
 		timer.schedule(task, delay, 1000);
-	}
-
-	protected void setQuality(short signal, short noise)
-	{
-		this.signal = "" + -signal + "/" + -noise + "dBm";
-		updateText();
-	}
-
-	protected void updateText()
-	{
-		setText("s/n: " + signal + ", " + state);
 	}
 }
