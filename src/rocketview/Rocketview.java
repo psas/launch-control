@@ -36,13 +36,15 @@ public class Rocketview extends JFrame
 		super("Rocketview");
 
 		StateGrid.setDispatcher(dispatch);
+		StateGrid grid = StateGrid.getStateGrid();
+		grid.setColumns(1);
 		
 		// message box for scrolled text
 		TextObserver messScroll = new TextObserver(dispatch);
 		messScroll.setBorder( new TitledBorder( "CanId  len  data" ));
 
 		JComponent[][] columns = {
-			{ new OtherObserver(dispatch), new RecObserver(dispatch) },
+			{ new OtherObserver(dispatch), grid, new RecObserver(dispatch) },
 			{ new GPSObserver(dispatch), new ATVObserver(dispatch) },
 			{ new APSObserver(dispatch), new IMUStateObserver(dispatch) },
 		};
