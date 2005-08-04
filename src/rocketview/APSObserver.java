@@ -11,7 +11,7 @@ class APSObserver extends JPanel implements CanObserver
 {
 	protected final DecimalFormat fmt = new DecimalFormat("0.000");
 
-	protected final JLabel busLabel = new JLabel();
+	protected final NameDetailLabel busLabel = new NameDetailLabel("Battery");
 
 	protected String voltage = "-";
 	protected String current = "-";
@@ -57,7 +57,7 @@ class APSObserver extends JPanel implements CanObserver
 
 	protected void setText()
 	{
-		busLabel.setText("Battery: " + voltage + "V " + current + "A " + charge + "Ah");
+		busLabel.setDetail(voltage + "V " + current + "A " + charge + "Ah");
 	}
 
     public void message(CanMessage msg)

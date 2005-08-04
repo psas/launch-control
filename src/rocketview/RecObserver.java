@@ -26,11 +26,11 @@ public class RecObserver extends JPanel implements CanObserver
 {
 	protected final DecimalFormat fmt = new DecimalFormat("0.0");
 
-	protected final JLabel powerLabel = new JLabel("Power: -");
-	protected final JLabel chargeLabel = new JLabel("Charge: -");
-	protected final JLabel batteryLabel = new JLabel("Battery: -");
-	protected final JLabel dtmfLabel = new JLabel("Last DTMF: -");
-	protected final JLabel timerLabel[] = new JLabel[4];
+	protected final NameDetailLabel powerLabel = new NameDetailLabel("Power", "-");
+	protected final NameDetailLabel chargeLabel = new NameDetailLabel("Charge", "-");
+	protected final NameDetailLabel batteryLabel = new NameDetailLabel("Battery", "-");
+	protected final NameDetailLabel dtmfLabel = new NameDetailLabel("Last DTMF", "-");
+	protected final NameDetailLabel timerLabel[] = new NameDetailLabel[4];
 
 	protected static final String dtmfChars = "1234567890*#";
 	protected String dtmfTones = "";
@@ -53,7 +53,7 @@ public class RecObserver extends JPanel implements CanObserver
 		add(dtmfLabel);
 		for (int i=0; i<4; i++)
 		{
-			timerLabel[i] = new JLabel("Pyro " + i + ": -");
+			timerLabel[i] = new NameDetailLabel("Timer " + i, "-");
 			add(timerLabel[i]);
 		}
 	}
@@ -64,12 +64,12 @@ public class RecObserver extends JPanel implements CanObserver
 		switch(msg.getId())
 		{
 			case CanBusIDs.REC_REPORT_BATTERY:
-				powerLabel.setText("Power: " + powerText(msg.getData8(5)));
-				chargeLabel.setText("Charge: " + chargeText(msg.getData8(0)));
-				batteryLabel.setText("Battery: " + batteryText(msg));
+				powerLabel.setDetail(powerText(msg.getData8(5)));
+				chargeLabel.setDetail(chargeText(msg.getData8(0)));
+				batteryLabel.setDetail(batteryText(msg));
 				break;
 			case CanBusIDs.REC_REPORT_DTMF:
-				dtmfLabel.setText("Last DTMF: " + dtmfText(msg));
+				dtmfLabel.setDetail(dtmfText(msg));
 				break;
 			case CanBusIDs.REC_REPORT_TIMER:
 				i = msg.getData8(2) - 1;
@@ -139,6 +139,6 @@ public class RecObserver extends JPanel implements CanObserver
 	}
 	private void setPyro(int i)
 	{
-		timerLabel[i].setText("Timer " + i + ": " + (timer[i] / 10f) + "s  Pyro " + i + " fired(" + pyro[i] + ")");
+		timerLabel[i].setDetail((timer[i] / 10f) + "s  Pyro " + i + " fired(" + pyro[i] + ")");
 	}
 }
