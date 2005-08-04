@@ -25,6 +25,7 @@ public class OtherObserver extends JPanel implements CanObserver
 		logAvail = StateGrid.getLabel("LOG_AVAIL");
 		logAvail.setDetail("?MB");
 		add(logAvail);
+		add(StateGrid.getLabel("SANE_ANTENNAS"));
 	}
 
 	public void message(CanMessage msg)
