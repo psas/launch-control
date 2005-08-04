@@ -10,12 +10,12 @@ import widgets.*;
 
 public class IMUStateObserver extends JPanel implements CanObserver
 {
-	protected final DecimalFormat fmtP = new DecimalFormat("0.0 kPa");
-	protected final DecimalFormat fmtA = new DecimalFormat("0.0 m");
-	protected final DecimalFormat fmtT = new DecimalFormat("0.0 C");
-	protected final NameDetailLabel pressure = new NameDetailLabel("Press", "- kPa");
-	protected final NameDetailLabel altitude = new NameDetailLabel("Alt", "- m");
-	protected final NameDetailLabel temperature = new NameDetailLabel("Temp", "- C");
+	protected final DecimalFormat fmtP = new DecimalFormat("0.0kPa");
+	protected final DecimalFormat fmtA = new DecimalFormat("0.0m");
+	protected final DecimalFormat fmtT = new DecimalFormat("0.0C");
+	protected final NameDetailLabel pressure = new NameDetailLabel("Press", "-kPa");
+	protected final NameDetailLabel altitude = new NameDetailLabel("Alt", "-m");
+	protected final NameDetailLabel temperature = new NameDetailLabel("Temp", "-C");
 	
 	protected double base_alt   = 0.0;
 	protected double base_press = 1.0;
