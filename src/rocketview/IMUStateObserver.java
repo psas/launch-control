@@ -9,7 +9,9 @@ import widgets.*;
 
 public class IMUStateObserver extends JPanel implements CanObserver
 {
-	protected final DecimalFormat fmt = new DecimalFormat("0.0 C");
+	protected final DecimalFormat fmtP = new DecimalFormat("0.0 kPa");
+	protected final DecimalFormat fmtT = new DecimalFormat("0.0 C");
+	protected final NameDetailLabel pressure = new NameDetailLabel("Press", "-");
 	protected final NameDetailLabel temperature = new NameDetailLabel("Temp", "-");
 
 	public IMUStateObserver(CanDispatch dispatch)
@@ -19,6 +21,7 @@ public class IMUStateObserver extends JPanel implements CanObserver
 		dispatch.add(this);
 
 		add(StateGrid.getLabel("IMU"));
+		add(pressure);
 		add(temperature);
 		add(StateGrid.getLabel("IMU_ACCEL_DATA"));
 		add(StateGrid.getLabel("IMU_GYRO_DATA"));
@@ -34,9 +37,13 @@ public class IMUStateObserver extends JPanel implements CanObserver
 	{
 		switch (msg.getId())
 		{
+			case CanBusIDs.PRESS_REPORT_DATA:
+				double p = 0.0225118 * (353 + msg.getData16(0));
+				pressure.setDetail(fmtP.format(p));
+				return;
 			case CanBusIDs.TEMP_REPORT_DATA:
 				double v = 3487.972309658033 / Math.log(3.116381893600779E8 / msg.getData16(0) - 252811.23882451496) - 273.15;
-				temperature.setDetail(fmt.format(v));
+				temperature.setDetail(fmtT.format(v));
 				return;
 		}
 	}
