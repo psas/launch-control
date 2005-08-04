@@ -61,14 +61,8 @@ class GPSObserver extends JPanel implements CanObserver
 		add(valLabel);
 		add(StateGrid.getLabel("GPS_POWER"));
 		add(StateGrid.getLabel("GPS_UART_TRANSMIT"));
-		add(StateGrid.getLabel("SAFE_DESCENT_GPS"));
-		add(StateGrid.getLabel("DROGUE_DEPLOY_SAFE_GPS"));
 		add(StateGrid.getLabel("GOT_GPS"));
 		add(StateGrid.getLabel("SANE_GPS"));
-		add(StateGrid.getLabel("BOOST_GPS"));
-		add(StateGrid.getLabel("DROGUE_GPS"));
-		add(StateGrid.getLabel("DESCEND_GPS"));
-		add(StateGrid.getLabel("TOUCHDOWN_GPS"));
 		add(StateGrid.getLabel("HEIGHT_MATCH_GPS_PRESSURE"));
 		
 	}
