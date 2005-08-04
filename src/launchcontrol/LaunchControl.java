@@ -14,21 +14,19 @@ import javax.swing.*;
 public class LaunchControl extends JPanel
 	implements ScheduleListener, CanObserver, ActionListener
 {
-	// Class constants
-	protected final static String stopMsg = "ABORT";
-	protected final static String startMsg = "Start Countdown";
-	protected final static String stoppedMsg = "Countdown stopped";
-
 	// Member variables, presumably used by multiple methods
 	protected final DecimalFormat fmt = new DecimalFormat("T+0.0;T-0.0");
 	protected java.util.Timer powerSequence = null; // power on or off fc
-	protected String startSound = Config.getString("startSound");
-	protected String abortSound = Config.getString("abortSound");
 
 	protected CanSocket rocketSocket; // rocket communication socket
 	protected TCPCanSocket towerSocket;
 
 	protected final Scheduler sched = new Scheduler();
+
+	protected JLabel statusLabel;
+	protected JLabel clock;
+	protected JButton countdownButton;
+	protected JButton abortButton;
 
 	protected static final long delay = 1000; /* link timeout delay (millisecs) */
 	protected final java.util.Timer linkTimer = new java.util.Timer(true /* daemon */);
@@ -45,25 +43,6 @@ public class LaunchControl extends JPanel
 			}
 		}
 	}
-	
-	// Launch control panels and components, tabbed to show hierarchy
-	protected JPanel topLCPanel;
-		protected JLabel statusLabel;
-		protected JLabel clock;
-		protected ShorePower shorePowerState;
-	protected JPanel bottomLCPanel;
-		protected JPanel countdownPanel;
-			protected JButton preFlightCheckButton;
-			protected JButton armButton;
-			protected JButton countdownButton;
-		protected JPanel overridePanel;
-			protected JButton boostButton;
-			protected JButton deployDrogueButton;
-			protected JButton deployMainButton;
-			protected JButton abortButton;
-		protected JPanel fcPowerPanel;
-			protected JButton fcPowerOnButton;
-			protected JButton fcPowerOffButton;
 
 	/** Create LaunchControl GUI, open connections, and start scheduler */
 	public LaunchControl(CanDispatch dispatch) throws IOException
@@ -84,7 +63,7 @@ public class LaunchControl extends JPanel
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		// setup top panel
-		topLCPanel = new JPanel();
+		JPanel topLCPanel = new JPanel();
 		topLCPanel.setLayout(new BoxLayout(topLCPanel, BoxLayout.X_AXIS));
 		
 		// setup top components
@@ -99,49 +78,49 @@ public class LaunchControl extends JPanel
 		this.add(topLCPanel);
 		
 		// setup bottom panel
-		bottomLCPanel = new JPanel();
+		JPanel bottomLCPanel = new JPanel();
 		bottomLCPanel.setLayout(new BoxLayout(bottomLCPanel, BoxLayout.X_AXIS));
 		this.add(bottomLCPanel);
 		
 		// setup countdown panel
-		countdownPanel = new JPanel();
+		JPanel countdownPanel = new JPanel();
 		countdownPanel.setLayout(new GridLayout(0, 1));
 		
 		// setup override panel
-		overridePanel = new JPanel();
+		JPanel overridePanel = new JPanel();
 		overridePanel.setLayout(new GridLayout(0, 1));
 
 		// setup countdown components
-		preFlightCheckButton = new JButton("Preflight Check");
+		JButton preFlightCheckButton = new JButton("Preflight Check");
 		preFlightCheckButton.setActionCommand("preflight");
 		preFlightCheckButton.addActionListener(this);
-        armButton = new JButton("Arm Rocket");
-        armButton.setActionCommand("arm");
-        armButton.addActionListener(this);
-        countdownButton = new JButton();
-        countdownButton.addActionListener(this);
-
-		// setup override components
-		boostButton = new JButton("Boost!");
-		boostButton.setActionCommand("boost");
-		boostButton.addActionListener(this);
-        deployDrogueButton = new JButton("Deploy Drogue!");
-        deployDrogueButton.setActionCommand("drogue");
-        deployDrogueButton.addActionListener(this);
-        deployMainButton = new JButton("Deploy Main!");
-        deployMainButton.setActionCommand("main");
-        deployMainButton.addActionListener(this);
-		
-		// add countdown components
 		countdownPanel.add(preFlightCheckButton);
+		JButton armButton = new JButton("Arm Rocket");
+		armButton.setActionCommand("arm");
+		armButton.addActionListener(this);
 		countdownPanel.add(armButton);
+		countdownButton = new JButton();
+		countdownButton.addActionListener(this);
 		countdownPanel.add(countdownButton);
+
+		// add countdown components
 		bottomLCPanel.add(countdownPanel);
 
-		// add override components
+		// setup override components
+		JButton boostButton = new JButton("Boost!");
+		boostButton.setActionCommand("boost");
+		boostButton.addActionListener(this);
 		overridePanel.add(boostButton);
+		JButton deployDrogueButton = new JButton("Deploy Drogue!");
+		deployDrogueButton.setActionCommand("drogue");
+		deployDrogueButton.addActionListener(this);
 		overridePanel.add(deployDrogueButton);
+		JButton deployMainButton = new JButton("Deploy Main!");
+		deployMainButton.setActionCommand("main");
+		deployMainButton.addActionListener(this);
 		overridePanel.add(deployMainButton);
+
+		// add override components
 		bottomLCPanel.add(overridePanel);
 		
 		// setup/add abort button
@@ -154,27 +133,26 @@ public class LaunchControl extends JPanel
 		bottomLCPanel.add(abortButton);
 		
 		// setup power panel
-		fcPowerPanel = new JPanel();
+		JPanel fcPowerPanel = new JPanel();
 		fcPowerPanel.setLayout(new GridLayout(0, 1));
 		
 		// setup power components
-		fcPowerOnButton = new JButton("FC On");
+		JButton fcPowerOnButton = new JButton("FC On");
 		fcPowerOnButton.setActionCommand("fc_on");
 		fcPowerOnButton.addActionListener(this);
-		fcPowerOffButton = new JButton("FC Off");
+		fcPowerPanel.add(fcPowerOnButton);
+		JButton fcPowerOffButton = new JButton("FC Off");
 		fcPowerOffButton.setActionCommand("fc_off");
 		fcPowerOffButton.addActionListener(this);
+		fcPowerPanel.add(fcPowerOffButton);
 		
 		// add power components
-		fcPowerPanel.add(fcPowerOnButton);
-		fcPowerPanel.add(fcPowerOffButton);
 		bottomLCPanel.add(fcPowerPanel);
 		
 		// add rocketSocket to scheduler
 		Scheduler.addSchedulableAction("rocket", new SocketAction(rocketSocket));
 		ended(); // reset the button and label
 		sched.addScheduleListener(this, 100);
-		
 	}
 
 
@@ -245,8 +223,8 @@ public class LaunchControl extends JPanel
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	/** Power on or off the FC by toggling shore power. 
 	 * a new sequence of on/off toggles of the shore power is started. 
 	 * The scheduled sequence should be over in ten seconds.
@@ -308,13 +286,13 @@ public class LaunchControl extends JPanel
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run()
 			{
-				countdownButton.setText(stopMsg);
+				countdownButton.setText("ABORT");
 				countdownButton.setActionCommand("abort");
 			}
 		});
 		setStatus("Countdown started");
 		try {
-			SoundAction.playSound(startSound);
+			SoundAction.playSound(Config.getString("startSound"));
 		} catch(Exception e) {
 			// ignore
 		}
@@ -330,7 +308,7 @@ public class LaunchControl extends JPanel
 		disableAbort();
 		setStatus("Countdown aborted: cleaning up");
 		try {
-			SoundAction.playSound(abortSound);
+			SoundAction.playSound(Config.getString("abortSound"));
 		} catch(Exception e) {
 			// ignore
 		}
@@ -341,12 +319,12 @@ public class LaunchControl extends JPanel
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run()
 			{
-				countdownButton.setText(startMsg);
+				countdownButton.setText("Start Countdown");
 				countdownButton.setActionCommand("start");
 				clock.setText("");
 			}
 		});
-		setStatus(stoppedMsg);
+		setStatus("Countdown stopped");
 	}
 
 	public void time(final long millis)
