@@ -1,13 +1,14 @@
 package rocketview;
 
 import cansocket.*;
+import widgets.NameDetailLabel;
 
 import javax.swing.*;
 
-class TimeObserver extends JLabel implements CanObserver
+class TimeObserver extends NameDetailLabel implements CanObserver
 {
 	public TimeObserver() {
-		setText("Time: -");
+		super("Time", "-");
 	}
 
 	public void message(CanMessage msg)
@@ -22,7 +23,7 @@ class TimeObserver extends JLabel implements CanObserver
 		byte minute = msg.getData8(5);
 		byte second = msg.getData8(6);
 
-		StringBuffer buf = new StringBuffer("Time: " );
+		StringBuffer buf = new StringBuffer();
 		buf.append( year ).append( "/" );
 		buf.append( month ).append( "/" );
 		buf.append( day ).append( " " );
@@ -30,6 +31,6 @@ class TimeObserver extends JLabel implements CanObserver
 		buf.append( minute ).append( ":" );
 		buf.append( second );
 
-		setText( buf.toString() );
+		setDetail( buf.toString() );
 	}
 }
