@@ -28,7 +28,7 @@ public class LaunchControl extends JPanel
 	protected JButton countdownButton;
 	protected AbortButton abortButton;
 
-	protected static final long delay = 1000; /* link timeout delay (millisecs) */
+	protected static final long delay = 250; /* link timeout delay (millisecs) */
 	protected final java.util.Timer linkTimer = new java.util.Timer(true /* daemon */);
 	protected LinkTimeout task;
 
