@@ -7,7 +7,10 @@ import java.lang.reflect.*;
 public class NodeEnableLabel extends NodeStateLabel
 {
 	protected final int id;
-	protected static final int length = 1<<13;	// 8192: must be a power of two
+	/** Number of timestamps to save. Must be a power of two and
+	 * greater than the maximum number of messages expected in the
+	 * three seconds we average over. */
+	protected static final int length = 1<<13; // 8192
 	protected final int[] times = new int[length];
 
 	protected int next_out, next_in;
@@ -41,7 +44,11 @@ public class NodeEnableLabel extends NodeStateLabel
 
 		// If this is *our* message, note another instance.
 		if(msg.getId() == id)
+		{
 			times[wrap(next_in++)] = now;
+			if(wrap(next_in) == wrap(next_out))
+				next_out++;
+		}
 
 		// Repaint every quarter second.
 		if(now - last_time >= 25 || now < last_time)
