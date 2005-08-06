@@ -28,7 +28,7 @@ public class IMUStateObserver extends JPanel implements CanObserver
 	
 	protected double cookPressure(int rawPress)
 	{
-		return 0.0225118 * (353 + rawPress);
+		return 0.0224468 * (470.734 + rawPress);
 	}
 	protected double cookTemperature(int rawTemp)
 	{
