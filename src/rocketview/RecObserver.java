@@ -53,7 +53,7 @@ public class RecObserver extends JPanel implements CanObserver
 		add(dtmfLabel);
 		for (int i=0; i<4; i++)
 		{
-			timerLabel[i] = new NameDetailLabel("Timer " + i, "-");
+			timerLabel[i] = new NameDetailLabel(String.valueOf(i + 1), "Timer: -  Pyro: -");
 			add(timerLabel[i]);
 		}
 	}
@@ -139,6 +139,6 @@ public class RecObserver extends JPanel implements CanObserver
 	}
 	private void setPyro(int i)
 	{
-		timerLabel[i].setDetail((timer[i] / 10f) + "s  Pyro " + i + " fired(" + pyro[i] + ")");
+		timerLabel[i].setDetail("Timer: " + (timer[i] / 10f) + "s  Pyro: " + pyro[i]);
 	}
 }
