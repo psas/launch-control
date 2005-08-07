@@ -112,13 +112,16 @@ public class LaunchControl extends JPanel
 		// setup override components
 		overridePanel.add(new CanMessageButton("Boost!",
 					rocketSocket, CanBusIDs.FC_REQUEST_STATE,
-					new byte[] { CanBusIDs.BoostState }));
+					new byte[] { CanBusIDs.BoostState },
+					true));
 		overridePanel.add(new CanMessageButton("Deploy Drogue!",
 					rocketSocket, CanBusIDs.FC_REQUEST_STATE,
-					new byte[] { CanBusIDs.DeployDrogueState }));
+					new byte[] { CanBusIDs.DeployDrogueState },
+					true));
 		overridePanel.add(new CanMessageButton("Deploy Main!",
 					rocketSocket, CanBusIDs.FC_REQUEST_STATE,
-					new byte[] { CanBusIDs.DeployMainState }));
+					new byte[] { CanBusIDs.DeployMainState },
+					true));
 
 		// add override components
 		bottomLCPanel.add(overridePanel, gbc);
