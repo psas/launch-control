@@ -2,6 +2,7 @@ package rocketview;
 
 import java.text.*;
 import java.math.*;
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -10,9 +11,9 @@ import widgets.*;
 
 public class IMUStateObserver extends JPanel implements CanObserver
 {
-	protected final DecimalFormat fmtP = new DecimalFormat("0.0kPa");
-	protected final DecimalFormat fmtA = new DecimalFormat("0.0m");
-	protected final DecimalFormat fmtT = new DecimalFormat("0.0C");
+	protected final DecimalFormat fmtP = new DecimalFormat("0.0 kPa");
+	protected final DecimalFormat fmtA = new DecimalFormat("0.0 m");
+	protected final DecimalFormat fmtT = new DecimalFormat("0.0 \u00b0C");
 	protected final NameDetailLabel pressure = new NameDetailLabel("Press", "-kPa");
 	protected final NameDetailLabel altitude = new NameDetailLabel("Alt", "-m");
 	protected final NameDetailLabel temperature = new NameDetailLabel("Temp", "-C");
@@ -46,17 +47,24 @@ public class IMUStateObserver extends JPanel implements CanObserver
 		dispatch.add(this);
 
 		add(StateGrid.getLabel("IMU"));
-		add(pressure);
-		add(altitude);
-		add(temperature);
 		add(StateGrid.getLabel("IMU_ACCEL_DATA"));
 		add(StateGrid.getLabel("IMU_GYRO_DATA"));
-		add(StateGrid.getLabel("PRESS_REPORT_DATA"));
-		add(StateGrid.getLabel("TEMP_REPORT_DATA"));
 		add(StateGrid.getLabel("SANE_IMU_ACCEL"));
+		add(StateGrid.getLabel("ARMING_IMU_FAST"));
+		add(temperature);
+		add(StateGrid.getLabel("TEMP_REPORT_DATA"));
+
+		JPanel c = new JPanel();
+		c.setLayout(new GridLayout(1, 1));
+		c.setBorder(BorderFactory.createEmptyBorder(8, 2, 8, 2));
+		c.add(new JSeparator());
+		add(c);
+
+		add(pressure);
+		add(altitude);
+		add(StateGrid.getLabel("PRESS_REPORT_DATA"));
 		add(StateGrid.getLabel("PRESSURE_VALID"));
 		add(StateGrid.getLabel("QUIET_PRESSURE_BASE"));
-		add(StateGrid.getLabel("ARMING_IMU_FAST"));
 	}
 
 	public void message(CanMessage msg)
