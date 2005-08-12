@@ -27,8 +27,11 @@ class TimeObserver extends NameDetailLabel implements CanObserver
 		buf.append( year ).append( "/" );
 		buf.append( month ).append( "/" );
 		buf.append( day ).append( " " );
+		if (hour < 10) buf.append("0");
 		buf.append( hour ).append( ":" );
+		if (minute < 10) buf.append("0");
 		buf.append( minute ).append( ":" );
+		if (second < 10) buf.append("0");
 		buf.append( second );
 
 		setDetail( buf.toString() );
