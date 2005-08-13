@@ -69,6 +69,9 @@ public class StateGrid extends JPanel
 		/* Armed tests. */
 		"LOG_AVAIL",
 
+		/* Coast tests */
+		"COAST_IMU",
+
 		/* Boost tests */
 		"BOOST_GPS",
 		"BOOST_IMU",
