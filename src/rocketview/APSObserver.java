@@ -67,7 +67,7 @@ class APSObserver extends JPanel implements CanObserver
 	    case CanBusIDs.APS_DATA_VOLTS:
 		short counts = msg.getData16(0);
 		//counts &= 0xffff;   // unsigned.  What the heck?
-		voltage = fmt.format(counts * (5 / 1024 / 0.14581));
+		voltage = fmt.format(counts * (5 / 1024.0 / 0.14581));
 		break;
 	    case CanBusIDs.APS_DATA_AMPS:
 		current = fmt.format(768.05 / msg.getData32(0));
