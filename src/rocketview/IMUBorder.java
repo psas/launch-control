@@ -31,6 +31,11 @@ class IMUBorder extends TitledBorder implements CanObserver, ActionListener
 
 		dispatch.add(this);
 	}
+
+	public void setBias(double bias)
+	{
+		this.bias = bias;
+	}
 	
 	public void setGain(double gain)
 	{
