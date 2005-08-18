@@ -13,7 +13,7 @@ class IMUBorder extends TitledBorder implements CanObserver, ActionListener
 	protected final String name, unit;
 	protected final int id, pos;
 
-	protected double sum, high, low, bias, gain;
+	protected double sum, bias, gain;
 	protected int n, time;
 
 	public IMUBorder(CanDispatch dispatch, String name, String unit, int id, int pos)
@@ -42,14 +42,12 @@ class IMUBorder extends TitledBorder implements CanObserver, ActionListener
 		if (msg.getId() == id)
 		{
 			double data = (msg.getData16(pos) - bias) / gain;
-			if (low  > data) low  = data;
-			if (high < data) high = data;
 			sum += data;
 			n++;
 			if (msg.getTimestamp() > time)
 			{
 				double avg = sum/n;
-				setTitle(name + fmt.format(avg) + unit + " (" + fmt.format(low) + ".." + fmt.format(high) + ")");
+				setTitle(name + fmt.format(avg) + unit);
 
 				sum = 0.0;
 				n = 0;
@@ -62,7 +60,6 @@ class IMUBorder extends TitledBorder implements CanObserver, ActionListener
 	{
 		// from "Calibrate" button
 		if (n>0) bias += gain*sum/n;
-		high = low = 0.0;
 		setTitle(name + "0.0" + unit);
 	}
 }
