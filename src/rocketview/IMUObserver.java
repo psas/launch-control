@@ -30,10 +30,9 @@ class IMUObserver extends JPanel implements CanObserver
 		{ "X", "Y", "Z", },
 		{ "Pitch", "Yaw", "Roll", }
 	};
-	protected static final double G = 9.80665;
-	protected final int bias[][] = { { 0, 0, 0 }, { 0, 0, 0 } };
+	protected final double bias[][] = { { 2400.45, 2462.06, 1918.72 }, { 0, 0, 0 } };
 	protected final double gain[][] = {
-		{ 392.80/G, 386.90/G, 77.00/G },		// cf. fcfifo/imu.c
+		{ 392.80, 386.90, 77.00 },		// cf. fcfifo/imu.c
 		{ 22.75, 22.75, 22.75 }
 	};
 	protected final String unit[] = { "g", "deg/s" };
@@ -92,9 +91,11 @@ class IMUObserver extends JPanel implements CanObserver
 		chart.setYRange(0, 4095);
 
 		IMUBorder border = new IMUBorder(dispatch, title[type][num], unit[type], id[type], num);
+		border.setBias(bias[type][num]);
 		border.setGain(gain[type][num]);
 		chart.setBorder(border);
-		calibrateButton.addActionListener(border);
+		if(type == IMU_GYRO)
+			calibrateButton.addActionListener(border);
 		return chart;
 	}
 
