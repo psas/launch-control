@@ -25,6 +25,9 @@ class GPSObserver extends JPanel implements CanObserver
 {
 	// static fields
 	protected static DecimalFormat minFmt = new DecimalFormat("00.000");
+
+	protected static String[][] lockTestNames = { {"Propagated", "Alt. used", null, "PM"}, {"Alt. used", null, "<4 sats", "EHPE", "EVPE"} };
+
 	
 	// fields
 	protected int used = 0;
@@ -67,20 +70,14 @@ class GPSObserver extends JPanel implements CanObserver
 
 	public void message(CanMessage msg)
 	{
-		StringBuffer labelString = new StringBuffer();
-		StringBuffer solString = new StringBuffer();
-		StringBuffer valString = new StringBuffer();
-		
-		boolean solCheck = false;
-		boolean valCheck = false;
 		
 		switch(msg.getId())
 		{
 			case CanBusIDs.FC_GPS_HEIGHT:
-				altLabel.setDetail("" + (msg.getData32(0) / (float)100.0) + 'm');
+				altLabel.setDetail((msg.getData32(0) / (float)100.0) + "m");
 				return;
 			case CanBusIDs.FC_GPS_LATLON:
-				labelString = new StringBuffer();
+				StringBuffer labelString = new StringBuffer();
 				dir(labelString, msg.getData32(0), 'N', 'S');
 				latLabel.setDetail(labelString.toString());
 				
@@ -95,65 +92,40 @@ class GPSObserver extends JPanel implements CanObserver
 				used = msg.getData8(0);
 				break;
 			case CanBusIDs.FC_GPS_NAVSOL:
-				int solution = msg.getData16(0);
-				int validity = msg.getData16(1);
-				
-				// if bits 0,1,3 of byte 0 are 1 then there is a quality solution, else there's not so
-				// list the reasons why
-				if ((solution & 11) == 0)
+				//navsol messages have two "interesting"
+				//bytes, one for solution and one for
+				//validity.
+				StringBuffer[] navsolStrings = {new StringBuffer(), new StringBuffer()};
+				boolean[] navsolChecks = {true, true};
+
+				int[] navsolBytes = {msg.getData16(0), msg.getData16(1)};
+				//cycle through the two bytes, then the
+				//bits in each byte
+				for(int byt = 0; byt < 2; byt++)
 				{
-					solString.append("OK");
-					solCheck = true;
-				} else
-				{
-					if ((solution & 1) != 0)
+					for(int bit = 0; bit < lockTestNames[byt].length; bit++)
 					{
-						solString.append("Propogated, ");
-					} 
-					
-					if ((solution & 2) != 0)
-					{
-						solString.append("Alt. Used, ");
-					} 
-					
-					if ((solution & 8) != 0)
-					{
-						solString.append("PM");
+						if(lockTestNames[byt][bit] == null)
+							continue; 
+						if((navsolBytes[byt] & (1 << bit)) == 0)
+							continue;
+						//if navsolChecks[byt] is false,
+						//some name has already been
+						//added. Add a comma.
+						if(!navsolChecks[byt])
+							navsolStrings[byt].append(", ");
+						else
+							navsolChecks[byt] = false;
+						navsolStrings[byt].append(lockTestNames[byt][bit]);
 					}
+					if(navsolChecks[byt])
+						navsolStrings[byt].append("OK");
 				}
-				solLabel.setDetail(solString.toString());
+
+				solLabel.setDetail(navsolStrings[0].toString());
+				valLabel.setDetail(navsolStrings[1].toString());
 				
-				// if bits 0,2,3,4 of byte 3 are 1 then the solution is valid, else it's not so
-				// list the reasons why
-				if ((validity & 29) == 0)
-				{
-					valString.append("OK");
-					valCheck = true;
-				} else
-				{
-					if ((validity & 1) != 0)
-					{
-						valString.append("Alt. Used, ");
-					} 
-					
-					if((validity & 4) != 0) 
-					{
-						valString.append("<4 Sats, ");
-					} 
-					
-					if ((validity & 8) != 0)
-					{
-						valString.append("EHPE, ");
-					} 
-					
-					if ((validity & 16) != 0)
-					{
-						valString.append("EVPE");
-					}
-				}
-				valLabel.setDetail(valString.toString());
-				
-				if (solCheck && valCheck)
+				if (navsolChecks[0] && navsolChecks[1])
 					lockLabel.setDetail("Yes");
 				else
 					lockLabel.setDetail("No");
@@ -163,7 +135,7 @@ class GPSObserver extends JPanel implements CanObserver
 				return;
 		}
 
-		satsLabel.setDetail("" + used + '/' + visible);
+		satsLabel.setDetail(String.valueOf(used + "/" + visible));
 	}
 
 	/*
