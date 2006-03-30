@@ -1,4 +1,4 @@
-/* Copyright 2005 David Cassard, Ian Osgood, Jamey Sharp
+/* Copyright 2004 David Cassard, Ian Osgood, Jamey Sharp
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

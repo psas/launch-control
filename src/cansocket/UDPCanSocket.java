@@ -1,4 +1,4 @@
-/* Copyright 2005 David Cassard, Ian Osgood, Jamey Sharp, Karl Hallowell,
+/* Copyright 2004 David Cassard, Ian Osgood, Jamey Sharp, Karl Hallowell,
  *                Peter Welte
  * 
  * This program is free software; you can redistribute it and/or modify it
