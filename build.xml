@@ -73,6 +73,21 @@
     </jar>
   </target>
 
+  <target name="jar-launchcontrol" depends="launchcontrol" description="build a jar of launchcontrol">
+    <manifest file="${build}/launchcontrol-manifest">
+      <attribute name="Main-Class" value="launchcontrol.LaunchControl"/>
+    </manifest>
+    <jar jarfile="${dist}/launchcontrol.jar" manifest="${build}/launchcontrol-manifest">
+      <fileset dir="${build}">
+        <include name="sounds/*"/>
+	<include name="cansocket/*.class"/>
+        <include name="widgets/*.png"/>
+	<include name="widgets/*.class"/>
+	<include name="launchcontrol/*.class"/>
+      </fileset>
+    </jar>
+  </target>
+
   <target name="profile-rocketview" depends="jar-rocketview" description="profile rocketview">
     <java jar="${dist}/rocketview.jar" fork="yes">
       <jvmarg value="-classic"/>
@@ -100,7 +115,11 @@
     </java>
   </target>
 
-  <target name="jar" depends="jar-rocketview" description="build all jars"/>
+  <target name="run-launchcontrol" depends="jar-launchcontrol" description="run launchcontrol">
+    <java jar="${dist}/launchcontrol.jar" fork="yes" />
+  </target>
+
+  <target name="jar" depends="jar-rocketview,jar-launchcontrol" description="build all jars"/>
 
   <!-- run any tests (we don't have any) -->
   <target name="run-tests" depends="all">

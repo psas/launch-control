@@ -342,4 +342,16 @@ public class LaunchControl extends JPanel
 			}
 		});
 	}
+
+	// LaunchControl-only frame for post-LV2 era
+	public static void main(String[] args) throws Exception
+	{
+                CanDispatch dispatch = new CanDispatch();
+		JFrame f = new JFrame("Launch Control");
+		f.add(new LaunchControl(dispatch));
+                f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                f.pack();
+                f.setVisible(true);
+                dispatch.run();
+	}
 }
