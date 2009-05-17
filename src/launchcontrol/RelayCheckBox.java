@@ -21,17 +21,6 @@ public class RelayCheckBox extends JCheckBox implements ItemListener, CanObserve
 	protected int reportMsg;
 	protected boolean ignoreEvents; // true = disable ShorePower's event handler
 
-	protected final Thread reader;
-
-	/** Create a RelayCheckBox widget.  
-	 * @param socket the socket to read from to get information
-	 * from the launch tower.
-	 */
-	public RelayCheckBox(CanSocket socket)
-	{
-		this(socket, null, CanBusIDs.LTR_SPOWER);
-	}
-
 	/* XXX these message-part constants should actually be in CanBusIDs */
 	public static int GET    = 0x1310;
 	public static int SET    = 0x1001;
@@ -42,9 +31,9 @@ public class RelayCheckBox extends JCheckBox implements ItemListener, CanObserve
 	 * from the launch tower.
 	 * @param relay  the base message from which get/set/report messages are constructed
 	 */
-	public RelayCheckBox(CanSocket socket, String title, int relay)
+	public RelayCheckBox(CanSocket socket, CanDispatch dispatch, String title, int relay)
 	{
-		this(socket, title, relay | GET, relay | SET, relay | REPORT);
+		this(socket, dispatch, title, relay | GET, relay | SET, relay | REPORT);
 	}
 
 	/** Create a RelayCheckBox widget.
@@ -56,7 +45,7 @@ public class RelayCheckBox extends JCheckBox implements ItemListener, CanObserve
 	 * from the launch tower.
 	 * @param title the title to display next to this checkbox
 	 */
-	public RelayCheckBox(CanSocket socket, String title, int get, int set, int report)
+	public RelayCheckBox(CanSocket socket, CanDispatch dispatch, String title, int get, int set, int report)
 	{
 		sock = socket;
 		this.title = title;
@@ -68,21 +57,17 @@ public class RelayCheckBox extends JCheckBox implements ItemListener, CanObserve
 
 		addItemListener(this);
 
-		CanDispatch dispatch = new CanDispatch(socket);
 		dispatch.add(this);
-		reader = new Thread(dispatch);
 
 		/* Request the state at startup. */
 		requestState();
 	}
 
-	protected void requestState()
+	public void requestState()
 	{
 		try {
 			sock.write(new CanMessage(getMsg, 0, new byte[8]));
 			sock.flush();
-			if(!reader.isAlive())
-				reader.start();
 		} catch(IOException e) {
 			System.err.println("write failed, will retry later: " + e);
 		}
@@ -118,14 +103,13 @@ public class RelayCheckBox extends JCheckBox implements ItemListener, CanObserve
 		if (ignoreEvents)
 			return;
 
-		System.out.println(title + " widget acting on item event");
 		byte body[] = new byte[8];
 		if (event.getStateChange() == ItemEvent.DESELECTED) {
 			body[0] = 0;
-			System.out.println("\t" + title + " DESELECTED, telling tower");
+			System.out.println(title + " DESELECTED, telling tower");
 		} else {
 			body[0] = 1;
-			System.out.println("\t" + title + " SELECTED, telling tower");
+			System.out.println(title + " SELECTED, telling tower");
 		}
 		try {
 			sock.write(new CanMessage(setMsg, 0, body));
@@ -137,17 +121,22 @@ public class RelayCheckBox extends JCheckBox implements ItemListener, CanObserve
 
 	/** possibly update the widget based on the message read from tower. */
 	public void message(CanMessage msg) {
-		// if msg is a LTR_REPORT_SPOWER (XXX: ensure its not actually LTR_SPOWER)
-		// then set power to first byte.
+		//  relay status is first byte.
 		if (msg.getId() == reportMsg) {
+			final boolean on = (msg.getData8(0) == 1);
 			// change the state of this widget, ensuring our event handler isn't
 			// called, because this isn't a user generated change of state.
 			//
 			// XXX: possible BUG.  see my comment about when events are 
 			// generated in the comment for itemStateChanged() above.
-			ignoreEvents = true; 
-			setSelected(msg.getData8(0) == 1);
-			ignoreEvents = false;
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run()
+				{
+					ignoreEvents = true; 
+					setSelected(on);
+					ignoreEvents = false;
+				}
+			});
 		}
 	}
 	
